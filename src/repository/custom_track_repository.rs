@@ -1,4 +1,5 @@
 use crate::models::custom_track::CustomTrack;
+use crate::repository::filter::custom_track_filter::CustomTrackFilter;
 use crate::schema::custom_tracks;
 use diesel::prelude::*;
 
@@ -11,12 +12,27 @@ impl CustomTrackRepository {
         CustomTrackRepository { connection }
     }
 
-    pub fn find_one(&mut self, track_id: i32) -> QueryResult<CustomTrack> {
-        custom_tracks::table.find(track_id).first(&mut self.connection)
-    }
+    pub fn find(&mut self, filter: CustomTrackFilter) -> QueryResult<Vec<CustomTrack>> {
+        let mut query = custom_tracks::table.into_boxed();
 
-    pub fn find(&mut self) -> QueryResult<Vec<CustomTrack>> {
-        custom_tracks::table.load::<CustomTrack>(&mut self.connection)
+        if let Some(author_id) = filter.author_id {
+            query = query.filter(custom_tracks::author_id.eq(author_id));
+        }
+
+        if let Some(search_text) = filter.search_text {
+            query = query.filter(custom_tracks::name.ilike(format!("%{}%", search_text)));
+            query = query.filter(custom_tracks::description.ilike(format!("%{}%", search_text)));
+        }
+
+        if let Some(staff_pick) = filter.staff_pick {
+            query = query.filter(custom_tracks::staff_pick.eq(staff_pick));
+        }
+
+        if let Some(active) = filter.active {
+            query = query.filter(custom_tracks::active.eq(active));
+        }
+
+        query.load::<CustomTrack>(&mut self.connection)
     }
 
     pub fn create(&mut self, new_track: &CustomTrack) -> QueryResult<CustomTrack> {

@@ -7,7 +7,6 @@ diesel::table! {
         name -> Varchar,
         description -> Varchar,
         date_created -> Timestamp,
-        preview -> Varchar,
         staff_pick -> Bool,
         active -> Bool,
     }
@@ -31,6 +30,7 @@ diesel::table! {
         custom_track_id -> Int4,
         file_name -> Varchar,
         file_size -> Int4,
+        resource_type -> Varchar,
         checksum -> Varchar,
         version -> Varchar,
         date_created -> Timestamp,
@@ -55,6 +55,10 @@ diesel::table! {
         active -> Bool,
     }
 }
+
+diesel::joinable!(custom_tracks -> users (author_id));
+diesel::joinable!(permissions -> users (user_id));
+diesel::joinable!(resources -> custom_tracks (custom_track_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
     custom_tracks,

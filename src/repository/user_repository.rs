@@ -1,4 +1,5 @@
 use crate::models::user::User;
+use crate::repository::filter::user_filter::UserFilter;
 use crate::schema::users;
 use diesel::prelude::*;
 
@@ -15,8 +16,22 @@ impl UserRepository {
         users::table.find(id).first(&mut self.connection)
     }
 
-    pub fn find(&mut self) -> QueryResult<Vec<User>> {
-        users::table.load::<User>(&mut self.connection)
+    pub fn find(&mut self, filter: UserFilter) -> QueryResult<Vec<User>> {
+        let mut query = users::table.into_boxed();
+
+        if let Some(id) = filter.id {
+            query = query.filter(users::id.eq(id));
+        }
+
+        if let Some(username) = filter.username {
+            query = query.filter(users::username.eq(username));
+        }
+
+        if let Some(active) = filter.active {
+            query = query.filter(users::active.eq(active));
+        }
+
+        query.load::<User>(&mut self.connection)
     }
 
     pub fn create(&mut self, new_user: &User) -> QueryResult<User> {

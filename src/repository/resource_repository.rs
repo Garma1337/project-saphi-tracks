@@ -1,4 +1,5 @@
 use crate::models::resource::Resource;
+use crate::repository::filter::resource_filter::ResourceFilter;
 use crate::schema::resources;
 use diesel::prelude::*;
 
@@ -11,12 +12,26 @@ impl ResourceRepository {
         ResourceRepository { connection }
     }
 
-    pub fn find_one(&mut self, id: i32) -> QueryResult<Resource> {
-        resources::table.find(id).first(&mut self.connection)
-    }
+    pub fn find(&mut self, filter: ResourceFilter) -> QueryResult<Vec<Resource>> {
+        let mut query = resources::table.into_boxed();
 
-    pub fn find(&mut self) -> QueryResult<Vec<Resource>> {
-        resources::table.load::<Resource>(&mut self.connection)
+        if let Some(id) = filter.id {
+            query = query.filter(resources::id.eq(id));
+        }
+
+        if let Some(custom_track_id) = filter.custom_track_id {
+            query = query.filter(resources::custom_track_id.eq(custom_track_id));
+        }
+
+        if let Some(search_text) = filter.search_text {
+            query = query.filter(resources::file_name.ilike(format!("%{}%", search_text)));
+        }
+
+        if let Some(resource_type) = filter.resource_type {
+            query = query.filter(resources::resource_type.eq(resource_type));
+        }
+
+        query.load::<Resource>(&mut self.connection)
     }
 
     pub fn create(&mut self, new_resource: &Resource) -> QueryResult<Resource> {

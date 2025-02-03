@@ -1,4 +1,4 @@
 # Content Overview
 
 * [Deployment](./deployment.md)
-* [Development](./dev)
+* [Development](./dev.md)
