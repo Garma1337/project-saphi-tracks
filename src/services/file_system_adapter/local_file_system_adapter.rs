@@ -1,8 +1,8 @@
-use crate::services::file_system::file_system::FileSystem;
+use crate::services::file_system_adapter::file_system_adapter::FileSystemAdapter;
 
-pub struct LocalFileSystem {}
+pub struct LocalFileSystemAdapter {}
 
-impl FileSystem for LocalFileSystem {
+impl FileSystemAdapter for LocalFileSystemAdapter {
     fn read_file(&self, path: &str) -> Result<String, String> {
         Ok(String::from("file content"))
     }

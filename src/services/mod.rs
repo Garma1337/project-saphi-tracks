@@ -1,4 +1,4 @@
-pub mod file_system;
+pub mod file_system_adapter;
 pub mod resources;
 
 pub mod db_connection_factory;
