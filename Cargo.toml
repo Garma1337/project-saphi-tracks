@@ -9,3 +9,4 @@ diesel = { version = "2.2.7", features = ["postgres"] }
 dotenvy = "0.15.7"
 serde = { version = "1.0.217", features = ["derive"] }
 md-5 = "0.10.6"
+jsonwebtoken = "9.3.1"

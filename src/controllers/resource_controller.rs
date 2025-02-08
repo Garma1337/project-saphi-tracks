@@ -1,6 +1,6 @@
+use crate::app::{App, ServiceContainer};
 use crate::repository::filter::resource_filter::ResourceFilter;
 use crate::repository::resource_repository::ResourceRepository;
-use crate::services::db_connection_factory::DbConnectionFactory;
 use rocket::fs::NamedFile;
 use rocket::serde::json::{json, serde_json, Json};
 
@@ -11,8 +11,7 @@ pub fn index(
     search_text: Option<&str>,
     resource_type: Option<&str>
 ) -> Json<serde_json::Value> {
-    let db_connection = DbConnectionFactory::factory();
-    let mut repository = ResourceRepository::new(db_connection);
+    let mut repository = ResourceRepository::new(App::db());
 
     let search_text = search_text.map(|s| s.to_string());
     let resource_type = resource_type.map(|s| s.to_string());
@@ -25,8 +24,7 @@ pub fn index(
 
 #[get("/download?<id>")]
 pub async fn download(id: i32) {
-    let db_connection = DbConnectionFactory::factory();
-    let mut repository = ResourceRepository::new(db_connection);
+    let mut repository = ResourceRepository::new(App::db());
 
     let filter = ResourceFilter {
         id: Some(id),

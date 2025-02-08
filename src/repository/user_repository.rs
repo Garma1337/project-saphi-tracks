@@ -27,6 +27,10 @@ impl UserRepository {
             query = query.filter(users::username.eq(username));
         }
 
+        if let Some(email) = filter.email {
+            query = query.filter(users::email.eq(email));
+        }
+
         if let Some(active) = filter.active {
             query = query.filter(users::active.eq(active));
         }

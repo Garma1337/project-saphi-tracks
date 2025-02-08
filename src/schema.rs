@@ -21,6 +21,7 @@ diesel::table! {
         can_edit_resources -> Bool,
         can_delete_resources -> Bool,
         can_edit_users -> Bool,
+        can_delete_users -> Bool,
     }
 }
 
@@ -34,6 +35,7 @@ diesel::table! {
         checksum -> Varchar,
         version -> Varchar,
         date_created -> Timestamp,
+        active -> Bool,
     }
 }
 

@@ -16,11 +16,16 @@ small and straightforward I don't think there's too much that needs to be done t
 
 * `doc/`: Contains the documentation for the project
 * `migrations/`: Contains the database migrations to use with `Diesel`
+* `resources/`: Contains resources (files uploaded to the website) 
 * `src/`: Contains the source code for the website backend (basically the REST API)
+  * `auth/`: Contains permission management and authentication
   * `controllers/`: Contains the controllers for the REST API
   * `models/`: Contains the models for the database
   * `repository/`: Contains the repositories for the models
+    * `filter/`: Contains filters for repository find methods
   * `services/`: Contains various services
+    * `file_system_adapter/`: Contains file system adapters used for storing resources
+    * `resources/`: Contains resources-related services
   * `tests/`: Contains the unit tests for the backend
   * `schema.rs`: Contains the database schema
 * `web/`: Contains the source code for the website frontend

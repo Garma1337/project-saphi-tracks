@@ -5,6 +5,7 @@ mod tests {
 
     #[test]
     fn test_should_return_md5_encoded_filename() {
-        assert_eq!(Md5EncoderStrategy{}.encode_filename("preview.jpg"), "daf3eeae9d3aeb5bdf9a2b9f86ba8bab");
+        let encoder_strategy = Md5EncoderStrategy {};
+        assert_eq!(encoder_strategy.encode_filename("preview.jpg"), "daf3eeae9d3aeb5bdf9a2b9f86ba8bab");
     }
 }

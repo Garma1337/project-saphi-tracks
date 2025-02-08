@@ -12,6 +12,10 @@ impl ResourceRepository {
         ResourceRepository { connection }
     }
 
+    pub fn find_one(&mut self, id: i32) -> QueryResult<Resource> {
+        resources::table.find(id).first(&mut self.connection)
+    }
+
     pub fn find(&mut self, filter: ResourceFilter) -> QueryResult<Vec<Resource>> {
         let mut query = resources::table.into_boxed();
 
@@ -40,7 +44,11 @@ impl ResourceRepository {
             .get_result(&mut self.connection)
     }
 
-    pub fn update(&mut self, resource_id: i32, updated_resource: &Resource) -> QueryResult<Resource> {
+    pub fn update(
+        &mut self,
+        resource_id: i32,
+        updated_resource: &Resource,
+    ) -> QueryResult<Resource> {
         diesel::update(resources::table.find(resource_id))
             .set(updated_resource)
             .get_result(&mut self.connection)

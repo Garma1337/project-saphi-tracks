@@ -2,18 +2,22 @@
 
 use crate::controllers::{custom_track_controller, index_controller, resource_controller, setting_controller, user_controller};
 
+pub mod app;
+pub mod auth;
 pub mod controllers;
-pub mod helpers;
+pub mod http;
 pub mod models;
 pub mod repository;
 pub mod schema;
 pub mod services;
 pub mod tests;
+pub mod util;
 
 #[launch]
 fn rocket() -> _ {
     rocket::build()
         .mount("/", routes![index_controller::index])
+        .mount("/api/v1/sessions", routes![])
         .mount("/api/v1/custom_tracks", routes![custom_track_controller::index])
         .mount("/api/v1/permissions", routes![])
         .mount("/api/v1/resources", routes![resource_controller::index, resource_controller::download])

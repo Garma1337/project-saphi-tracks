@@ -1,6 +1,6 @@
 use diesel::prelude::*;
-use std::time::SystemTime;
 use serde::Serialize;
+use std::time::SystemTime;
 
 #[derive(Queryable, Selectable, Serialize, Insertable, AsChangeset)]
 #[diesel(table_name = crate::schema::users)]

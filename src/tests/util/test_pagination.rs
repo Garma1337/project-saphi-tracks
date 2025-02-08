@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use crate::helpers::pagination::Pagination;
+    use crate::util::pagination::Pagination;
 
     #[test]
     pub fn test_should_get_current_page() {

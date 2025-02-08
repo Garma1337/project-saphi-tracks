@@ -1,9 +1,9 @@
 use diesel::prelude::*;
-use std::time::SystemTime;
 use serde::Serialize;
+use std::time::SystemTime;
 
 #[derive(Queryable, Selectable, Serialize, Insertable, AsChangeset)]
-#[diesel(table_name = crate::schema::custom_tracks)]
+#[diesel(belongs_to(User), table_name = crate::schema::custom_tracks)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct CustomTrack {
     pub id: i32,

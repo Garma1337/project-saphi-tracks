@@ -2,10 +2,9 @@ use crate::models::setting::Setting;
 use crate::repository::filter::setting_filter::SettingFilter;
 use crate::schema::settings;
 use diesel::prelude::*;
-use diesel::PgConnection;
 
 pub struct SettingRepository {
-    pub connection: PgConnection
+    pub connection: PgConnection,
 }
 
 impl SettingRepository {
@@ -13,8 +12,8 @@ impl SettingRepository {
         SettingRepository { connection }
     }
 
-    pub fn find_one(&mut self, setting_id: i32) -> QueryResult<Setting> {
-        settings::table.find(setting_id).first(&mut self.connection)
+    pub fn find_one(&mut self, id: i32) -> QueryResult<Setting> {
+        settings::table.find(id).first(&mut self.connection)
     }
 
     pub fn find(&mut self, filter: SettingFilter) -> QueryResult<Vec<Setting>> {

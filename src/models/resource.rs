@@ -1,6 +1,6 @@
 use diesel::prelude::*;
-use std::time::SystemTime;
 use serde::Serialize;
+use std::time::SystemTime;
 
 #[derive(Serialize)]
 pub enum ResourceType {
@@ -11,7 +11,7 @@ pub enum ResourceType {
 }
 
 #[derive(Queryable, Selectable, Serialize, Insertable, AsChangeset)]
-#[diesel(table_name = crate::schema::resources)]
+#[diesel(belongs_to(CustomTrack), table_name = crate::schema::resources)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct Resource {
     pub id: i32,
@@ -22,4 +22,5 @@ pub struct Resource {
     pub checksum: String,
     pub version: String,
     pub date_created: SystemTime,
+    pub active: bool,
 }

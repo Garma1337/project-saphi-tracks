@@ -12,6 +12,10 @@ impl CustomTrackRepository {
         CustomTrackRepository { connection }
     }
 
+    pub fn find_one(&mut self, id: i32) -> QueryResult<CustomTrack> {
+        custom_tracks::table.find(id).first(&mut self.connection)
+    }
+
     pub fn find(&mut self, filter: CustomTrackFilter) -> QueryResult<Vec<CustomTrack>> {
         let mut query = custom_tracks::table.into_boxed();
 
@@ -41,7 +45,11 @@ impl CustomTrackRepository {
             .get_result(&mut self.connection)
     }
 
-    pub fn update(&mut self, track_id: i32, updated_track: &CustomTrack) -> QueryResult<CustomTrack> {
+    pub fn update(
+        &mut self,
+        track_id: i32,
+        updated_track: &CustomTrack,
+    ) -> QueryResult<CustomTrack> {
         diesel::update(custom_tracks::table.find(track_id))
             .set(updated_track)
             .get_result(&mut self.connection)
