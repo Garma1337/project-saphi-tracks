@@ -11,4 +11,11 @@ VALUES
     (7, 'Ice'),
     (8, 'Circular'),
     (9, 'Point to Point'),
-    (10, 'Expert')
+    (10, 'Technical'),
+    (11, 'Simple'),
+    (12, 'Original'),
+    (13, 'Multiple Paths'),
+    (14, 'Short'),
+    (15, 'Long'),
+    (16, 'Tight Turns'),
+    (17, 'Loose Turns')
