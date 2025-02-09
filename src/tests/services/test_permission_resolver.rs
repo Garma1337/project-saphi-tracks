@@ -14,7 +14,7 @@ pub mod tests {
             description: "The best custom track in the game".to_string(),
             date_created: SystemTime::now(),
             staff_pick: false,
-            active: true,
+            verified: true,
         }
     }
 

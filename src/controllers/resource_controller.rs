@@ -4,12 +4,14 @@ use crate::repository::resource_repository::ResourceRepository;
 use rocket::fs::NamedFile;
 use rocket::serde::json::{json, serde_json, Json};
 
-#[get("/?<id>&<custom_track_id>&<search_text>&<resource_type>")]
+#[get("/?<id>&<author_id>&<custom_track_id>&<search_text>&<resource_type>&<verified>")]
 pub fn index(
     id: Option<i32>,
+    author_id: Option<i32>,
     custom_track_id: Option<i32>,
     search_text: Option<&str>,
-    resource_type: Option<&str>
+    resource_type: Option<&str>,
+    verified: Option<bool>
 ) -> Json<serde_json::Value> {
     let mut repository = ResourceRepository::new(App::db());
 
@@ -17,7 +19,7 @@ pub fn index(
     let resource_type = resource_type.map(|s| s.to_string());
 
     repository
-        .find(ResourceFilter { id, custom_track_id, search_text, resource_type })
+        .find(ResourceFilter { id, author_id, custom_track_id, search_text, resource_type, verified })
         .map(|resources| Json(json!(resources)))
         .unwrap()
 }
@@ -28,9 +30,11 @@ pub async fn download(id: i32) {
 
     let filter = ResourceFilter {
         id: Some(id),
+        author_id: None,
         custom_track_id: None,
         search_text: None,
         resource_type: None,
+        verified: Some(true),
     };
 
     let mut result = repository.find(filter).unwrap();

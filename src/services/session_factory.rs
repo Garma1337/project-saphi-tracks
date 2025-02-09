@@ -26,7 +26,7 @@ impl SessionFactory {
             email: "?".to_string(),
             password_hash: "".to_string(),
             created_at: SystemTime::now(),
-            active: false,
+            verified: false,
         };
 
         if jwt.claims.subject > 0 {

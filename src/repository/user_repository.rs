@@ -31,8 +31,8 @@ impl UserRepository {
             query = query.filter(users::email.eq(email));
         }
 
-        if let Some(active) = filter.active {
-            query = query.filter(users::active.eq(active));
+        if let Some(verified) = filter.verified {
+            query = query.filter(users::active.eq(verified));
         }
 
         query.load::<User>(&mut self.connection)

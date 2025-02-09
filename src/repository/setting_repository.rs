@@ -23,6 +23,10 @@ impl SettingRepository {
             query = query.filter(settings::id.eq(id));
         }
 
+        if let Some(category) = filter.category {
+            query = query.filter(settings::category.ilike(format!("%{}%", category)));
+        }
+
         if let Some(key) = &filter.key {
             query = query.filter(settings::key.ilike(format!("%{}%", key)));
         }

@@ -12,5 +12,5 @@ pub struct CustomTrack {
     pub description: String,
     pub date_created: SystemTime,
     pub staff_pick: bool,
-    pub active: bool
+    pub verified: bool
 }

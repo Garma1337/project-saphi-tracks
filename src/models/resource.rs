@@ -15,6 +15,7 @@ pub enum ResourceType {
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct Resource {
     pub id: i32,
+    pub author_id: i32,
     pub custom_track_id: i32,
     pub file_name: String,
     pub file_size: i32,
@@ -22,5 +23,5 @@ pub struct Resource {
     pub checksum: String,
     pub version: String,
     pub date_created: SystemTime,
-    pub active: bool,
+    pub verified: bool,
 }

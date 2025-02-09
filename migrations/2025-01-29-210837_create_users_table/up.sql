@@ -6,5 +6,5 @@ CREATE TABLE "users"
     "email"         VARCHAR   NOT NULL,
     "password_hash" VARCHAR   NOT NULL,
     "created_at"    TIMESTAMP NOT NULL,
-    "active"        BOOL      NOT NULL
+    "verified"      BOOL      NOT NULL
 );

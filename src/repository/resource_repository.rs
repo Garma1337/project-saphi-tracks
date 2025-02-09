@@ -23,6 +23,10 @@ impl ResourceRepository {
             query = query.filter(resources::id.eq(id));
         }
 
+        if let Some(author_id) = filter.author_id {
+            query = query.filter(resources::author_id.eq(author_id));
+        }
+
         if let Some(custom_track_id) = filter.custom_track_id {
             query = query.filter(resources::custom_track_id.eq(custom_track_id));
         }
@@ -33,6 +37,10 @@ impl ResourceRepository {
 
         if let Some(resource_type) = filter.resource_type {
             query = query.filter(resources::resource_type.eq(resource_type));
+        }
+
+        if let Some(verified) = filter.verified {
+            query = query.filter(resources::verified.eq(verified));
         }
 
         query.load::<Resource>(&mut self.connection)

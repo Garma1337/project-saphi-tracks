@@ -11,5 +11,5 @@ pub struct User {
     pub email: String,
     pub password_hash: String,
     pub created_at: SystemTime,
-    pub active: bool,
+    pub verified: bool,
 }

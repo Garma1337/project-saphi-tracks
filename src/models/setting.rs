@@ -6,6 +6,7 @@ use serde::Serialize;
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct Setting {
     pub id: i32,
+    pub category: String,
     pub key: String,
     pub value: String,
 }

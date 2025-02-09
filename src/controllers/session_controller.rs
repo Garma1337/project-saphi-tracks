@@ -25,11 +25,16 @@ pub fn login(login: Json<LoginRequest>) -> Json<serde_json::Value> {
         id: None,
         email: None,
         username: Some(username),
-        active: Some(true),
+        verified: Some(true),
     };
 
     repository
         .find(user_filter)
         .map(|users| Json(json!(users)))
         .unwrap()
+}
+
+#[post("/logout")]
+pub fn logout() -> Json<serde_json::Value> {
+    Json(json![{}])
 }

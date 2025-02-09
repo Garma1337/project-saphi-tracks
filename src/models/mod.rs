@@ -4,3 +4,4 @@ pub mod permission;
 pub mod resource;
 pub mod setting;
 pub mod user;
+pub mod tag;

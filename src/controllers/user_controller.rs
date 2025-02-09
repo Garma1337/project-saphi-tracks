@@ -3,12 +3,12 @@ use crate::repository::filter::user_filter::UserFilter;
 use crate::repository::user_repository::UserRepository;
 use rocket::serde::json::{json, serde_json, Json};
 
-#[get("/?<id>&<username>&<email>&<active>")]
+#[get("/?<id>&<username>&<email>&<verified>")]
 pub fn index(
     id: Option<i32>,
     username: Option<&str>,
     email: Option<&str>,
-    active: Option<bool>
+    verified: Option<bool>
 ) -> Json<serde_json::Value> {
     let mut repository = UserRepository::new(App::db());
 
@@ -16,7 +16,7 @@ pub fn index(
     let email = email.map(|s| s.to_string());
 
     repository
-        .find(UserFilter { id, username, email, active })
+        .find(UserFilter { id, username, email, verified })
         .map(|users| Json(json!(users)))
         .unwrap()
 }

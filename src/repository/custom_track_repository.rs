@@ -32,8 +32,8 @@ impl CustomTrackRepository {
             query = query.filter(custom_tracks::staff_pick.eq(staff_pick));
         }
 
-        if let Some(active) = filter.active {
-            query = query.filter(custom_tracks::active.eq(active));
+        if let Some(verified) = filter.verified {
+            query = query.filter(custom_tracks::verified.eq(verified));
         }
 
         query.load::<CustomTrack>(&mut self.connection)
