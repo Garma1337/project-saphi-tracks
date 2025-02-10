@@ -1,64 +1,32 @@
-use crate::models::resource::Resource;
+use crate::models::resources::{Entity as Resource, Model};
 use crate::repository::filter::resource_filter::ResourceFilter;
-use crate::schema::resources;
-use diesel::prelude::*;
+use sea_orm::{DatabaseConnection, EntityTrait};
 
 pub struct ResourceRepository {
-    pub connection: PgConnection,
+    pub db: DatabaseConnection,
 }
 
 impl ResourceRepository {
-    pub fn new(connection: PgConnection) -> Self {
-        ResourceRepository { connection }
+    pub fn new(db: DatabaseConnection) -> ResourceRepository {
+        ResourceRepository { db }
     }
 
-    pub fn find_one(&mut self, id: i32) -> QueryResult<Resource> {
-        resources::table.find(id).first(&mut self.connection)
-    }
-
-    pub fn find(&mut self, filter: ResourceFilter) -> QueryResult<Vec<Resource>> {
-        let mut query = resources::table.into_boxed();
-
-        if let Some(id) = filter.id {
-            query = query.filter(resources::id.eq(id));
-        }
-
-        if let Some(author_id) = filter.author_id {
-            query = query.filter(resources::author_id.eq(author_id));
-        }
-
-        if let Some(custom_track_id) = filter.custom_track_id {
-            query = query.filter(resources::custom_track_id.eq(custom_track_id));
-        }
-
-        if let Some(search_text) = filter.search_text {
-            query = query.filter(resources::file_name.ilike(format!("%{}%", search_text)));
-        }
-
-        if let Some(resource_type) = filter.resource_type {
-            query = query.filter(resources::resource_type.eq(resource_type));
-        }
-
-        if let Some(verified) = filter.verified {
-            query = query.filter(resources::verified.eq(verified));
-        }
-
-        query.load::<Resource>(&mut self.connection)
-    }
-
-    pub fn create(&mut self, new_resource: &Resource) -> QueryResult<Resource> {
-        diesel::insert_into(resources::table)
-            .values(new_resource)
-            .get_result(&mut self.connection)
-    }
-
-    pub fn update(
+    pub async fn find(
         &mut self,
-        resource_id: i32,
-        updated_resource: &Resource,
-    ) -> QueryResult<Resource> {
-        diesel::update(resources::table.find(resource_id))
-            .set(updated_resource)
-            .get_result(&mut self.connection)
+        filter: &ResourceFilter,
+        order_by: &str,
+        limit: i32,
+        offset: i32,
+    ) -> Vec<Model> {
+        let mut cursor = Resource::find().filter(filter).cursor_by("id");
+
+        cursor.after(offset);
+        cursor.before(offset + limit);
+
+        cursor.all(&self.db).await.unwrap_or_else(|_| vec![])
+    }
+
+    pub async fn count(&mut self, filter: &ResourceFilter) -> i32 {
+        Resource::find().filter(filter).count().await.unwrap_or_else(|_| 0)
     }
 }

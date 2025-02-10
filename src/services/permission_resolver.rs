@@ -1,7 +1,7 @@
-use crate::models::custom_track::CustomTrack;
-use crate::models::permission::Permission;
-use crate::models::resource::Resource;
-use crate::models::user::User;
+use crate::models::custom_tracks::Model as CustomTrack;
+use crate::models::permissions::Model as Permission;
+use crate::models::resources::Model as Resource;
+use crate::models::users::Model as User;
 
 pub struct PermissionResolver {}
 

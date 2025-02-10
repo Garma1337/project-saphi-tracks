@@ -1,14 +1,37 @@
 use crate::app::{App, ServiceContainer};
+use crate::http::responses::paginated_result::PaginatedResult;
 use crate::repository::filter::setting_filter::SettingFilter;
 use crate::repository::setting_repository::SettingRepository;
-use rocket::serde::json::{serde_json, Json};
+use crate::util::pagination::Pagination;
+use rocket::serde::json::{json, serde_json, Json};
 
-#[get("/?<id>&<category>&<key>")]
-pub fn index(id: Option<i32>, category: Option<String>, key: Option<String>) -> Json<serde_json::Value> {
-    let mut repository = SettingRepository::new(App::db());
+#[get("/?<id>&<category>&<key>&<page>")]
+pub async fn index(
+    id: Option<i32>,
+    category: Option<String>,
+    key: Option<String>,
+    page: Option<i32>
+) -> Json<serde_json::Value> {
+    let db = App::db().await;
+    let mut repository = SettingRepository::new(db);
 
-    repository
-        .find(SettingFilter { id, category, key })
-        .map(|settings| Json(serde_json::json!(settings)))
-        .unwrap()
+    let filter = SettingFilter { id, category, key };
+    let setting_count = repository.count(&filter).await;
+
+    let mut pagination = Pagination::new(1, 20, setting_count);
+    if let Some(page) = page {
+        pagination.current_page = page;
+    }
+
+    let settings = repository.find(
+        &filter,
+        "id",
+        pagination.get_items_per_page(),
+        pagination.get_offset()
+    ).await;
+
+    Json(json!(PaginatedResult {
+        pagination,
+        items: settings
+    }))
 }

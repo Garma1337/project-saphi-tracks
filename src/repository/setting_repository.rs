@@ -1,48 +1,32 @@
-use crate::models::setting::Setting;
+use crate::models::settings::{Entity as Setting, Model};
 use crate::repository::filter::setting_filter::SettingFilter;
-use crate::schema::settings;
-use diesel::prelude::*;
+use sea_orm::{DatabaseConnection, EntityTrait};
 
 pub struct SettingRepository {
-    pub connection: PgConnection,
+    pub db: DatabaseConnection,
 }
 
 impl SettingRepository {
-    pub fn new(connection: PgConnection) -> Self {
-        SettingRepository { connection }
+    pub fn new(db: DatabaseConnection) -> SettingRepository {
+        SettingRepository { db }
     }
 
-    pub fn find_one(&mut self, id: i32) -> QueryResult<Setting> {
-        settings::table.find(id).first(&mut self.connection)
+    pub async fn find(
+        &mut self,
+        filter: &SettingFilter,
+        order_by: &str,
+        limit: i32,
+        offset: i32,
+    ) -> Vec<Model> {
+        let mut cursor = Setting::find().filter(filter).cursor_by("id");
+
+        cursor.after(offset);
+        cursor.before(offset + limit);
+
+        cursor.all(&self.db).await.unwrap_or_else(|_| vec![])
     }
 
-    pub fn find(&mut self, filter: SettingFilter) -> QueryResult<Vec<Setting>> {
-        let mut query = settings::table.into_boxed();
-
-        if let Some(id) = filter.id {
-            query = query.filter(settings::id.eq(id));
-        }
-
-        if let Some(category) = filter.category {
-            query = query.filter(settings::category.ilike(format!("%{}%", category)));
-        }
-
-        if let Some(key) = &filter.key {
-            query = query.filter(settings::key.ilike(format!("%{}%", key)));
-        }
-
-        query.load::<Setting>(&mut self.connection)
-    }
-
-    pub fn create(&mut self, new_setting: &Setting) -> QueryResult<Setting> {
-        diesel::insert_into(settings::table)
-            .values(new_setting)
-            .get_result(&mut self.connection)
-    }
-
-    pub fn update(&mut self, setting_id: i32, updated_setting: &Setting) -> QueryResult<Setting> {
-        diesel::update(settings::table.find(setting_id))
-            .set(updated_setting)
-            .get_result(&mut self.connection)
+    pub async fn count(&mut self, filter: &SettingFilter) -> i32 {
+        Setting::find().filter(filter).count().await.unwrap_or_else(|_| 0)
     }
 }

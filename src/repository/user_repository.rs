@@ -1,52 +1,36 @@
-use crate::models::user::User;
+use crate::models::users::{Entity as User, Model};
 use crate::repository::filter::user_filter::UserFilter;
-use crate::schema::users;
-use diesel::prelude::*;
+use sea_orm::{DatabaseConnection, EntityTrait};
 
 pub struct UserRepository {
-    pub connection: PgConnection,
+    pub db: DatabaseConnection,
 }
 
 impl UserRepository {
-    pub fn new(connection: PgConnection) -> Self {
-        UserRepository { connection }
+    pub fn new(db: DatabaseConnection) -> UserRepository {
+        UserRepository { db }
     }
 
-    pub fn find_one(&mut self, id: i32) -> QueryResult<User> {
-        users::table.find(id).first(&mut self.connection)
+    pub async fn find_one(&mut self, id: i32) -> Option<Model> {
+        User::find_by_id(id).one(&self.db).await.unwrap_or(None)
     }
 
-    pub fn find(&mut self, filter: UserFilter) -> QueryResult<Vec<User>> {
-        let mut query = users::table.into_boxed();
+    pub async fn find(
+        &mut self,
+        filter: &UserFilter,
+        order_by: &str,
+        limit: i32,
+        offset: i32,
+    ) -> Vec<Model> {
+        let mut cursor = User::find().filter(filter).cursor_by("id");
 
-        if let Some(id) = filter.id {
-            query = query.filter(users::id.eq(id));
-        }
+        cursor.after(offset);
+        cursor.before(offset + limit);
 
-        if let Some(username) = filter.username {
-            query = query.filter(users::username.eq(username));
-        }
-
-        if let Some(email) = filter.email {
-            query = query.filter(users::email.eq(email));
-        }
-
-        if let Some(verified) = filter.verified {
-            query = query.filter(users::active.eq(verified));
-        }
-
-        query.load::<User>(&mut self.connection)
+        cursor.all(&self.db).await.unwrap_or_else(|_| vec![])
     }
 
-    pub fn create(&mut self, new_user: &User) -> QueryResult<User> {
-        diesel::insert_into(users::table)
-            .values(new_user)
-            .get_result(&mut self.connection)
-    }
-
-    pub fn update(&mut self, user_id: i32, updated_user: &User) -> QueryResult<User> {
-        diesel::update(users::table.find(user_id))
-            .set(updated_user)
-            .get_result(&mut self.connection)
+    pub async fn count(&mut self, filter: &UserFilter) -> i32 {
+        User::find().filter(filter).count().await.unwrap_or_else(|_| 0)
     }
 }

@@ -1,3 +1,6 @@
+use rocket::serde::{Deserialize, Serialize};
+
+#[derive(Deserialize, Serialize)]
 pub struct Pagination {
     pub current_page: i32,
     pub items_per_page: i32,

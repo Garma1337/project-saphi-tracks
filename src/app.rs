@@ -6,17 +6,18 @@ use crate::services::resource_service::ResourceService;
 use crate::services::resources::md5_encoder_strategy::Md5EncoderStrategy;
 use crate::services::semver_validator::SemverValidator;
 use crate::services::session_factory::SessionFactory;
-use diesel::{Connection, PgConnection};
 use dotenvy::dotenv;
 use jsonwebtoken::Algorithm;
+use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 use std::env;
+use std::time::Duration;
 
 pub trait ServiceContainer {
-    fn db() -> PgConnection;
+    async fn db() -> DatabaseConnection;
     fn jwt_manager() -> JWTManager;
     fn permission_resolver() -> PermissionResolver;
     fn resources() -> ResourceService;
-    fn session_factory() -> SessionFactory;
+    fn session_factory(db: DatabaseConnection) -> SessionFactory;
     fn semver_validator() -> SemverValidator;
 }
 
@@ -24,11 +25,21 @@ pub struct App {}
 
 impl ServiceContainer for App {
 
-    fn db() -> PgConnection {
+    async fn db() -> DatabaseConnection {
         dotenv().ok();
 
         let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-        PgConnection::establish(&database_url).unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
+
+        let mut opt = ConnectOptions::new(database_url);
+        opt
+            .max_connections(100)
+            .min_connections(5)
+            .connect_timeout(Duration::from_secs(8))
+            .acquire_timeout(Duration::from_secs(8))
+            .idle_timeout(Duration::from_secs(8))
+            .max_lifetime(Duration::from_secs(8));
+
+        Database::connect(opt).await.unwrap()
     }
 
     fn jwt_manager() -> JWTManager {
@@ -55,9 +66,9 @@ impl ServiceContainer for App {
         )
     }
 
-    fn session_factory() -> SessionFactory {
+    fn session_factory(db: DatabaseConnection) -> SessionFactory {
         SessionFactory::new(
-            UserRepository::new(App::db()),
+            UserRepository::new(db),
             App::jwt_manager()
         )
     }

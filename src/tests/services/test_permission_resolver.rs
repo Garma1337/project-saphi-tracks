@@ -1,10 +1,10 @@
 #[cfg(test)]
 
 pub mod tests {
-    use std::time::SystemTime;
-    use crate::models::custom_track::CustomTrack;
-    use crate::models::permission::Permission;
+    use crate::models::custom_tracks::Model as CustomTrack;
+    use crate::models::permissions::Model as Permission;
     use crate::services::permission_resolver::PermissionResolver;
+    use chrono::NaiveDateTime;
 
     fn create_custom_track(id: i32, author_id: i32) -> CustomTrack {
         CustomTrack {
@@ -12,7 +12,7 @@ pub mod tests {
             author_id,
             name: "Yoshi's Circuit".to_string(),
             description: "The best custom track in the game".to_string(),
-            date_created: SystemTime::now(),
+            date_created: NaiveDateTime::from_timestamp(0, 0),
             staff_pick: false,
             verified: true,
         }
@@ -30,7 +30,6 @@ pub mod tests {
             can_edit_resources: false,
             can_delete_resources: false,
             can_edit_users: false,
-            can_delete_users: false,
         };
 
         assert_eq!(PermissionResolver::can_edit_custom_track(custom_track, permission), true);
@@ -48,7 +47,6 @@ pub mod tests {
             can_edit_resources: false,
             can_delete_resources: false,
             can_edit_users: false,
-            can_delete_users: false,
         };
 
         assert_eq!(PermissionResolver::can_edit_custom_track(custom_track, permission), true);
@@ -66,7 +64,6 @@ pub mod tests {
             can_edit_resources: false,
             can_delete_resources: false,
             can_edit_users: false,
-            can_delete_users: false,
         };
 
         assert_eq!(PermissionResolver::can_edit_custom_track(custom_track, permission), false);
@@ -82,7 +79,6 @@ pub mod tests {
             can_edit_resources: false,
             can_delete_resources: false,
             can_edit_users: false,
-            can_delete_users: false,
         };
 
         assert_eq!(PermissionResolver::can_delete_custom_track(permission), false);
@@ -98,7 +94,6 @@ pub mod tests {
             can_edit_resources: false,
             can_delete_resources: false,
             can_edit_users: false,
-            can_delete_users: false,
         };
 
         assert_eq!(PermissionResolver::can_delete_custom_track(permission), true);

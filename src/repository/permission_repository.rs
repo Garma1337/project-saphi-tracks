@@ -1,37 +1,32 @@
-use crate::models::permission::Permission;
-use crate::schema::permissions;
-use diesel::prelude::*;
+use crate::models::permissions::{Entity as Permission, Model};
+use crate::repository::filter::permission_filter::PermissionFilter;
+use sea_orm::{DatabaseConnection, EntityTrait};
 
 pub struct PermissionRepository {
-    pub connection: PgConnection,
+    pub db: DatabaseConnection,
 }
 
 impl PermissionRepository {
-    pub fn new(connection: PgConnection) -> Self {
-        PermissionRepository { connection }
+    pub fn new(db: DatabaseConnection) -> PermissionRepository {
+        PermissionRepository { db }
     }
 
-    pub fn find_one(&mut self, id: i32) -> QueryResult<Permission> {
-        permissions::table.find(id).first(&mut self.connection)
-    }
-
-    pub fn find(&mut self) -> QueryResult<Vec<Permission>> {
-        permissions::table.load::<Permission>(&mut self.connection)
-    }
-
-    pub fn create(&mut self, new_permission: &Permission) -> QueryResult<Permission> {
-        diesel::insert_into(permissions::table)
-            .values(new_permission)
-            .get_result(&mut self.connection)
-    }
-
-    pub fn update(
+    pub async fn find(
         &mut self,
-        permission_id: i32,
-        updated_permission: &Permission,
-    ) -> QueryResult<Permission> {
-        diesel::update(permissions::table.find(permission_id))
-            .set(updated_permission)
-            .get_result(&mut self.connection)
+        filter: &PermissionFilter,
+        order_by: &str,
+        limit: i32,
+        offset: i32,
+    ) -> Vec<Model> {
+        let mut cursor = Permission::find().filter(filter).cursor_by("id");
+
+        cursor.after(offset);
+        cursor.before(offset + limit);
+
+        cursor.all(&self.db).await.unwrap_or_else(|_| vec![])
+    }
+
+    pub async fn count(&mut self, filter: &PermissionFilter) -> i32 {
+        Permission::find().filter(filter).count().await.unwrap_or_else(|_| 0)
     }
 }

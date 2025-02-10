@@ -4,10 +4,12 @@ pub struct LocalFileSystemAdapter {}
 
 impl FileSystemAdapter for LocalFileSystemAdapter {
     fn read_file(&self, path: &str) -> Result<String, String> {
+        println!("{}", path);
         Ok(String::from("file content"))
     }
 
     fn write_file(&self, path: &str, content: &str) -> Result<(), String> {
+        println!("{} {}", path, content);
         Ok(())
     }
 }

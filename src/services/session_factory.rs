@@ -1,8 +1,8 @@
 use crate::auth::jwt::JWTManager;
 use crate::auth::session::Session;
-use crate::models::user::User;
+use crate::models::users::Model as User;
 use crate::repository::user_repository::UserRepository;
-use std::time::SystemTime;
+use chrono::NaiveDateTime;
 
 pub struct SessionFactory {
     pub user_repository: UserRepository,
@@ -17,22 +17,21 @@ impl SessionFactory {
         }
     }
 
-    pub fn factory(&mut self, auth_token: &str) -> Session {
+    pub async fn factory(&mut self, auth_token: &str) -> Session {
         let jwt = self.jwt_manager.decode_token(auth_token).unwrap();
 
-        let mut user = User {
+        let guest = User {
             id: 0,
             username: "?".to_string(),
             email: "?".to_string(),
             password_hash: "".to_string(),
-            created_at: SystemTime::now(),
+            created_at: NaiveDateTime::from_timestamp(0, 0),
             verified: false,
         };
 
-        if jwt.claims.subject > 0 {
-            user = self.user_repository.find_one(jwt.claims.subject).unwrap()
+        match self.user_repository.find_one(jwt.claims.subject).await {
+            Some(user) => Session { user, jwt },
+            None => Session { user: guest, jwt },
         }
-
-        Session { user, jwt }
     }
 }
