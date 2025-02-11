@@ -1,7 +1,7 @@
-use crate::app::{App, ServiceContainer};
 use crate::http::responses::paginated_result::PaginatedResult;
 use crate::repository::custom_track_repository::CustomTrackRepository;
 use crate::repository::filter::custom_track_filter::CustomTrackFilter;
+use crate::services::di::database_connection_factory::DatabaseConnectionFactory;
 use crate::util::pagination::Pagination;
 use rocket::serde::json::{json, serde_json, Json};
 
@@ -14,7 +14,7 @@ pub async fn index(
     verified: Option<bool>,
     page: Option<i32>
 ) -> Json<serde_json::Value> {
-    let db = App::db().await;
+    let db = DatabaseConnectionFactory::get_connection().await;
     let mut repository = CustomTrackRepository::new(db);
 
     let search_text = search_text.map(|s| s.to_string());

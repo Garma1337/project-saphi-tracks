@@ -10,9 +10,9 @@ use crate::controllers::{
     user_controller
 };
 
-pub mod app;
 pub mod auth;
 pub mod controllers;
+pub mod cli;
 pub mod http;
 pub mod models;
 pub mod repository;

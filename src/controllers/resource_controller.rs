@@ -1,7 +1,7 @@
-use crate::app::{App, ServiceContainer};
 use crate::http::responses::paginated_result::PaginatedResult;
 use crate::repository::filter::resource_filter::ResourceFilter;
 use crate::repository::resource_repository::ResourceRepository;
+use crate::services::di::database_connection_factory::DatabaseConnectionFactory;
 use crate::util::pagination::Pagination;
 use rocket::fs::NamedFile;
 use rocket::serde::json::{json, serde_json, Json};
@@ -16,7 +16,7 @@ pub async fn index(
     verified: Option<bool>,
     page: Option<i32>
 ) -> Json<serde_json::Value> {
-    let db = App::db().await;
+    let db = DatabaseConnectionFactory::get_connection().await;
     let mut repository = ResourceRepository::new(db);
 
     let search_text = search_text.map(|s| s.to_string());
@@ -46,7 +46,7 @@ pub async fn index(
 
 #[get("/download?<id>")]
 pub async fn download(id: i32) {
-    let db = App::db().await;
+    let db = DatabaseConnectionFactory::get_connection().await;
     let mut repository = ResourceRepository::new(db);
 
     let filter = ResourceFilter {

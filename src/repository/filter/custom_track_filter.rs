@@ -10,7 +10,7 @@ pub struct CustomTrackFilter {
     pub verified: Option<bool>,
 }
 
-impl IntoCondition for CustomTrackFilter {
+impl IntoCondition for &CustomTrackFilter {
     fn into_condition(self) -> Condition {
         let mut condition = Condition::any();
 
@@ -22,7 +22,7 @@ impl IntoCondition for CustomTrackFilter {
             condition = condition.add(Column::AuthorId.eq(author_id));
         }
 
-        if let Some(search_text) = self.search_text {
+        if let Some(search_text) = &self.search_text {
             condition = condition.add(Column::Name.like(search_text));
         }
 

@@ -11,7 +11,7 @@ pub struct ResourceFilter {
     pub verified: Option<bool>,
 }
 
-impl IntoCondition for ResourceFilter {
+impl IntoCondition for &ResourceFilter {
     fn into_condition(self) -> Condition {
         let mut condition = Condition::any();
 
@@ -27,11 +27,11 @@ impl IntoCondition for ResourceFilter {
             condition = condition.add(Column::CustomTrackId.eq(custom_track_id));
         }
 
-        if let Some(search_text) = self.search_text {
+        if let Some(search_text) = &self.search_text {
             condition = condition.add(Column::FileName.like(search_text));
         }
 
-        if let Some(resource_type) = self.resource_type {
+        if let Some(resource_type) = &self.resource_type {
             condition = condition.add(Column::ResourceType.eq(resource_type));
         }
 

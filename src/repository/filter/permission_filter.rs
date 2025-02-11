@@ -7,7 +7,7 @@ pub struct PermissionFilter {
     pub name: Option<String>,
 }
 
-impl IntoCondition for PermissionFilter {
+impl IntoCondition for &PermissionFilter {
     fn into_condition(self) -> Condition {
         let mut condition = Condition::any();
 
@@ -15,7 +15,7 @@ impl IntoCondition for PermissionFilter {
             condition = condition.add(Column::Id.eq(id));
         }
 
-        if let Some(name) = self.name {
+        if let Some(name) = &self.name {
             condition = condition.add(Column::Name.eq(name));
         }
 

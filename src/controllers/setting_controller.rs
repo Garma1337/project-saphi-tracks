@@ -1,7 +1,7 @@
-use crate::app::{App, ServiceContainer};
 use crate::http::responses::paginated_result::PaginatedResult;
 use crate::repository::filter::setting_filter::SettingFilter;
 use crate::repository::setting_repository::SettingRepository;
+use crate::services::di::database_connection_factory::DatabaseConnectionFactory;
 use crate::util::pagination::Pagination;
 use rocket::serde::json::{json, serde_json, Json};
 
@@ -12,7 +12,7 @@ pub async fn index(
     key: Option<String>,
     page: Option<i32>
 ) -> Json<serde_json::Value> {
-    let db = App::db().await;
+    let db = DatabaseConnectionFactory::get_connection().await;
     let mut repository = SettingRepository::new(db);
 
     let filter = SettingFilter { id, category, key };

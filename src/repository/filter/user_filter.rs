@@ -9,7 +9,7 @@ pub struct UserFilter {
     pub verified: Option<bool>,
 }
 
-impl IntoCondition for UserFilter {
+impl IntoCondition for &UserFilter {
     fn into_condition(self) -> Condition {
         let mut condition = Condition::any();
 
@@ -17,11 +17,11 @@ impl IntoCondition for UserFilter {
             condition = condition.add(Column::Id.eq(id));
         }
 
-        if let Some(username) = self.username {
+        if let Some(username) = &self.username {
             condition = condition.add(Column::Username.eq(username));
         }
 
-        if let Some(email) = self.email {
+        if let Some(email) = &self.email {
             condition = condition.add(Column::Email.eq(email));
         }
 

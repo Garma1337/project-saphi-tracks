@@ -1,6 +1,7 @@
 use crate::models::tags::{Column, Entity as Tag, Model};
 use crate::repository::filter::tag_filter::TagFilter;
-use sea_orm::{DatabaseConnection, EntityTrait, QueryFilter};
+use sea_orm::prelude::Expr;
+use sea_orm::{DatabaseConnection, EntityTrait, PaginatorTrait, QueryFilter, QueryOrder};
 
 pub struct TagRepository {
     pub db: DatabaseConnection,
@@ -18,7 +19,11 @@ impl TagRepository {
         limit: i32,
         offset: i32,
     ) -> Vec<Model> {
-        let mut cursor = Tag::find().filter(filter).cursor_by(Column::Id);
+        let mut cursor = Tag::find()
+            .filter(filter)
+            .order_by_asc(Expr::cust(order_by))
+            .cursor_by(Column::Id)
+        ;
 
         cursor.after(offset);
         cursor.before(offset + limit);
@@ -27,6 +32,6 @@ impl TagRepository {
     }
 
     pub async fn count(&mut self, filter: &TagFilter) -> i32 {
-        Tag::find().filter(filter).count().await.unwrap_or_else(|_| 0)
+        Tag::find().filter(filter).count(&self.db).await.unwrap_or_else(|_| 0) as i32
     }
 }

@@ -1,6 +1,7 @@
 use crate::models::users::{Entity as User, Model};
 use crate::repository::filter::user_filter::UserFilter;
-use sea_orm::{DatabaseConnection, EntityTrait};
+use sea_orm::prelude::Expr;
+use sea_orm::{DatabaseConnection, EntityTrait, PaginatorTrait, QueryFilter, QueryOrder};
 
 pub struct UserRepository {
     pub db: DatabaseConnection,
@@ -22,7 +23,11 @@ impl UserRepository {
         limit: i32,
         offset: i32,
     ) -> Vec<Model> {
-        let mut cursor = User::find().filter(filter).cursor_by("id");
+        let mut cursor = User::find()
+            .filter(filter)
+            .order_by_asc(Expr::cust(order_by))
+            .cursor_by("id")
+        ;
 
         cursor.after(offset);
         cursor.before(offset + limit);
@@ -31,6 +36,6 @@ impl UserRepository {
     }
 
     pub async fn count(&mut self, filter: &UserFilter) -> i32 {
-        User::find().filter(filter).count().await.unwrap_or_else(|_| 0)
+        User::find().filter(filter).count(&self.db).await.unwrap_or_else(|_| 0) as i32
     }
 }

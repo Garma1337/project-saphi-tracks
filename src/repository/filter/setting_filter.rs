@@ -8,7 +8,7 @@ pub struct SettingFilter {
     pub key: Option<String>,
 }
 
-impl IntoCondition for SettingFilter {
+impl IntoCondition for &SettingFilter {
     fn into_condition(self) -> Condition {
         let mut condition = Condition::any();
 
@@ -16,11 +16,11 @@ impl IntoCondition for SettingFilter {
             condition = condition.add(Column::Id.eq(id));
         }
 
-        if let Some(category) = self.category {
+        if let Some(category) = &self.category {
             condition = condition.add(Column::Category.eq(category));
         }
 
-        if let Some(key) = self.key {
+        if let Some(key) = &self.key {
             condition = condition.add(Column::Key.eq(key));
         }
 
