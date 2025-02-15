@@ -1,0 +1,33 @@
+# coding=utf-8
+
+from flask import Request
+
+from api.http.response import ErrorResponse, Response
+from api.http.router import Router
+
+
+class DispatcherErrror(Exception):
+    pass
+
+
+class Dispatcher(object):
+
+    def __init__(self, router: Router) -> None:
+        self.router = router
+
+    def dispatch_request(self, requested_route: str, request: Request) -> Response:
+        if not requested_route:
+            return ErrorResponse('No route specified', 400)
+
+        if not self.router.has_request_handler(requested_route):
+            return ErrorResponse(f'No route {requested_route} exists', 404)
+
+        request_handler = self.router.get_request_handler_for_route(requested_route, request.method)
+
+        if endpoint.require_authentication():
+            try:
+                endpoint.assert_user_is_authenticated()
+            except ValueError as e:
+                return ErrorResponse(str(e), 401)
+
+        return endpoint.handle_request(request)

@@ -8,4 +8,4 @@ To be done ...
 
 # Technical Documentation
 
-Look no [further](./doc/index.md).
+Look no [further](doc/index.md).

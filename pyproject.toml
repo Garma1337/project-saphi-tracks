@@ -1,0 +1,16 @@
+[project]
+name = "saphi-custom-tracks"
+version = '1.0.0'
+description = "Custom Track Repository for Project Saphi"
+dependencies = [
+    "flask",
+    "flask-migrate",
+    "flask-sqlalchemy",
+    "flask-jwt-extended",
+    "marshmallow",
+    "psycopg-binary"
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
