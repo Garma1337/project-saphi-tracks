@@ -35,6 +35,10 @@ impl UserRepository {
         cursor.all(&self.db).await.unwrap_or_else(|_| vec![])
     }
 
+    pub async fn find_all(&mut self) -> Vec<Model> {
+        User::find().all(&self.db).await.unwrap_or_else(|_| vec![])
+    }
+
     pub async fn count(&mut self, filter: &UserFilter) -> i32 {
         User::find().filter(filter).count(&self.db).await.unwrap_or_else(|_| 0) as i32
     }

@@ -12,7 +12,7 @@ use crate::controllers::{
 
 pub mod auth;
 pub mod controllers;
-pub mod cli;
+pub mod event;
 pub mod http;
 pub mod models;
 pub mod repository;
