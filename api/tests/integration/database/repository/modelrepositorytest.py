@@ -1,7 +1,8 @@
 # coding=utf-8
 
+from api.database.repository.modelrepository import ModelRepository
 from api.tests.integration.integrationtest import IntegrationTest
-from api.tests.integration.mockmodel import MockModelRepository, Base
+from api.tests.integration.mockmodel import Base, MockModel
 
 
 class ModelRepositoryTest(IntegrationTest):
@@ -14,7 +15,8 @@ class ModelRepositoryTest(IntegrationTest):
             Base.metadata.create_all(cls.db.engine)
 
     def setUp(self):
-        self.model_repository = MockModelRepository(self.db)
+        self.model_repository = ModelRepository(self.db)
+        self.model_repository.set_model_class(MockModel)
 
         with self.app.app_context():
             self.model_repository.delete_all()

@@ -15,12 +15,12 @@ class PermissionSchema(Schema):
     can_edit_resources = fields.Bool()
     can_delete_resources = fields.Bool()
     can_edit_users = fields.Bool()
-    user = fields.Nested('UserSchema', exclude=('permission',))
+    user = fields.Nested('UserSchema', exclude=('permission','custom_tracks','resources',))
 
 
 class Permission(Model):
     __tablename__ = 'permissions'
-    __dump_schema__ = PermissionSchema
+    __dump_schema__ = PermissionSchema()
 
     id: Mapped[int] = mapped_column(primary_key=True, nullable=False, autoincrement=True)
     user_id: Mapped[int] = Column(ForeignKey('users.id'), unique=True)

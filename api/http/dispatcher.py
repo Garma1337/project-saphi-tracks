@@ -19,15 +19,15 @@ class Dispatcher(object):
         if not requested_route:
             return ErrorResponse('No route specified', 400)
 
-        if not self.router.has_request_handler(requested_route):
-            return ErrorResponse(f'No route {requested_route} exists', 404)
+        if not self.router.has_request_handler(requested_route, request.method):
+            return ErrorResponse(f'No route /{requested_route} exists', 404)
 
         request_handler = self.router.get_request_handler_for_route(requested_route, request.method)
 
-        if endpoint.require_authentication():
+        if request_handler.require_authentication():
             try:
-                endpoint.assert_user_is_authenticated()
+                request_handler.assert_user_is_authenticated()
             except ValueError as e:
                 return ErrorResponse(str(e), 401)
 
-        return endpoint.handle_request(request)
+        return request_handler.handle_request(request)

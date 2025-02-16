@@ -6,6 +6,7 @@ from typing import Optional
 from flask import Request
 from flask_jwt_extended import get_jwt_identity
 
+from api.database.model.user import User
 from api.http.response import Response
 
 
@@ -20,13 +21,13 @@ class RequestHandler(object):
         pass
 
     def assert_user_is_authenticated(self):
-        if not self._get_current_user():
+        if not self.get_current_user():
             raise ValueError('You need to be authenticated to perform this action.')
 
-    def _get_current_user(self):
+    def get_current_user(self) -> User:
         return get_jwt_identity()
 
-    def _get_boolean_query_parameter(self, request: Request, parameter_name: str) -> Optional[bool]:
+    def get_boolean_query_parameter(self, request: Request, parameter_name: str) -> Optional[bool]:
         parameter = request.args.get(parameter_name)
 
         if parameter is not None:

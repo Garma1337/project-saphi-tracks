@@ -1,9 +1,12 @@
 # coding: utf-8
 
+from typing import List
+
 from marshmallow import Schema, fields
 from sqlalchemy import Column, ForeignKey, String, DateTime, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from api.database.associations import custom_tracks_tags
 from api.database.model.model import Model
 
 
@@ -15,8 +18,8 @@ class CustomTrackSchema(Schema):
     created = fields.DateTime()
     highlighted = fields.Bool()
     verified = fields.Bool()
-    author = fields.Nested('UserSchema', exclude=('custom_tracks',))
-    resources = fields.Nested('ResourceSchema', exclude=('custom_track',), many=True)
+    author = fields.Nested('UserSchema', exclude=('custom_tracks','resources','permission',))
+    resources = fields.Nested('ResourceSchema', exclude=('custom_track','author',), many=True)
     tags = fields.Nested('TagSchema', exclude=('custom_tracks',), many=True)
 
 
@@ -32,5 +35,5 @@ class CustomTrack(Model):
     highlighted: Mapped[bool] = Column(Boolean(), nullable=False)
     verified: Mapped[bool] = Column(Boolean(), nullable=False)
     author: Mapped['User'] = relationship('User', back_populates='custom_tracks')
-    resources: Mapped['Resource'] = relationship('Resource', back_populates='custom_track')
-    tags: Mapped['Tag'] = relationship('Tag', secondary='custom_track_tags', back_populates='custom_tracks')
+    resources: Mapped[List['Resource']] = relationship('Resource', back_populates='custom_track')
+    tags: Mapped[List['Tag']] = relationship('Tag', secondary=custom_tracks_tags, back_populates='custom_tracks')

@@ -29,6 +29,12 @@ def create_app() -> Flask:
     from .http.controller import api
     app.register_blueprint(api)
 
+    from .faker.cli import faker
+    app.register_blueprint(faker)
+
+    from .database.cli import db_helper
+    app.register_blueprint(db_helper)
+
     return app
 
 def create_test_app() -> Flask:

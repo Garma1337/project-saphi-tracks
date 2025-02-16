@@ -4,8 +4,6 @@ from marshmallow import Schema
 from sqlalchemy.orm import mapped_column, Mapped, declarative_base
 
 from api import db
-from api.database.repository.modelrepository import ModelRepository
-
 
 Base = declarative_base()
 
@@ -24,9 +22,3 @@ class MockModel(Base):
     description = db.Column(db.Text)
     value = db.Column(db.Integer)
     created_at = db.Column(db.DateTime)
-
-
-class MockModelRepository(ModelRepository):
-
-    def set_model_class(self):
-        return MockModel

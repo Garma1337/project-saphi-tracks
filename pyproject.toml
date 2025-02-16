@@ -8,7 +8,7 @@ dependencies = [
     "flask-sqlalchemy",
     "flask-jwt-extended",
     "marshmallow",
-    "psycopg-binary"
+    "psycopg2-binary"
 ]
 
 [build-system]

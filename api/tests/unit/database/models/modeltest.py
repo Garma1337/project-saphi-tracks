@@ -2,7 +2,7 @@
 
 from unittest import TestCase
 
-from api.database.models.model import Model
+from api.database.model.model import Model
 
 
 class ModelTest(TestCase):
