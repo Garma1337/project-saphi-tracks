@@ -15,4 +15,7 @@ class ResourceManager(object):
             ResourceType.LEV.value: ['lev']
         }
 
+        if resource_type not in extension_mapping:
+            raise KeyError(f'No file extensions defined for resource type {resource_type}')
+
         return extension_mapping[resource_type]

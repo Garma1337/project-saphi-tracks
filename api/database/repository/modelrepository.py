@@ -14,9 +14,9 @@ class ModelRepository(ABC):
     If a model needs a more complex implementation, a custom repository should be created.
     """
 
-    def __init__(self, db: SQLAlchemy) -> None:
+    def __init__(self, db: SQLAlchemy, model_class: type[Model]) -> None:
         self.db = db
-        self.model_class = None
+        self.model_class = model_class
 
     def find_one(self, id: int):
         query = self.db.session.query(self.model_class).where(getattr(self.model_class, 'id') == id)

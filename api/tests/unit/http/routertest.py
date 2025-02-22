@@ -3,14 +3,14 @@
 from unittest import TestCase
 
 from api.http.request_handlers.requesthandler import RequestHandler
-from api.http.response import Response
+from api.http.response import JsonResponse
 from api.http.router import Router
 
 
 class TestRequestHandler(RequestHandler):
 
     def handle_request(self, request):
-        return Response({ 'test': 'test' })
+        return JsonResponse({'test': 'test'})
 
     def require_authentication(self):
         return False

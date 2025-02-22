@@ -6,7 +6,7 @@ from api.auth.permission.permissionresolver import PermissionResolver
 from api.database.entitymanager import EntityManager
 from api.database.model.customtrack import CustomTrack
 from api.http.request_handlers.requesthandler import RequestHandler
-from api.http.response import Response
+from api.http.response import JsonResponse
 from api.lib.pagination import Pagination
 
 
@@ -16,7 +16,7 @@ class FindCustomTracks(RequestHandler):
         self.entity_manager = entity_manager
         self.permission_resolver = permission_resolver
 
-    def handle_request(self, request: Request) -> Response:
+    def handle_request(self, request: Request) -> JsonResponse:
         repository = self.entity_manager.get_repository(CustomTrack)
 
         highlighted = self.get_boolean_query_parameter(request, 'highlighted')
@@ -35,7 +35,7 @@ class FindCustomTracks(RequestHandler):
         pagination = Pagination(request.args.get('page', 1), request.args.get('per_page', 20), custom_track_count)
         custom_tracks = repository.find_by(**filter_args, limit=pagination.get_limit(), offset=pagination.get_offset())
 
-        return Response({
+        return JsonResponse({
             'pagination': pagination.to_dictionary(),
             'items': [custom_track.to_dictionary() for custom_track in custom_tracks]
         })

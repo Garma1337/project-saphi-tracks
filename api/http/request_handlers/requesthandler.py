@@ -1,19 +1,19 @@
 # coding: utf-8
 
-from abc import abstractmethod
+from abc import abstractmethod, ABC
 from typing import Optional
 
 from flask import Request
 from flask_jwt_extended import get_jwt_identity
 
 from api.database.model.user import User
-from api.http.response import Response
+from api.http.response import JsonResponse
 
 
-class RequestHandler(object):
+class RequestHandler(ABC):
 
     @abstractmethod
-    def handle_request(self, request: Request) -> Response:
+    def handle_request(self, request: Request) -> JsonResponse:
         pass
 
     @abstractmethod

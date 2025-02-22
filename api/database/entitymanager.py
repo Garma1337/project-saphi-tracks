@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from copy import copy
+from flask_sqlalchemy import SQLAlchemy
 
 from api.database.model.model import Model
 from api.database.repository.modelrepository import ModelRepository
@@ -8,11 +8,13 @@ from api.database.repository.modelrepository import ModelRepository
 
 class EntityManager(object):
 
-    def __init__(self, model_repository: ModelRepository) -> None:
-        self.model_repository = model_repository
+    def __init__(self, db: SQLAlchemy, model_repository_type: type[ModelRepository]) -> None:
+        self.db = db
+        self.model_repository_type = model_repository_type
+        self.repository_cache = {}
 
-    def get_repository(self, model: type[Model]) -> ModelRepository:
-        model_repository = copy(self.model_repository)
-        model_repository.set_model_class(model)
+    def get_repository(self, model_class: type[Model]) -> ModelRepository:
+        if model_class not in self.repository_cache:
+            self.repository_cache[model_class] = self.model_repository_type(self.db, model_class)
 
-        return model_repository
+        return self.repository_cache[model_class]

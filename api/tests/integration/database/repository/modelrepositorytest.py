@@ -15,8 +15,7 @@ class ModelRepositoryTest(IntegrationTest):
             Base.metadata.create_all(cls.db.engine)
 
     def setUp(self):
-        self.model_repository = ModelRepository(self.db)
-        self.model_repository.set_model_class(MockModel)
+        self.model_repository = ModelRepository(self.db, MockModel)
 
         with self.app.app_context():
             self.model_repository.delete_all()

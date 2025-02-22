@@ -6,7 +6,7 @@ from api.auth.permission.permissionresolver import PermissionResolver
 from api.database.entitymanager import EntityManager
 from api.database.model.resource import Resource
 from api.http.request_handlers.requesthandler import RequestHandler
-from api.http.response import Response
+from api.http.response import JsonResponse
 from api.lib.pagination import Pagination
 
 
@@ -16,7 +16,7 @@ class FindResources(RequestHandler):
         self.entity_manager = entity_manager
         self.permission_resolver = permission_resolver
 
-    def handle_request(self, request: Request) -> Response:
+    def handle_request(self, request: Request) -> JsonResponse:
         repository = self.entity_manager.get_repository(Resource)
 
         verified = self.get_boolean_query_parameter(request, 'verified')
@@ -35,7 +35,7 @@ class FindResources(RequestHandler):
         pagination = Pagination(request.args.get('page', 1), request.args.get('per_page', 20), resource_count)
         resources = repository.find_by(**filter_args, limit=pagination.get_limit(), offset=pagination.get_offset())
 
-        return Response({
+        return JsonResponse({
             'pagination': pagination.to_dictionary(),
             'items': [resource.to_dictionary() for resource in resources]
         })

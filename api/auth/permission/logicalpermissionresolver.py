@@ -21,4 +21,4 @@ class LogicalPermissionResolver(PermissionResolver):
         return user.permission.can_delete_resources
 
     def can_edit_user(self, user: User, target_user: User) -> bool:
-        return user.permission.can_edit_users
+        return user.id == target_user.id or user.permission.can_edit_users

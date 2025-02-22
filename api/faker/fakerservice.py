@@ -58,11 +58,6 @@ class FakerService(object):
         if resource_type not in [ResourceType.PREVIEW.value, ResourceType.XDELTA.value, ResourceType.VRM.value, ResourceType.LEV.value]:
             raise ValueError(f'{resource_type} is not a valid resource type')
 
-        user_repository = self.entity_manager.get_repository(User)
-
-        if user_repository.count() < 1:
-            raise ValueError('No users found in the database')
-
         custom_track_repository = self.entity_manager.get_repository(CustomTrack)
 
         if custom_track_repository.count() < 1:
@@ -70,7 +65,6 @@ class FakerService(object):
 
         expected_extensions = self.resource_manager.get_expected_file_extensions(resource_type)
 
-        users = user_repository.find_by()
         custom_tracks = custom_track_repository.find_by()
 
         resource_repository = self.entity_manager.get_repository(Resource)
