@@ -35,7 +35,10 @@ class ModelRepository(ABC):
                     if not hasattr(self.model_class, arg):
                         raise ValueError(f'Entity {self.model_class.__name__} has no attribute {arg}')
 
-                    query = query.where(getattr(self.model_class, arg) == kwargs[arg])
+                    if isinstance(kwargs[arg], str):
+                        query = query.where(getattr(self.model_class, arg).ilike(f'%{kwargs[arg]}%'))
+                    else:
+                        query = query.where(getattr(self.model_class, arg) == kwargs[arg])
 
         return query.all()
 
@@ -47,7 +50,10 @@ class ModelRepository(ABC):
                 if not hasattr(self.model_class, arg):
                     raise ValueError(f'Entity {self.model_class.__name__} has no attribute {arg}')
 
-                query = query.where(getattr(self.model_class, arg) == kwargs[arg])
+                if isinstance(kwargs[arg], str):
+                    query = query.where(getattr(self.model_class, arg).ilike(f'%{kwargs[arg]}%'))
+                else:
+                    query = query.where(getattr(self.model_class, arg) == kwargs[arg])
 
         return query.count()
 

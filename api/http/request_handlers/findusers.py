@@ -6,6 +6,7 @@ from api.auth.permission.permissionresolver import PermissionResolver
 from api.database.entitymanager import EntityManager
 from api.database.model.user import User
 from api.http.request_handlers.requesthandler import RequestHandler
+from api.http.requesthelper import RequestHelper
 from api.http.response import JsonResponse
 from api.lib.pagination import Pagination
 
@@ -19,10 +20,10 @@ class FindUsers(RequestHandler):
     def handle_request(self, request: Request) -> JsonResponse:
         repository = self.entity_manager.get_repository(User)
 
-        verified = self.get_boolean_query_parameter(request, 'verified')
+        verified = RequestHelper.try_parse_boolean_value(request.args, 'verified')
 
         filter_args = {
-            'id': request.args.get('id'),
+            'id': RequestHelper.try_parse_integer_value(request.args, 'id'),
             'username': request.args.get('username'),
             'verified': verified,
         }

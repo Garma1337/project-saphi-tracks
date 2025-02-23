@@ -5,6 +5,7 @@ from flask import Request
 from api.database.entitymanager import EntityManager
 from api.database.model.tag import Tag
 from api.http.request_handlers.requesthandler import RequestHandler
+from api.http.requesthelper import RequestHelper
 from api.http.response import JsonResponse
 from api.lib.pagination import Pagination
 
@@ -18,7 +19,7 @@ class FindTags(RequestHandler):
         repository = self.entity_manager.get_repository(Tag)
 
         filter_args = {
-            'id': request.args.get('id'),
+            'id': RequestHelper.try_parse_integer_value(request.args, 'id'),
             'name': request.args.get('name'),
         }
 

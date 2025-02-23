@@ -31,7 +31,7 @@ class TypeScriptDTOGeneratorTest(TestCase):
     def test_can_generate_dto(self):
         dto = self.dto_generator.generate_dto(self.schemas, 'CustomTrack', self.schemas['CustomTrack'])
 
-        expected = """export type CustomTrack {
+        expected = """export type CustomTrack = {
 \tid: number;
 \tauthor_id: number;
 \tname: string;

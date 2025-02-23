@@ -19,7 +19,7 @@ class TypeScriptDTOGenerator(DTOGenerator):
         return '\n\n'.join(dtos)
 
     def generate_dto(self, schemas: dict, model_name: str, schema: Schema) -> str:
-        dto = 'export type {} {{\n'.format(model_name)
+        dto = 'export type {} = {{\n'.format(model_name)
 
         for field in schema.fields:
             field_type = self.get_type(schemas, schema.fields[field])

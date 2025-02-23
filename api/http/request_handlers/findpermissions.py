@@ -6,6 +6,7 @@ from api.auth.permission.permissionresolver import PermissionResolver
 from api.database.entitymanager import EntityManager
 from api.database.model.permission import Permission
 from api.http.request_handlers.requesthandler import RequestHandler
+from api.http.requesthelper import RequestHelper
 from api.http.response import JsonResponse
 from api.lib.pagination import Pagination
 
@@ -20,8 +21,8 @@ class FindPermissions(RequestHandler):
         repository = self.entity_manager.get_repository(Permission)
 
         filter_args = {
-            'id': request.args.get('id'),
-            'user_id': request.args.get('user_id'),
+            'id': RequestHelper.try_parse_integer_value(request.args, 'id'),
+            'user_id': RequestHelper.try_parse_integer_value(request.args, 'user_id'),
         }
 
         permission_count = repository.count(**filter_args)

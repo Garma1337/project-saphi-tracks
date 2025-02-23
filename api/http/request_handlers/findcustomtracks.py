@@ -6,6 +6,7 @@ from api.auth.permission.permissionresolver import PermissionResolver
 from api.database.entitymanager import EntityManager
 from api.database.model.customtrack import CustomTrack
 from api.http.request_handlers.requesthandler import RequestHandler
+from api.http.requesthelper import RequestHelper
 from api.http.response import JsonResponse
 from api.lib.pagination import Pagination
 
@@ -19,12 +20,12 @@ class FindCustomTracks(RequestHandler):
     def handle_request(self, request: Request) -> JsonResponse:
         repository = self.entity_manager.get_repository(CustomTrack)
 
-        highlighted = self.get_boolean_query_parameter(request, 'highlighted')
-        verified = self.get_boolean_query_parameter(request, 'verified')
+        highlighted = RequestHelper.try_parse_boolean_value(request.args, 'highlighted')
+        verified = RequestHelper.try_parse_boolean_value(request.args, 'verified')
 
         filter_args = {
-            'id': request.args.get('id'),
-            'author_id': request.args.get('author_id'),
+            'id': RequestHelper.try_parse_integer_value(request.args, 'id'),
+            'author_id': RequestHelper.try_parse_integer_value(request.args, 'author_id'),
             'name': request.args.get('name'),
             'highlighted': highlighted,
             'verified': verified,

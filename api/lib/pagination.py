@@ -9,6 +9,7 @@ class PaginationSchema(Schema):
     current_page = fields.Int()
     items_per_page = fields.Int()
     total_item_count = fields.Int()
+    total_page_count = fields.Int()
 
 
 class Pagination(object):
@@ -55,4 +56,9 @@ class Pagination(object):
         return self.current_page > 1
 
     def to_dictionary(self) -> dict:
-        return PaginationSchema().dump(self)
+        return PaginationSchema().dump({
+            'current_page': self.get_page(),
+            'items_per_page': self.get_page_size(),
+            'total_item_count': self.get_item_count(),
+            'total_page_count': self.get_page_count()
+        })
