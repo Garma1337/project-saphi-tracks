@@ -8,7 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from api.database.entitymanager import EntityManager
 from api.database.model.tag import Tag
 from api.http.request_handlers.findtags import FindTags
-from mockmodelrepository import MockModelRepository
+from api.tests.mockmodelrepository import MockModelRepository
 
 
 class FindTagsTest(TestCase):

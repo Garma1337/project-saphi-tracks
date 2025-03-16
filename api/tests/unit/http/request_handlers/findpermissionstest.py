@@ -9,7 +9,7 @@ from api.auth.permission.logicalpermissionresolver import LogicalPermissionResol
 from api.database.entitymanager import EntityManager
 from api.database.model.permission import Permission
 from api.http.request_handlers.findpermissions import FindPermissions
-from mockmodelrepository import MockModelRepository
+from api.tests.mockmodelrepository import MockModelRepository
 
 
 class FindPermissionsTest(TestCase):

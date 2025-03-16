@@ -27,6 +27,7 @@ class User(Model):
     username: Mapped[str] = Column(String(100), nullable=False)
     email: Mapped[str] = Column(String(100), nullable=False)
     password: Mapped[str] = Column(String(100), nullable=False)
+    salt: Mapped[str] = Column(String(100), nullable=False)
     created: Mapped[str] = Column(DateTime(), nullable=False)
     verified: Mapped[bool] = Column(Boolean(), nullable=False)
     custom_tracks: Mapped[List['CustomTrack']] = relationship('CustomTrack', back_populates='author')

@@ -8,7 +8,7 @@ from api.http.dispatcher import Dispatcher
 from api.http.request_handlers.requesthandler import RequestHandler
 from api.http.response import JsonResponse
 from api.http.router import Router
-from unit.http.routertest import TestRequestHandler
+from api.tests.unit.http.routertest import TestRequestHandler
 
 
 class AuthenticationRequiredRequestHandler(RequestHandler):
