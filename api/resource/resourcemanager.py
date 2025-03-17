@@ -2,10 +2,16 @@
 
 from typing import List
 
-from api.database.model.resource import ResourceType
+from api.database.model.resource import ResourceType, Resource
+from api.resource.file_encoder_strategy.fileencoderstrategy import FileEncoderStrategy
+from api.resource.file_system_adapter.filesystemadapter import FileSystemAdapter
 
 
 class ResourceManager(object):
+
+    def __init__(self, file_system_adapter: FileSystemAdapter, file_encoder_strategy: FileEncoderStrategy):
+        self.file_system_adapter = file_system_adapter
+        self.file_encoder_strategy = file_encoder_strategy
 
     def get_expected_file_extensions(self, resource_type: str) -> List[str]:
         extension_mapping = {

@@ -9,7 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 
 from api import create_test_app, db
-from api.lib.filesystem import FileSystem
+from api.lib.filesystemhelper import FileSystemHelper
 
 
 class IntegrationTest(TestCase):
@@ -26,7 +26,7 @@ class IntegrationTest(TestCase):
             cls.db.session.execute(text(f'CREATE SCHEMA public'))
             cls.db.session.execute(text(f'GRANT ALL ON SCHEMA public TO {cls.app.config["DATABASE_USER"]}'))
             cls.db.session.commit()
-            upgrade(directory= f'{FileSystem.get_current_directory()}/../../migrations')
+            upgrade(directory= f'{FileSystemHelper.get_current_directory()}/../../migrations')
 
     @classmethod
     def tearDownClass(cls):

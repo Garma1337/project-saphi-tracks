@@ -3,6 +3,8 @@
 import os
 from datetime import timedelta
 
+MAX_CONTENT_LENGTH = 10 * 1024 * 1024 # 10MB
+
 DATABASE_DRIVER = os.getenv('DATABASE_DRIVER')
 DATABASE_HOST = os.getenv('DATABASE_HOST')
 DATABASE_PORT = os.getenv('DATABASE_PORT')

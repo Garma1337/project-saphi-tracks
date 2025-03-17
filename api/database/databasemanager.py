@@ -5,7 +5,7 @@ from flask_migrate import upgrade
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 
-from api.lib.filesystem import FileSystem
+from api.lib.filesystemhelper import FileSystemHelper
 
 
 class DatabaseManager(object):
@@ -19,4 +19,4 @@ class DatabaseManager(object):
         self.db.session.execute(text(f'CREATE SCHEMA public'))
         self.db.session.execute(text(f'GRANT ALL ON SCHEMA public TO {self.config["DATABASE_USER"]}'))
         self.db.session.commit()
-        upgrade(directory=f'{FileSystem.get_current_directory()}/../../migrations')
+        upgrade(directory=f'{FileSystemHelper.get_current_directory()}/../../migrations')

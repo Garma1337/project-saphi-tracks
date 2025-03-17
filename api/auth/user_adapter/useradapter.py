@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from abc import abstractmethod
+from abc import abstractmethod, ABC
 
 from flask_jwt_extended import create_access_token
 
@@ -15,7 +15,7 @@ class AuthenticationError(Exception):
     pass
 
 
-class UserAdapter(object):
+class UserAdapter(ABC):
 
     @abstractmethod
     def authenticate_user(self, username: str, password: str) -> bool:

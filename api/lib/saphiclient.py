@@ -24,8 +24,6 @@ class SaphiClient(object):
         try:
             response = requests.post(url, json = body, headers = {'Saphi-Api-Key': self.api_key})
 
-            print(response.content)
-
             try:
                 return response.json()
             except JSONDecodeError:
