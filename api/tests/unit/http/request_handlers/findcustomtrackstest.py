@@ -10,6 +10,7 @@ from flask_sqlalchemy import SQLAlchemy
 from api.auth.permission.logicalpermissionresolver import LogicalPermissionResolver
 from api.database.entitymanager import EntityManager
 from api.database.model.customtrack import CustomTrack
+from api.database.model.permission import Permission
 from api.database.model.resource import Resource
 from api.database.model.user import User
 from api.http.request_handlers.findcustomtracks import FindCustomTracks
@@ -31,6 +32,10 @@ class FindCustomTracksTest(TestCase):
             verified=True
         )
 
+        self.garma.permission = Permission(
+            can_edit_custom_tracks=True,
+        )
+
         self.custom_tracks = [
             self.custom_track_repository.create(
                 author_id=self.garma.id,
@@ -50,6 +55,7 @@ class FindCustomTracksTest(TestCase):
             LogicalPermissionResolver()
         )
 
+        self.request_handler.get_current_user = lambda: self.garma
         self.request_handler.entity_manager.get_repository = lambda model: self.custom_track_repository
 
     def test_can_find_custom_tracks(self):
@@ -118,7 +124,7 @@ class FindCustomTracksTest(TestCase):
         self.assertEqual(True, custom_tracks[0]['highlighted'])
         self.assertEqual(True, custom_tracks[0]['verified'])
 
-    def test_can_find_custom_tracks_by_highlighted(self):
+    def test_can_find_highlighted_custom_tracks(self):
         response = self.request_handler.handle_request(Request.from_values(query_string='highlighted=1'))
         data = response.get_data()
 
@@ -133,7 +139,23 @@ class FindCustomTracksTest(TestCase):
         self.assertEqual(2, custom_tracks[0]['id'])
         self.assertEqual(4, custom_tracks[1]['id'])
 
-    def test_can_find_custom_tracks_by_verified(self):
+    def test_can_find_unhighlighted_custom_tracks(self):
+        response = self.request_handler.handle_request(Request.from_values(query_string='highlighted=0'))
+        data = response.get_data()
+
+        custom_tracks = data['items']
+        pagination = data['pagination']
+
+        self.assertEqual(3, len(custom_tracks))
+        self.assertEqual(3, pagination['total_item_count'])
+        self.assertEqual(20, pagination['items_per_page'])
+        self.assertEqual(1, pagination['current_page'])
+
+        self.assertEqual(1, custom_tracks[0]['id'])
+        self.assertEqual(3, custom_tracks[1]['id'])
+        self.assertEqual(5, custom_tracks[2]['id'])
+
+    def test_can_find_verified_custom_tracks_if_user_has_permission(self):
         response = self.request_handler.handle_request(Request.from_values(query_string='verified=1'))
         data = response.get_data()
 
@@ -147,3 +169,36 @@ class FindCustomTracksTest(TestCase):
 
         self.assertEqual(2, custom_tracks[0]['id'])
         self.assertEqual(4, custom_tracks[1]['id'])
+
+    def test_cannot_find_unverified_custom_tracks_if_user_has_no_permission(self):
+        self.garma.permission.can_edit_custom_tracks = False
+
+        response = self.request_handler.handle_request(Request.from_values(query_string='verified=0'))
+        data = response.get_data()
+
+        custom_tracks = data['items']
+        pagination = data['pagination']
+
+        self.assertEqual(2, len(custom_tracks))
+        self.assertEqual(2, pagination['total_item_count'])
+        self.assertEqual(20, pagination['items_per_page'])
+        self.assertEqual(1, pagination['current_page'])
+
+        self.assertEqual(2, custom_tracks[0]['id'])
+        self.assertEqual(4, custom_tracks[1]['id'])
+
+    def test_can_find_unverified_custom_tracks_if_user_has_permission(self):
+        response = self.request_handler.handle_request(Request.from_values(query_string='verified=0'))
+        data = response.get_data()
+
+        custom_tracks = data['items']
+        pagination = data['pagination']
+
+        self.assertEqual(3, len(custom_tracks))
+        self.assertEqual(3, pagination['total_item_count'])
+        self.assertEqual(20, pagination['items_per_page'])
+        self.assertEqual(1, pagination['current_page'])
+
+        self.assertEqual(1, custom_tracks[0]['id'])
+        self.assertEqual(3, custom_tracks[1]['id'])
+        self.assertEqual(5, custom_tracks[2]['id'])

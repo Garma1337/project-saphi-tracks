@@ -15,6 +15,7 @@ class RouterFactory(object):
         router.add_route('dtos', 'GET', container.get('http.request_handler.generate_dtos'))
         router.add_route('permissions', 'GET', container.get('http.request_handler.find_permissions'))
         router.add_route('resources', 'GET', container.get('http.request_handler.find_resources'))
+        router.add_route('resources/download', 'GET', container.get('http.request_handler.download_resource'))
         router.add_route('session', 'GET', container.get('http.request_handler.get_session'))
         router.add_route('settings', 'GET', container.get('http.request_handler.find_settings'))
         router.add_route('tags', 'GET', container.get('http.request_handler.find_tags'))

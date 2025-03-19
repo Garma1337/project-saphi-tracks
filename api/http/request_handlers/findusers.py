@@ -22,6 +22,9 @@ class FindUsers(RequestHandler):
 
         verified = RequestHelper.try_parse_boolean_value(request.args, 'verified')
 
+        if not self.permission_resolver.can_see_unverified_users(self.get_current_user()):
+            verified = True
+
         filter_args = {
             'id': RequestHelper.try_parse_integer_value(request.args, 'id'),
             'username': request.args.get('username'),

@@ -23,6 +23,9 @@ class FindCustomTracks(RequestHandler):
         highlighted = RequestHelper.try_parse_boolean_value(request.args, 'highlighted')
         verified = RequestHelper.try_parse_boolean_value(request.args, 'verified')
 
+        if not self.permission_resolver.can_see_unverified_custom_tracks(self.get_current_user()):
+            verified = True
+
         filter_args = {
             'id': RequestHelper.try_parse_integer_value(request.args, 'id'),
             'author_id': RequestHelper.try_parse_integer_value(request.args, 'author_id'),

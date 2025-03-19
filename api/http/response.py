@@ -27,7 +27,7 @@ class EmptyResponse(JsonResponse):
 
 class ErrorJsonResponse(JsonResponse):
 
-    def __init__(self, error: str, status_code: int = 200) -> None:
+    def __init__(self, error: str, status_code: int = 400) -> None:
         super().__init__({'success': False, 'error': error }, status_code)
 
 

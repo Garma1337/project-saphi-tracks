@@ -53,9 +53,11 @@ class LoginUserTest(TestCase):
         }))
 
         data = response.get_data()
+        status_code = response.get_status_code()
 
         self.assertEqual(data['success'], True)
         self.assertEqual(data['access_token'], '123456')
+        self.assertEqual(status_code, 200)
 
     def test_can_not_login_user_if_already_logged_in(self):
         self.login_user.get_current_user = Mock(return_value={'name': 'Garma'})
@@ -66,9 +68,11 @@ class LoginUserTest(TestCase):
         }))
 
         data = response.get_data()
+        status_code = response.get_status_code()
 
         self.assertEqual(data['success'], False)
         self.assertIsNotNone(data['error'])
+        self.assertEqual(status_code, 401)
 
     def test_can_not_login_user_if_no_username(self):
         self.login_user.get_current_user = Mock(return_value=None)
@@ -78,9 +82,11 @@ class LoginUserTest(TestCase):
         }))
 
         data = response.get_data()
+        status_code = response.get_status_code()
 
         self.assertEqual(data['success'], False)
         self.assertIsNotNone(data['error'])
+        self.assertEqual(status_code, 400)
 
     def test_can_not_login_user_if_no_password(self):
         self.login_user.get_current_user = Mock(return_value=None)
@@ -90,9 +96,11 @@ class LoginUserTest(TestCase):
         }))
 
         data = response.get_data()
+        status_code = response.get_status_code()
 
         self.assertEqual(data['success'], False)
         self.assertIsNotNone(data['error'])
+        self.assertEqual(status_code, 400)
 
     def test_can_not_login_user_if_authentication_fails(self):
         self.login_user.get_current_user = Mock(return_value=None)
@@ -103,6 +111,8 @@ class LoginUserTest(TestCase):
         }))
 
         data = response.get_data()
+        status_code = response.get_status_code()
 
         self.assertEqual(data['success'], False)
         self.assertIsNotNone(data['error'])
+        self.assertEqual(status_code, 401)
