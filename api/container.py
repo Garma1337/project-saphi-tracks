@@ -29,15 +29,18 @@ from api.http.request_handlers.findusers import FindUsers
 from api.http.request_handlers.generatedtos import GenerateDTOs
 from api.http.request_handlers.getsession import GetSession
 from api.http.request_handlers.loginuser import LoginUser
+from api.http.request_handlers.verifycustomtrack import VerifyCustomTrack
+from api.http.request_handlers.verifyresource import VerifyResource
 from api.http.routerfactory import RouterFactory
 from api.lib.container import Container
+from api.lib.customtrackmanager import CustomTrackManager
 from api.lib.saphiclient import SaphiClient
 from api.resource.file_encoder_strategy.sha256fileencoderstrategy import Sha256FileEncoderStrategy
 from api.resource.file_system_adapter.localfilesystemadapter import LocalFileSystemAdapter
 from api.resource.resourcemanager import ResourceManager
 
 container = Container()
-current_directory = os.path.dirname(__file__)
+current_directory = os.path.abspath(os.path.dirname(__file__))
 
 def init_app(app):
     # Auth
@@ -105,14 +108,24 @@ def init_app(app):
         container.get('auth.permission.permission_resolver')
     ))
     container.register('http.request_handler.login_user', lambda: LoginUser(container.get('auth.authenticator')))
+    container.register('http.request_handler.verify_custom_track', lambda: VerifyCustomTrack(
+        container.get(''),
+        container.get('auth.permission.permission_resolver')
+    ))
+    container.register('http.request_handler.verify_resource', lambda: VerifyResource(
+        container.get('resource.resource_manager'),
+        container.get('auth.permission.permission_resolver')
+    ))
 
     # libraries
+    container.register('custom_track_manager', lambda: CustomTrackManager(container.get('db.entity_manager'), container.get('resource.resource_manager')))
     container.register('saphi_client', lambda: SaphiClient(app.config['SAPHI_API_URL'], app.config['SAPHI_API_TOKEN']))
 
     # Resources
     container.register('resource.file_encoder_strategy.sha256', lambda: Sha256FileEncoderStrategy())
-    container.register('resource.file_system_adapter.local', lambda: LocalFileSystemAdapter(f'{current_directory}/../../resources'))
+    container.register('resource.file_system_adapter.local', lambda: LocalFileSystemAdapter(f'{current_directory}/../resources'))
     container.register('resource.resource_manager', lambda: ResourceManager(
+        container.get('db.entity_manager'),
         container.get('resource.file_system_adapter.local'),
         container.get('resource.file_encoder_strategy.sha256')
     ))

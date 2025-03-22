@@ -18,7 +18,9 @@ from api.tests.mockpasswordencoderstrategy import MockPasswordEncoderStrategy
 class LocalUserAdapterTest(TestCase):
 
     def setUp(self):
-        self.entity_manager = EntityManager(SQLAlchemy(), MockModelRepository)
+        self.db = SQLAlchemy()
+
+        self.entity_manager = EntityManager(self.db, MockModelRepository)
         self.password_manager = PasswordManager(MockPasswordEncoderStrategy())
 
         self.user_repository = MockModelRepository(User)

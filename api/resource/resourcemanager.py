@@ -10,6 +10,14 @@ from api.resource.file_encoder_strategy.fileencoderstrategy import FileEncoderSt
 from api.resource.file_system_adapter.filesystemadapter import FileSystemAdapter
 
 
+class ResourceNotFoundError(Exception):
+    pass
+
+
+class ResourceAlreadyVerifiedError(Exception):
+    pass
+
+
 class ResourceManager(object):
 
     def __init__(self, entity_manager: EntityManager, file_system_adapter: FileSystemAdapter, file_encoder_strategy: FileEncoderStrategy):
@@ -38,10 +46,25 @@ class ResourceManager(object):
             raise ValueError(f'No resource with id {resource_id} exists')
 
         encoder_target = self.file_encoder_strategy.encode_file_name(resource.file_name)
-        self._send_from_directory(encoder_target.directory_path, encoder_target.file_name)
+        target_directory = self.file_system_adapter.get_full_path(encoder_target.directory_path)
 
-    def _send_from_directory(self, directory: str, file_path: str) -> None:
-        send_from_directory(directory, file_path)
+        self._offer_resource_download(target_directory, encoder_target.file_name)
 
-    def create_resource(self, resource_type: str, file_name: str, file_data: bytes) -> str:
+    def create_resource_from_uploaded_file(self, resource_type: str, file_name: str, file_data: bytes) -> str:
         pass
+
+    def verify_resource(self, resource_id: int) -> Resource:
+        resource_repository = self.entity_manager.get_repository(Resource)
+        resource = resource_repository.find_one(resource_id)
+
+        if not resource:
+            raise ResourceNotFoundError(f'No resource with id {resource_id} exists')
+
+        if resource.verified:
+            raise ResourceAlreadyVerifiedError(f'Resource with id {resource_id} is already verified')
+
+        resource_repository.update(id=resource_id, verified=1)
+        return resource_repository.find_one(resource_id)
+
+    def _offer_resource_download(self, directory: str, file_path: str) -> None:
+        send_from_directory(directory, file_path, as_attachment=True)

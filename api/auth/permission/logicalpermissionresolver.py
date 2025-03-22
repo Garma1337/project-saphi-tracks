@@ -23,6 +23,12 @@ class LogicalPermissionResolver(PermissionResolver):
 
         return user.permission.can_delete_custom_tracks
 
+    def can_verify_custom_track(self, user: User) -> bool:
+        if not user:
+            return False
+
+        return user.permission.can_edit_custom_tracks
+
     def can_see_unverified_custom_tracks(self, user: User) -> bool:
         if not user:
             return False
@@ -43,6 +49,12 @@ class LogicalPermissionResolver(PermissionResolver):
             return False
 
         return user.permission.can_delete_resources
+
+    def can_verify_resource(self, user: User) -> bool:
+        if not user:
+            return False
+
+        return user.permission.can_edit_resources
 
     def can_see_unverified_resources(self, user: User) -> bool:
         if not user:

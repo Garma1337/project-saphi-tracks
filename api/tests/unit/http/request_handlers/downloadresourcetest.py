@@ -11,22 +11,18 @@ from api.database.entitymanager import EntityManager
 from api.database.model.resource import Resource
 from api.http.request_handlers.downloadresource import DownloadResource
 from api.resource.file_encoder_strategy.sha256fileencoderstrategy import Sha256FileEncoderStrategy
-from api.resource.file_system_adapter.localfilesystemadapter import LocalFileSystemAdapter
 from api.resource.resourcemanager import ResourceManager
+from api.tests.mockfilesystemadapter import MockFileSystemAdapter
 from api.tests.mockmodelrepository import MockModelRepository
 
 
 class DownloadResourceTest(TestCase):
 
     def setUp(self):
-        self.entity_manager = EntityManager(
-            SQLAlchemy(),
-            MockModelRepository
-        )
-
+        self.entity_manager = EntityManager(SQLAlchemy(), MockModelRepository)
         self.resource_repository = MockModelRepository(Resource)
 
-        self.file_system_adapter = LocalFileSystemAdapter('.')
+        self.file_system_adapter = MockFileSystemAdapter()
         self.file_encoder_strategy = Sha256FileEncoderStrategy()
 
         self.resource_manager = ResourceManager(
@@ -34,7 +30,7 @@ class DownloadResourceTest(TestCase):
             self.file_system_adapter,
             self.file_encoder_strategy
         )
-        self.resource_manager._send_from_directory = Mock(return_value = None)
+        self.resource_manager._offer_resource_download = Mock(return_value = None)
 
         self.permission_resolver = LogicalPermissionResolver()
         self.download_resource = DownloadResource(self.entity_manager, self.resource_manager, self.permission_resolver)

@@ -26,6 +26,10 @@ class FileSystemAdapter(object):
         pass
 
     @abstractmethod
+    def get_full_path(self, file_path: str) -> str:
+        pass
+
+    @abstractmethod
     def file_exists(self, file_path: str) -> bool:
         pass
 

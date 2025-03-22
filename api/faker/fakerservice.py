@@ -83,7 +83,7 @@ class FakerService(object):
                 checksum=hashlib.md5(f'file{i}.{random_extension}'.encode()).hexdigest(),
                 version=f'1.0.0',
                 created=datetime.now(),
-                verified=random.randint(0, 1)
+                verified=random_custom_track.verified
             )
 
             fake_resources.append(resource)
@@ -117,6 +117,7 @@ class FakerService(object):
                 email=f'{str(uuid.uuid4())}@domain.com',
                 username=f'User {i}',
                 password=hashlib.sha256(f'password_{i}'.encode()).hexdigest(),
+                salt='123456',
                 created=datetime.now(),
                 verified=random.randint(0, 1)
             )

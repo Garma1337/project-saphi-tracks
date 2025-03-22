@@ -105,6 +105,25 @@ class LogicalPermissionResolverTest(TestCase):
 
         self.assertFalse(self.logical_permission_resolver.can_delete_custom_track(user, custom_track))
 
+    def test_can_verify_custom_track_when_user_can_edit_custom_tracks(self):
+        user = User()
+        user.permission = Permission()
+        user.permission.can_edit_custom_tracks = True
+
+        self.assertTrue(self.logical_permission_resolver.can_verify_custom_track(user))
+
+    def test_can_not_verify_custom_track_when_user_cannot_edit_custom_tracks(self):
+        user = User()
+        user.permission = Permission()
+        user.permission.can_edit_custom_tracks = False
+
+        self.assertFalse(self.logical_permission_resolver.can_verify_custom_track(user))
+
+    def test_can_not_verify_custom_track_when_user_is_not_authenticated(self):
+        user = None
+
+        self.assertFalse(self.logical_permission_resolver.can_verify_custom_track(user))
+
     def test_can_see_unverified_custom_tracks_when_user_can_edit_custom_tracks(self):
         user = User()
         user.permission = Permission()
@@ -194,6 +213,25 @@ class LogicalPermissionResolverTest(TestCase):
         resource = Resource()
 
         self.assertFalse(self.logical_permission_resolver.can_delete_resource(user, resource))
+
+    def test_can_verify_resource_when_user_can_edit_resources(self):
+        user = User()
+        user.permission = Permission()
+        user.permission.can_edit_resources = True
+
+        self.assertTrue(self.logical_permission_resolver.can_verify_resource(user))
+
+    def test_can_not_verify_resource_when_user_cannot_edit_resources(self):
+        user = User()
+        user.permission = Permission()
+        user.permission.can_edit_resources = False
+
+        self.assertFalse(self.logical_permission_resolver.can_verify_resource(user))
+
+    def test_can_not_verify_resource_when_user_is_not_authenticated(self):
+        user = None
+
+        self.assertFalse(self.logical_permission_resolver.can_verify_resource(user))
 
     def test_can_see_unverified_resources_when_user_can_edit_resources(self):
         user = User()

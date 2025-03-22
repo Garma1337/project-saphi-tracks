@@ -8,8 +8,8 @@ from flask_sqlalchemy import SQLAlchemy
 from api.database.entitymanager import EntityManager
 from api.database.model.resource import Resource
 from api.resource.file_encoder_strategy.sha256fileencoderstrategy import Sha256FileEncoderStrategy
-from api.resource.file_system_adapter.localfilesystemadapter import LocalFileSystemAdapter
-from api.resource.resourcemanager import ResourceManager
+from api.resource.resourcemanager import ResourceManager, ResourceNotFoundError, ResourceAlreadyVerifiedError
+from api.tests.mockfilesystemadapter import MockFileSystemAdapter
 from api.tests.mockmodelrepository import MockModelRepository
 
 
@@ -23,7 +23,7 @@ class ResourceManagerTest(TestCase):
 
         self.resource_repository = MockModelRepository(Resource)
 
-        self.file_system_adapter = LocalFileSystemAdapter('.')
+        self.file_system_adapter = MockFileSystemAdapter()
         self.file_encoder_strategy = Sha256FileEncoderStrategy()
 
         self.resource_manager = ResourceManager(
@@ -31,7 +31,7 @@ class ResourceManagerTest(TestCase):
             self.file_system_adapter,
             self.file_encoder_strategy
         )
-        self.resource_manager._send_from_directory = Mock(return_value = None)
+        self.resource_manager._offer_resource_download = Mock(return_value = None)
 
         self.entity_manager.get_repository = lambda model: self.resource_repository
 
@@ -56,3 +56,28 @@ class ResourceManagerTest(TestCase):
     def test_can_not_offer_resource_download_for_non_existent_resource(self):
         with self.assertRaises(ValueError):
             self.resource_manager.offer_resource_download(1)
+
+    def test_can_verify_resource(self):
+        resource = self.resource_repository.create(
+            id=1,
+            file_name='file_name'
+        )
+
+        verified_resource = self.resource_manager.verify_resource(resource.id)
+
+        self.assertEqual(1, verified_resource.id)
+        self.assertEqual(True, verified_resource.verified)
+
+    def test_can_not_verify_non_existent_resource(self):
+        with self.assertRaises(ResourceNotFoundError):
+            self.resource_manager.verify_resource(1)
+
+    def test_can_not_verify_already_verified_resource(self):
+        resource = self.resource_repository.create(
+            id=1,
+            file_name='file_name',
+            verified=True
+        )
+
+        with self.assertRaises(ResourceAlreadyVerifiedError):
+            self.resource_manager.verify_resource(resource.id)

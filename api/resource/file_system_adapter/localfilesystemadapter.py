@@ -19,6 +19,9 @@ class LocalFileSystemAdapter(FileSystemAdapter):
         file_path = self.root_directory.joinpath(file_path)
         return os.access(file_path, os.R_OK)
 
+    def get_full_path(self, file_path: str) -> str:
+        return str(self.root_directory.joinpath(file_path))
+
     def file_exists(self, file_path: str) -> bool:
         file_path = self.root_directory.joinpath(file_path)
         return os.path.exists(file_path)

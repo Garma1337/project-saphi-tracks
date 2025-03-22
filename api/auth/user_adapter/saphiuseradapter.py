@@ -35,7 +35,7 @@ class SaphiUserAdapter(UserAdapter):
                 'user_adapter': self
             }))
 
-        return bool(response['success'])
+        return success
 
     def login_user(self, username: str, password: str) -> str:
         if not self.authenticate_user(username, password):

@@ -22,6 +22,10 @@ class PermissionResolver(ABC):
         pass
 
     @abstractmethod
+    def can_verify_custom_track(self, user: User) -> bool:
+        pass
+
+    @abstractmethod
     def can_see_unverified_custom_tracks(self, user: User) -> bool:
         pass
 
@@ -35,6 +39,10 @@ class PermissionResolver(ABC):
 
     @abstractmethod
     def can_delete_resource(self, user: User, resource: Resource):
+        pass
+
+    @abstractmethod
+    def can_verify_resource(self, user: User) -> bool:
         pass
 
     @abstractmethod

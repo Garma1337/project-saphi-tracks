@@ -1,1 +1,3 @@
 config.dev.py
+web/assets/
+web/index.html
