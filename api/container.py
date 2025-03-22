@@ -29,6 +29,7 @@ from api.http.request_handlers.findusers import FindUsers
 from api.http.request_handlers.generatedtos import GenerateDTOs
 from api.http.request_handlers.getsession import GetSession
 from api.http.request_handlers.loginuser import LoginUser
+from api.http.request_handlers.updatecustomtrack import UpdateCustomTrack
 from api.http.request_handlers.verifycustomtrack import VerifyCustomTrack
 from api.http.request_handlers.verifyresource import VerifyResource
 from api.http.routerfactory import RouterFactory
@@ -108,6 +109,10 @@ def init_app(app):
         container.get('auth.permission.permission_resolver')
     ))
     container.register('http.request_handler.login_user', lambda: LoginUser(container.get('auth.authenticator')))
+    container.register('http.request_handler.update_custom_track', lambda: UpdateCustomTrack(
+        container.get('db.entity_manager'),
+        container.get('auth.permission.permission_resolver')
+    ))
     container.register('http.request_handler.verify_custom_track', lambda: VerifyCustomTrack(
         container.get(''),
         container.get('auth.permission.permission_resolver')

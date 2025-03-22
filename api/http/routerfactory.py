@@ -27,4 +27,7 @@ class RouterFactory(object):
         router.add_route('login', 'POST', container.get('http.request_handler.login_user'))
         router.add_route('resources/verify', 'POST', container.get('http.request_handler.verify_resource'))
 
+        # PATCH Endpoints
+        router.add_route('customtracks', 'PATCH', container.get('http.request_handler.update_custom_track'))
+
         return router
