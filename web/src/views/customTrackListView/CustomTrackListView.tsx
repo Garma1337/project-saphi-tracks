@@ -18,28 +18,24 @@ import RestoreIcon from '@mui/icons-material/Restore';
 import AddIcon from '@mui/icons-material/Add';
 import {Pagination} from "../../lib/api/response.ts";
 import CustomTrackListGrid from "../../components/CustomTrackListGrid.tsx";
+import ServiceManager from "../../lib/serviceManager.ts";
 
 const CustomTrackListView = () => {
+    const apiClient: ApiClient = ServiceManager.createApiClient();
+
     const navigate = useNavigate();
     const [customTracks, setCustomTracks] = useState<CustomTrack[]>([]);
     const [pagination, setPagination] = useState<Pagination | null>(null);
-    const [apiClient, setApiClient] = useState<ApiClient | null>(null);
     const [page, setPage] = useState<number>(1);
 
     const [name, setName] = useState<string | null>(null);
 
     useEffect(() => {
-        if (apiClient) {
-            apiClient.findCustomTracks(null, null, name, null, null, page, 20).then((query) => {
-                setPagination(query.pagination);
-                setCustomTracks(query.items)
-            });
-        }
-    }, [apiClient, name, page, setPagination, setCustomTracks]);
-
-    useEffect(() => {
-        setApiClient(new ApiClient('http://localhost:5000/api/v1'));
-    }, [setApiClient]);
+        apiClient.findCustomTracks(null, null, name, null, null, page, 20).then((query) => {
+            setPagination(query.pagination);
+            setCustomTracks(query.items || []);
+        });
+    }, [name, page, setPagination, setCustomTracks]);
 
     const handlePageChange = (_event: React.ChangeEvent<unknown>, value: number) => {
         setPage(value);

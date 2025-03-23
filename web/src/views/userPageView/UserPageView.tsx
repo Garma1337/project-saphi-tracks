@@ -8,32 +8,28 @@ import ApiClient from "../../lib/apiClient.ts";
 import {CustomTrack} from "../../lib/api/dtos.ts";
 import randomSlice from "../../utils/randomSlice.ts";
 import CustomTrackListGrid from "../../components/CustomTrackListGrid.tsx";
+import ServiceManager from "../../lib/serviceManager.ts";
 
 const UserPageView = () => {
+    const apiClient: ApiClient = ServiceManager.createApiClient();
+
     const [searchParams] = useSearchParams();
-    const [apiClient, setApiClient] = useState<ApiClient | null>(null);
     const [user, setUser] = useState<any>(null);
     const [userCustomTracks, setUserCustomTracks] = useState<CustomTrack[]>([]);
 
     useEffect(() => {
-        if (apiClient) {
-            const id = Number(searchParams.get('id'));
-            apiClient.findUsers(id, null, null, null, null).then(query => setUser(query.items[0]));
-        }
-    }, [apiClient, searchParams, setUser]);
+        const id = Number(searchParams.get('id'));
+        apiClient.findUsers(id, null, null, null, null).then(query => setUser(query.items[0]));
+    }, [searchParams, setUser]);
 
     useEffect(() => {
-        if (apiClient && user) {
+        if (user) {
             apiClient.findCustomTracks(null, user.id, null, null, null, 1, 50).then((query) => {
                 const randomTracks: CustomTrack[] = randomSlice(query.items, 6);
                 setUserCustomTracks(randomTracks)
             });
         }
-    }, [apiClient, user, setUserCustomTracks]);
-
-    useEffect(() => {
-        setApiClient(new ApiClient('http://localhost:5000/api/v1'));
-    }, []);
+    }, [user, setUserCustomTracks]);
 
     return (
         <>

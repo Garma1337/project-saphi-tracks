@@ -6,6 +6,7 @@ export type CustomTrack = {
     created: Date;
     highlighted: boolean;
     verified: boolean;
+    video: string;
     author: User;
     resources: Resource[];
     tags: Tag[];

@@ -3,7 +3,7 @@ import './App.css'
 import AppRoutes from './routes'
 import Layout from "./views/layout/Layout.tsx";
 import IndexView from './views/indexView/IndexView.tsx';
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import useStore from './store.ts';
 import ApiClient from "./lib/apiClient.ts";
 import CustomTrackListView from "./views/customTrackListView/CustomTrackListView.tsx";
@@ -12,27 +12,28 @@ import UserPageView from "./views/userPageView/UserPageView.tsx";
 import ToolsView from "./views/toolsView/ToolsView.tsx";
 import TutorialView from "./views/tutorialView/TutorialView.tsx";
 import CustomTrackCreateView from "./views/customTrackCreateView/CustomTrackCreateView.tsx";
+import LoginView from "./views/loginView/LoginView.tsx";
+import ServiceManager from "./lib/serviceManager.ts";
+import CustomTrackPageView from "./views/customTrackPageView/CustomTrackPageView.tsx";
 
 function App() {
+    const apiClient: ApiClient = ServiceManager.createApiClient();
+
+    const setCurrentUser = useStore(state => state.setCurrentUser);
     const setSettings = useStore(state => state.setSettings);
     const setTags = useStore(state => state.setTags);
-    const [apiClient, setApiClient] = useState<ApiClient | null>(null);
 
     useEffect(() => {
-        setApiClient(new ApiClient('http://localhost:5000/api/v1'));
-    }, []);
+        apiClient.getSession().then(response => setCurrentUser(response.current_user));
+    }, [setCurrentUser]);
 
     useEffect(() => {
-        if (apiClient) {
-            apiClient.findSettings(null, null, null, null, null).then(query => setSettings(query.items));
-        }
-    }, [apiClient, setSettings]);
+        apiClient.findSettings(null, null, null, null, null).then(query => setSettings(query.items));
+    }, [setSettings]);
 
     useEffect(() => {
-        if (apiClient) {
-            apiClient.findTags(null, null, null, null).then(query => setTags(query.items));
-        }
-    }, [apiClient, setTags]);
+        apiClient.findTags(null, null, null, null).then(query => setTags(query.items));
+    }, [setTags]);
 
     return (
         <Routes>
@@ -40,6 +41,8 @@ function App() {
                 <Route index element={<IndexView/>}/>
                 <Route path={AppRoutes.CustomTrackCreatePage} element={<CustomTrackCreateView/>}/>
                 <Route path={AppRoutes.CustomTrackListPage} element={<CustomTrackListView/>}/>
+                <Route path={AppRoutes.CustomTrackDetailPage} element={<CustomTrackPageView/>}/>
+                <Route path={AppRoutes.LoginPage} element={<LoginView/>}/>
                 <Route path={AppRoutes.ToolsPage} element={<ToolsView/>}/>
                 <Route path={AppRoutes.TutorialPage} element={<TutorialView/>}/>
                 <Route path={AppRoutes.UserListPage} element={<UserListView/>}/>

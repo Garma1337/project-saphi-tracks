@@ -1,7 +1,6 @@
-import {Box, Button, Card, CardContent, CardMedia, Link, Typography} from "@mui/material";
+import {Box, Card, CardContent, CardMedia, Link, Typography} from "@mui/material";
 import AppRoutes from "../routes.tsx";
 import formatDate from "../utils/formatDate.ts";
-import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import {useNavigate} from "react-router-dom";
 import {CustomTrack} from "../lib/api/dtos.ts";
 
@@ -24,26 +23,23 @@ const CustomTrackListGrid = (props: CustomTrackListGridProps) => {
                     <CardContent>
                         <CardMedia
                             component="img"
-                            height="125"
+                            height="250"
                             image={"https://ctrcustomtracks.com/wp-content/uploads/2025/01/NeonParadise-300x222.png"}
                             alt={customTrack.name}
                         />
                         <Box>
-                            <h2>{customTrack.name}</h2>
+                            <h2>
+                                <Link onClick={() => navigate(AppRoutes.CustomTrackDetailPage + "?id=" + customTrack.id)}>
+                                    {customTrack.name}
+                                </Link>
+                            </h2>
                             <Typography>
-                                By: <Link
+                                Author: <Link
                                 onClick={() => navigate(AppRoutes.UserDetailPage + "?id=" + customTrack.author_id)}>{customTrack.author.username}</Link>
                             </Typography>
                             <Typography>
                                 Created: {formatDate(customTrack.created.toLocaleString())}
                             </Typography>
-                            <Button
-                                variant="outlined"
-                                onClick={() => navigate(AppRoutes.CustomTrackDetailPage + "?id=" + customTrack.id)}
-                            >
-                                <ZoomInIcon sx={{marginRight: 1}}/>
-                                Details
-                            </Button>
                         </Box>
                     </CardContent>
                 </Card>

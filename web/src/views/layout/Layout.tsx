@@ -1,10 +1,23 @@
-import {AppBar, Box, Button, Container, IconButton, Menu, MenuItem, Toolbar} from "@mui/material"
+import {
+    AppBar,
+    Box,
+    Button,
+    Container,
+    Drawer,
+    IconButton,
+    Menu,
+    MenuItem,
+    Stack,
+    Toolbar,
+    useMediaQuery,
+    useTheme
+} from "@mui/material"
 import {Outlet, useNavigate} from "react-router-dom";
 import AppRoutes from "../../routes.tsx";
 import useStore from "../../store.ts";
 import Brightness4Icon from '@mui/icons-material/Brightness4';
-import {AccountCircle} from "@mui/icons-material";
-import React from "react";
+import {AccountCircle, Menu as MenuIcon} from "@mui/icons-material";
+import React, {useState} from "react";
 import HomeIcon from '@mui/icons-material/Home';
 import PeopleIcon from '@mui/icons-material/People';
 import CollectionsIcon from '@mui/icons-material/Collections';
@@ -14,10 +27,13 @@ import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 
 const Layout = () => {
     const navigate = useNavigate();
-    const setJwt = useStore(state => state.setJwt);
     const currentUser = useStore(state => state.currentUser);
     const setCurrentUser = useStore(state => state.setCurrentUser);
     const [accountAnchorEL, setAccountAnchorEL] = React.useState<null | HTMLElement>(null);
+    const [drawerOpen, setDrawerOpen] = useState(false);
+
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     const handleAccountMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAccountAnchorEL(event.currentTarget);
@@ -29,7 +45,6 @@ const Layout = () => {
 
     const logoutPlayer = () => {
         localStorage.removeItem('jwt');
-        setJwt('');
         setCurrentUser(null);
         navigate(AppRoutes.IndexPage);
     }
@@ -40,48 +55,77 @@ const Layout = () => {
         window.location.reload();
     }
 
+    const handleDrawerToggle = () => {
+        setDrawerOpen(!drawerOpen);
+    };
+
+    const drawer = (
+        <Box onClick={handleDrawerToggle}>
+            <Stack spacing={2} sx={{padding: 2 }}>
+                <Button color="inherit" onClick={() => navigate(AppRoutes.IndexPage)} sx={{ justifyContent: 'flex-start'}}>
+                    <HomeIcon sx={{marginRight: 1}}/>
+                    Home
+                </Button>
+                <Button color="inherit" onClick={() => navigate(AppRoutes.CustomTrackListPage)} sx={{ justifyContent: 'flex-start'}}>
+                    <CollectionsIcon sx={{marginRight: 1}}/>
+                    Custom Tracks
+                </Button>
+                <Button color="inherit" onClick={() => navigate(AppRoutes.ToolsPage)} sx={{ justifyContent: 'flex-start'}}>
+                    <BuildIcon sx={{marginRight: 1}}/>
+                    Tools
+                </Button>
+                <Button color="inherit" onClick={() => navigate(AppRoutes.TutorialPage)} sx={{ justifyContent: 'flex-start'}}>
+                    <AutoStoriesIcon sx={{marginRight: 1}}/>
+                    Tutorial
+                </Button>
+                <Button color="inherit" onClick={() => navigate(AppRoutes.UserListPage)} sx={{ justifyContent: 'flex-start'}}>
+                    <PeopleIcon sx={{marginRight: 1}}/>
+                    Users
+                </Button>
+            </Stack>
+        </Box>
+    );
+
     return (
         <Box sx={{flexGrow: 1}}>
-            <AppBar position="static">
+            <AppBar position="static" color="primary">
                 <Container>
-                    <Toolbar sx={{paddingLeft: 0, paddingRight: 0}}>
+                    <Toolbar>
                         <IconButton
                             size="large"
                             edge="start"
                             color="inherit"
                             aria-label="menu"
-                            sx={{mr: 2}}
+                            onClick={handleDrawerToggle}
                         >
-                            <PaletteIcon/>
+                            {isMobile ? <MenuIcon/> : <PaletteIcon/>}
                         </IconButton>
-                        <Box sx={{flexGrow: 1}}>
-                            <Button color="inherit" onClick={() => navigate(AppRoutes.IndexPage)}>
-                                <HomeIcon sx={{marginRight: 1}}/>
-                                Home
-                            </Button>
-                            <Button color="inherit" onClick={() => navigate(AppRoutes.CustomTrackListPage)}>
-                                <CollectionsIcon sx={{marginRight: 1}}/>
-                                Custom Tracks
-                            </Button>
-                            <Button color="inherit" onClick={() => navigate(AppRoutes.ToolsPage)}>
-                                <BuildIcon sx={{marginRight: 1}}/>
-                                Tools
-                            </Button>
-                            <Button color="inherit" onClick={() => navigate(AppRoutes.TutorialPage)}>
-                                <AutoStoriesIcon sx={{marginRight: 1}}/>
-                                Tutorial
-                            </Button>
-                            <Button color="inherit" onClick={() => navigate(AppRoutes.UserListPage)}>
-                                <PeopleIcon sx={{marginRight: 1}}/>
-                                Users
-                            </Button>
-                        </Box>
+                        {!isMobile && (
+                            <Box sx={{flexGrow: 1}}>
+                                <Button color="inherit" onClick={() => navigate(AppRoutes.IndexPage)}>
+                                    <HomeIcon sx={{marginRight: 1}}/>
+                                    Home
+                                </Button>
+                                <Button color="inherit" onClick={() => navigate(AppRoutes.CustomTrackListPage)}>
+                                    <CollectionsIcon sx={{marginRight: 1}}/>
+                                    Custom Tracks
+                                </Button>
+                                <Button color="inherit" onClick={() => navigate(AppRoutes.ToolsPage)}>
+                                    <BuildIcon sx={{marginRight: 1}}/>
+                                    Tools
+                                </Button>
+                                <Button color="inherit" onClick={() => navigate(AppRoutes.TutorialPage)}>
+                                    <AutoStoriesIcon sx={{marginRight: 1}}/>
+                                    Tutorial
+                                </Button>
+                                <Button color="inherit" onClick={() => navigate(AppRoutes.UserListPage)}>
+                                    <PeopleIcon sx={{marginRight: 1}}/>
+                                    Users
+                                </Button>
+                            </Box>
+                        )}
                         {!currentUser && (
-                            <>
-                                <Button color="inherit" onClick={() => navigate(AppRoutes.LoginPage)}>Login</Button>
-                                <Button color="inherit"
-                                        onClick={() => navigate(AppRoutes.RegisterPage)}>Register</Button>
-                            </>
+                            <Button color="inherit" onClick={() => navigate(AppRoutes.LoginPage)}>Login</Button>
                         )}
                         {currentUser && (
                             <div>
@@ -122,11 +166,18 @@ const Layout = () => {
                     </Toolbar>
                 </Container>
             </AppBar>
-            <Container sx={{my: 2}}>
+            <Drawer
+                anchor="left"
+                open={drawerOpen}
+                onClose={handleDrawerToggle}
+            >
+                {drawer}
+            </Drawer>
+            <Container sx={{my: 2 }}>
                 <Outlet/>
             </Container>
         </Box>
-    )
+    );
 }
 
 export default Layout;

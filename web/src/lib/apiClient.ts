@@ -1,17 +1,57 @@
 import axios, {AxiosInstance} from "axios";
 import ApiClientInterface from "./apiClientInterface.ts";
-import {PaginatedQuery} from "./api/response.ts";
+import {
+    CreateCustomTrackResponse,
+    LoginResponse,
+    PaginatedQueryResponse,
+    SessionResponse,
+    VerifyCustomTrackResponse,
+    VerifyResourceResponse
+} from "./api/response.ts";
 
 export default class ApiClient implements ApiClientInterface {
     private client: AxiosInstance;
 
-    public constructor(baseUrl: string) {
+    public constructor(baseUrl: string, accessToken: string | null = null) {
         this.client = axios.create({
             baseURL: baseUrl,
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            validateStatus: (status) => {
+                return status >= 200 && status < 500;
+            }
         });
+
+        if (accessToken) {
+            this.client.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+        }
+    }
+
+    public async createCustomTrack(
+        name: string,
+        description: string,
+        video: string,
+        previewImage: File,
+        levFile: File,
+        levFileVersion: string,
+        vrmFile: File,
+        vrmFileVersion: string,
+    ): Promise<CreateCustomTrackResponse> {
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('description', description);
+        formData.append('video', video);
+        formData.append('preview_image', previewImage);
+        formData.append('lev_file', levFile);
+        formData.append('lev_file_version', levFileVersion);
+        formData.append('vrm_file', vrmFile);
+        formData.append('vrm_file_version', vrmFileVersion);
+
+        const response = await this.client.post(`/customtracks`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+
+        return response.data as CreateCustomTrackResponse;
     }
 
     public async findCustomTracks(
@@ -22,7 +62,7 @@ export default class ApiClient implements ApiClientInterface {
         verified: boolean | null,
         page: number | null,
         perPage: number | null,
-    ): Promise<PaginatedQuery> {
+    ): Promise<PaginatedQueryResponse> {
         const params = {
             id: id,
             author_id: authorId,
@@ -34,7 +74,7 @@ export default class ApiClient implements ApiClientInterface {
         }
 
         const response = await this.client.get(`/customtracks`, {params});
-        return response.data as PaginatedQuery;
+        return response.data as PaginatedQueryResponse;
     }
 
     public async findPermissions(
@@ -42,7 +82,7 @@ export default class ApiClient implements ApiClientInterface {
         userId: number | null,
         page: number | null,
         perPage: number | null,
-    ): Promise<PaginatedQuery> {
+    ): Promise<PaginatedQueryResponse> {
         const params = {
             id: id,
             user_id: userId,
@@ -51,14 +91,14 @@ export default class ApiClient implements ApiClientInterface {
         }
 
         const response = await this.client.get(`/permissions`, {params});
-        return response.data as PaginatedQuery;
+        return response.data as PaginatedQueryResponse;
     }
 
     public async findResources(
         id: number | null,
         page: number | null,
         perPage: number | null,
-    ): Promise<PaginatedQuery> {
+    ): Promise<PaginatedQueryResponse> {
         const params = {
             id: id,
             page: page,
@@ -66,7 +106,7 @@ export default class ApiClient implements ApiClientInterface {
         }
 
         const response = await this.client.get(`/resources`, {params});
-        return response.data as PaginatedQuery;
+        return response.data as PaginatedQueryResponse;
     }
 
     public async findSettings(
@@ -75,7 +115,7 @@ export default class ApiClient implements ApiClientInterface {
         key: string | null,
         page: number | null,
         perPage: number | null,
-    ): Promise<PaginatedQuery> {
+    ): Promise<PaginatedQueryResponse> {
         const params = {
             id: id,
             category: category,
@@ -85,7 +125,7 @@ export default class ApiClient implements ApiClientInterface {
         }
 
         const response = await this.client.get(`/settings`, {params});
-        return response.data as PaginatedQuery;
+        return response.data as PaginatedQueryResponse;
     }
 
     public async findTags(
@@ -93,7 +133,7 @@ export default class ApiClient implements ApiClientInterface {
         name: string | null,
         page: number | null,
         perPage: number | null,
-    ): Promise<PaginatedQuery> {
+    ): Promise<PaginatedQueryResponse> {
         const params = {
             id: id,
             name: name,
@@ -102,7 +142,7 @@ export default class ApiClient implements ApiClientInterface {
         }
 
         const response = await this.client.get(`/tags`, {params});
-        return response.data as PaginatedQuery;
+        return response.data as PaginatedQueryResponse;
     }
 
     public async findUsers(
@@ -111,7 +151,7 @@ export default class ApiClient implements ApiClientInterface {
         verified: boolean | null,
         page: number | null,
         perPage: number | null,
-    ): Promise<PaginatedQuery> {
+    ): Promise<PaginatedQueryResponse> {
         const params = {
             id: id,
             username: name,
@@ -121,6 +161,26 @@ export default class ApiClient implements ApiClientInterface {
         }
 
         const response = await this.client.get(`/users`, {params});
-        return response.data as PaginatedQuery;
+        return response.data as PaginatedQueryResponse;
+    }
+
+    public async getSession(): Promise<SessionResponse> {
+        const response = await this.client.get(`/session`);
+        return response.data as SessionResponse;
+    }
+
+    public async login(username: string, password: string): Promise<LoginResponse> {
+        const response = await this.client.post(`/login`, { username, password });
+        return response.data as LoginResponse;
+    }
+
+    public async verifyCustomTrack(id: number): Promise<VerifyCustomTrackResponse> {
+        const response = await this.client.post(`/customtracks/verify`, { id });
+        return response.data as VerifyCustomTrackResponse;
+    }
+
+    public async verifyResource(id: number): Promise<VerifyResourceResponse> {
+        const response = await this.client.post(`/resources/verify`, { id });
+        return response.data as VerifyResourceResponse;
     }
 }

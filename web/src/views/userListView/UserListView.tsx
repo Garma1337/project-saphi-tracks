@@ -24,28 +24,24 @@ import formatDate from "../../utils/formatDate.ts";
 import RestoreIcon from "@mui/icons-material/Restore";
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import {Pagination} from "../../lib/api/response.ts";
+import ServiceManager from "../../lib/serviceManager.ts";
 
 const UserListView = () => {
+    const apiClient: ApiClient = ServiceManager.createApiClient();
+
     const navigate = useNavigate();
     const [pagination, setPagination] = useState<Pagination | null>(null);
-    const [apiClient, setApiClient] = useState<ApiClient | null>(null);
     const [page, setPage] = useState<number>(1);
     const [users, setUsers] = useState<any[]>([]);
 
     const [name, setName] = useState<string | null>(null);
 
     useEffect(() => {
-        if (apiClient) {
-            apiClient.findUsers(null, name, null, page, null).then((query) => {
-                setPagination(query.pagination);
-                setUsers(query.items)
-            });
-        }
-    }, [apiClient, name, page, setPagination, setUsers]);
-
-    useEffect(() => {
-        setApiClient(new ApiClient('http://localhost:5000/api/v1'));
-    }, [setApiClient]);
+        apiClient.findUsers(null, name, null, page, null).then((query) => {
+            setPagination(query.pagination);
+            setUsers(query.items || []);
+        });
+    }, [name, page, setPagination, setUsers]);
 
     const handlePageChange = (_event: React.ChangeEvent<unknown>, value: number) => {
         setPage(value);
