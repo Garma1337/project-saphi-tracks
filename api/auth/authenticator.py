@@ -12,7 +12,7 @@ class Authenticator(object):
     def authenticate_user(self, username: str, password: str) -> bool:
         return self.user_adapter.authenticate_user(username, password)
 
-    def login_user(self, username: str, password: str) -> User:
+    def login_user(self, username: str, password: str) -> str:
         return self.user_adapter.login_user(username, password)
 
     def register_user(self, username: str, email: str, password: str) -> User:

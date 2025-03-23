@@ -24,12 +24,13 @@ def create_app() -> Flask:
     container.init_app(app)
 
     from . import jwt
+    jwt.init_app(app)
+
     from .http.controller.apicontroller import api
     from .http.controller.webcontroller import web
     from .faker.cli import faker
     from .database.cli import db_helper
 
-    jwt.init_app(app)
     app.register_blueprint(api)
     app.register_blueprint(web)
     app.register_blueprint(faker)

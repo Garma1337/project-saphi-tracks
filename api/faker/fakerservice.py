@@ -34,6 +34,15 @@ class FakerService(object):
         custom_track_repository = self.entity_manager.get_repository(CustomTrack)
 
         fake_custom_tracks = []
+        video_urls = [
+            'https://www.youtube.com/watch?v=POV9G8MQmIU',
+            'https://www.youtube.com/watch?v=PXULP4bQFds',
+            'https://www.youtube.com/watch?v=asBvc2O8g-A',
+            'https://www.youtube.com/watch?v=kTazemVSz7M',
+            'https://www.youtube.com/watch?v=2aLk7UbUGz8',
+            'https://www.youtube.com/watch?v=q4CfKECq9oI',
+            'https://www.youtube.com/watch?v=yiGORCWsp8Q'
+        ]
 
         for i in range(1, count + 1):
             random_user = random.choice(users)
@@ -44,7 +53,8 @@ class FakerService(object):
                 description=f'This is a really cool description for Custom Track {i}',
                 highlighted=random.randint(0, 1),
                 verified=random.randint(0, 1),
-                created=datetime.now()
+                created=datetime.now(),
+                video=random.choice(video_urls)
             )
 
             fake_custom_tracks.append(custom_track)
@@ -83,7 +93,7 @@ class FakerService(object):
                 checksum=hashlib.md5(f'file{i}.{random_extension}'.encode()).hexdigest(),
                 version=f'1.0.0',
                 created=datetime.now(),
-                verified=random_custom_track.verified
+                verified=int(random_custom_track.verified)
             )
 
             fake_resources.append(resource)

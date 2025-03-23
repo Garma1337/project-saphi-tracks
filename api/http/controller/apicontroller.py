@@ -11,7 +11,7 @@ api: Blueprint = Blueprint('api', __name__)
 @api.route('/api/v1/<path:route>', methods=['GET', 'POST', 'PATCH', 'DELETE'])
 @cross_origin()
 def run(route):
-    verify_jwt_in_request(optional=True)
+    verify_jwt_in_request(optional=True, locations=['headers'])
 
     dispatcher = container.get('http.dispatcher')
     response = dispatcher.dispatch_request(route, request)

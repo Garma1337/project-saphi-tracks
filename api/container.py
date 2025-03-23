@@ -108,13 +108,16 @@ def init_app(app):
         container.get('db.entity_manager'),
         container.get('auth.permission.permission_resolver')
     ))
-    container.register('http.request_handler.login_user', lambda: LoginUser(container.get('auth.authenticator')))
+    container.register('http.request_handler.login_user', lambda: LoginUser(
+        container.get('auth.authenticator'),
+        container.get('db.entity_manager')
+    ))
     container.register('http.request_handler.update_custom_track', lambda: UpdateCustomTrack(
         container.get('db.entity_manager'),
         container.get('auth.permission.permission_resolver')
     ))
     container.register('http.request_handler.verify_custom_track', lambda: VerifyCustomTrack(
-        container.get(''),
+        container.get('custom_track_manager'),
         container.get('auth.permission.permission_resolver')
     ))
     container.register('http.request_handler.verify_resource', lambda: VerifyResource(

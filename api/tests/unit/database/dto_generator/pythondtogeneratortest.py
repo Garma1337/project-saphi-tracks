@@ -39,6 +39,7 @@ class PythonDTOGeneratorTest(TestCase):
 \tcreated: datetime
 \thighlighted: bool
 \tverified: bool
+\tvideo: str
 \tauthor: User
 \tresources: List[Resource]
 \ttags: List[Tag]"""

@@ -39,6 +39,7 @@ class TypeScriptDTOGeneratorTest(TestCase):
 \tcreated: Date;
 \thighlighted: boolean;
 \tverified: boolean;
+\tvideo: string;
 \tauthor: User;
 \tresources: Resource[];
 \ttags: Tag[];

@@ -1,4 +1,4 @@
-# coding=utf-8
+# coding: utf-8
 
 from flask import Flask
 from flask_jwt_extended import JWTManager
@@ -21,4 +21,4 @@ def init_app(app: Flask):
         user_repository = entity_manager.get_repository(User)
 
         identity = jwt_data['sub']
-        return user_repository.find_one(id=identity['id'])
+        return user_repository.find_one(identity['id'])
