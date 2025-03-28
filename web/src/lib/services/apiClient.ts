@@ -1,13 +1,13 @@
 import axios, {AxiosInstance} from "axios";
 import ApiClientInterface from "./apiClientInterface.ts";
 import {
-    CreateCustomTrackResponse,
+    CreateCustomTrackResponse, DownloadResourceResponse,
     LoginResponse,
     PaginatedQueryResponse,
     SessionResponse,
     VerifyCustomTrackResponse,
     VerifyResourceResponse
-} from "./api/response.ts";
+} from "./../api/response.ts";
 
 export default class ApiClient implements ApiClientInterface {
     private client: AxiosInstance;
@@ -52,6 +52,14 @@ export default class ApiClient implements ApiClientInterface {
         });
 
         return response.data as CreateCustomTrackResponse;
+    }
+
+    public async downloadResource(id: number): Promise<DownloadResourceResponse> {
+        const response = await this.client.get(`/download?id=${id}`, { responseType: 'blob' });
+        return {
+            file: response.data,
+            content_disposition: response.headers['content-disposition'],
+        } as DownloadResourceResponse;
     }
 
     public async findCustomTracks(

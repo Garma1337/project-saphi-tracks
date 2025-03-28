@@ -1,6 +1,6 @@
 import Stack from "@mui/material/Stack/Stack";
 import Typography from "@mui/material/Typography/Typography";
-import ApiClient from "../../lib/apiClient.ts";
+import ApiClient from "../../lib/services/apiClient.ts";
 import ServiceManager from "../../lib/serviceManager.ts";
 import {useEffect, useState} from "react";
 import {CustomTrack} from "../../lib/api/dtos.ts";
@@ -12,6 +12,7 @@ import AccordionDetails from "@mui/material/AccordionDetails/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary/AccordionSummary";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import YouTubeVideo from "../../components/YouTubeVideo.tsx";
+import DownloadResourceLink from "../../components/ResourceDownloadButton.tsx";
 
 const CustomTrackPageView = () => {
     const apiClient: ApiClient = ServiceManager.createApiClient();
@@ -52,7 +53,9 @@ const CustomTrackPageView = () => {
                         <AccordionDetails>
                             <ul>
                                 {customTrack.resources.map((resource) => (
-                                    <li>{resource.file_name} (v{resource.version})</li>
+                                    <li>
+                                        <DownloadResourceLink resourceId={resource.id} label={resource.file_name} /> (v{resource.version})
+                                    </li>
                                 ))}
                             </ul>
                         </AccordionDetails>

@@ -1,10 +1,17 @@
 import {Alert, Button, Stack, TextField, Typography} from "@mui/material";
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import ServiceManager from "../../lib/serviceManager.ts";
-import ApiClient from "../../lib/apiClient.ts";
+import ApiClient from "../../lib/services/apiClient.ts";
+import useStore from "../../store.ts";
+import { useNavigate } from "react-router-dom";
+import AppRoutes from "../../routes.tsx";
 
 const CustomTrackCreateView = () => {
     const apiClient: ApiClient = ServiceManager.createApiClient();
+
+    const navigate = useNavigate();
+    const currentUser = useStore(state => state.currentUser);
+    const displayOptions = useStore(state => state.displayOptions);
 
     const [name, setName] = useState<string | null>(null);
     const [description, setDescription] = useState<string | null>(null);
@@ -51,6 +58,12 @@ const CustomTrackCreateView = () => {
         setLevFileVersion(null);
         setVrmFileVersion(null);
     }
+
+    useEffect(() => {
+        if (!displayOptions.get('show_custom_track_create_button')) {
+            navigate(AppRoutes.IndexPage);
+        }
+    }, [currentUser, navigate]);
 
     return (
         <Stack spacing={2}>

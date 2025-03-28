@@ -6,6 +6,8 @@ export type Store<T extends object> = StateCreator<T, [['zustand/devtools', neve
 export type AppState = {
     currentUser: any;
     setCurrentUser: (currentUser: any) => void;
+    displayOptions: Map<string, boolean>;
+    setDisplayOptions: (displayOptions: any) => void;
     settings: any[];
     setSettings: (settings: any) => void;
     tags: any[];
@@ -15,6 +17,8 @@ export type AppState = {
 const createStore: Store<AppState> = (set) => ({
     currentUser: null,
     setCurrentUser: (currentUser: any) => set(() => ({ currentUser }), false, 'setCurrentUser'),
+    displayOptions: new Map(),
+    setDisplayOptions: (displayOptions: any) => set(() => ({ displayOptions }), false, 'setDisplayOptions'),
     tags: [],
     setTags: (tags: any) => set(() => ({ tags }), false, 'setTags'),
     settings: [],

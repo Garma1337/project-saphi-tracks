@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import ApiClient from "../../lib/apiClient.ts";
+import ApiClient from "../../lib/services/apiClient.ts";
 import ServiceManager from "../../lib/serviceManager.ts";
 import { useEffect, useState } from "react";
 import {CustomTrack} from "../../lib/api/dtos.ts";
@@ -16,7 +16,7 @@ const IndexView = () => {
     useEffect(() => {
         apiClient.findCustomTracks(null, null, null, true, null, 1, 10).then((query) => {
             const items = query.items || [];
-            const randomTracks = randomSlice(items, 3);
+            const randomTracks: CustomTrack[] = randomSlice(items, 3);
 
             setHighlightedTracks(randomTracks);
         });

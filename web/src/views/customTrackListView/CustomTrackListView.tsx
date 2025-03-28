@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {useEffect, useState} from 'react';
 import {CustomTrack} from "../../lib/api/dtos.ts";
-import ApiClient from "../../lib/apiClient.ts";
+import ApiClient from "../../lib/services/apiClient.ts";
 import {
     Alert,
     Box,
@@ -19,11 +19,14 @@ import AddIcon from '@mui/icons-material/Add';
 import {Pagination} from "../../lib/api/response.ts";
 import CustomTrackListGrid from "../../components/CustomTrackListGrid.tsx";
 import ServiceManager from "../../lib/serviceManager.ts";
+import useStore from "../../store.ts";
 
 const CustomTrackListView = () => {
     const apiClient: ApiClient = ServiceManager.createApiClient();
 
     const navigate = useNavigate();
+    const displayOptions = useStore(state => state.displayOptions);
+
     const [customTracks, setCustomTracks] = useState<CustomTrack[]>([]);
     const [pagination, setPagination] = useState<Pagination | null>(null);
     const [page, setPage] = useState<number>(1);
@@ -72,16 +75,18 @@ const CustomTrackListView = () => {
                     Reset
                 </Button>
 
-                <Button
-                    onClick={() => navigate(AppRoutes.CustomTrackCreatePage)}
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    sx={{padding: 1.75, marginLeft: 2}}
-                >
-                    <AddIcon sx={{ marginRight: 1 }}/>
-                    Create Custom Track
-                </Button>
+                {displayOptions?.get('show_create_custom_track_button') && (
+                    <Button
+                        onClick={() => navigate(AppRoutes.CustomTrackCreatePage)}
+                        variant="contained"
+                        color="primary"
+                        size="large"
+                        sx={{padding: 1.75, marginLeft: 2}}
+                    >
+                        <AddIcon sx={{ marginRight: 1 }}/>
+                        Create Custom Track
+                    </Button>
+                )}
             </Box>
             {customTracks.length > 0 && (
                 <>

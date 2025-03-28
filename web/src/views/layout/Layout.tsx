@@ -24,11 +24,18 @@ import CollectionsIcon from '@mui/icons-material/Collections';
 import PaletteIcon from '@mui/icons-material/Palette';
 import BuildIcon from '@mui/icons-material/Build';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
+import SettingsIcon from '@mui/icons-material/Settings';
+import ServiceManager from "../../lib/serviceManager.ts";
+import toggleTheme from "../../utils/toggleTheme.ts";
 
 const Layout = () => {
+    const sessionManager = ServiceManager.createSessionManager();
+
     const navigate = useNavigate();
     const currentUser = useStore(state => state.currentUser);
     const setCurrentUser = useStore(state => state.setCurrentUser);
+    const displayOptions = useStore(state => state.displayOptions);
+    const setDisplayOptions = useStore(state => state.setDisplayOptions);
     const [accountAnchorEL, setAccountAnchorEL] = React.useState<null | HTMLElement>(null);
     const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -44,15 +51,12 @@ const Layout = () => {
     };
 
     const logoutPlayer = () => {
-        localStorage.removeItem('jwt');
-        setCurrentUser(null);
-        navigate(AppRoutes.IndexPage);
-    }
+        sessionManager.logout().then(response => {
+            setCurrentUser(response.current_user)
+            setDisplayOptions(new Map(Object.entries(response.display_options)))
+        });
 
-    const toggleTheme = () => {
-        const newTheme = localStorage.getItem('theme') === 'light' ? 'dark' : 'light';
-        localStorage.setItem('theme', newTheme);
-        window.location.reload();
+        navigate(AppRoutes.IndexPage);
     }
 
     const handleDrawerToggle = () => {
@@ -82,6 +86,12 @@ const Layout = () => {
                     <PeopleIcon sx={{marginRight: 1}}/>
                     Users
                 </Button>
+                {displayOptions?.get('show_admin_button') && (
+                    <Button color="inherit" onClick={() => navigate(AppRoutes.AdminPage)} sx={{ justifyContent: 'flex-start'}}>
+                        <SettingsIcon sx={{marginRight: 1}}/>
+                        Admin
+                    </Button>
+                )}
             </Stack>
         </Box>
     );
@@ -122,9 +132,15 @@ const Layout = () => {
                                     <PeopleIcon sx={{marginRight: 1}}/>
                                     Users
                                 </Button>
+                                {displayOptions?.get('show_admin_button') && (
+                                    <Button color="inherit" onClick={() => navigate(AppRoutes.AdminPage)}>
+                                        <SettingsIcon sx={{marginRight: 1}}/>
+                                        Admin
+                                    </Button>
+                                )}
                             </Box>
                         )}
-                        {!currentUser && (
+                        {displayOptions.get('show_login_button') && (
                             <Button color="inherit" onClick={() => navigate(AppRoutes.LoginPage)}>Login</Button>
                         )}
                         {currentUser && (

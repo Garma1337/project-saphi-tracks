@@ -4,7 +4,7 @@ import {useSearchParams} from "react-router-dom";
 import PersonIcon from '@mui/icons-material/Person';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import formatDate from "../../utils/formatDate.ts";
-import ApiClient from "../../lib/apiClient.ts";
+import ApiClient from "../../lib/services/apiClient.ts";
 import {CustomTrack} from "../../lib/api/dtos.ts";
 import randomSlice from "../../utils/randomSlice.ts";
 import CustomTrackListGrid from "../../components/CustomTrackListGrid.tsx";

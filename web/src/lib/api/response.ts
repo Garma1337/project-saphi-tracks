@@ -18,8 +18,14 @@ export type CreateCustomTrackResponse = {
     custom_track: CustomTrack | null;
 }
 
+export type DownloadResourceResponse = {
+    file: Blob;
+    content_disposition: string;
+}
+
 export type SessionResponse = {
     current_user: User;
+    display_options: Map<string, boolean>;
 }
 
 export type LoginResponse = {

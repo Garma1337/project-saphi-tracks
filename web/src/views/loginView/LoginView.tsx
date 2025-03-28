@@ -1,18 +1,18 @@
 import {Alert, Button, Stack, TextField, Typography} from "@mui/material";
 import {useEffect, useState} from "react";
-import ApiClient from "../../lib/apiClient.ts";
 import ServiceManager from "../../lib/serviceManager.ts";
 import {useNavigate} from "react-router-dom";
 import AppRoutes from "../../routes.tsx";
 import useStore from "../../store.ts";
 
 const LoginView = () => {
-    const apiClient: ApiClient = ServiceManager.createApiClient();
+    const sessionManager = ServiceManager.createSessionManager();
 
     const navigate = useNavigate();
 
     const currentUser = useStore(state => state.currentUser);
     const setCurrentUser = useStore(state => state.setCurrentUser);
+    const setDisplayOptions = useStore(state => state.setDisplayOptions);
 
     const [loginError, setLoginError] = useState<string | null>(null);
     const [username, setUsername] = useState<string | null>(null);
@@ -21,21 +21,18 @@ const LoginView = () => {
     const loginPlayer = (username: string, password: string) => {
         setLoginError(null);
 
-        apiClient.login(username, password).then((response) => {
+        sessionManager.login(username, password).then((response) => {
             if (response.success) {
-                localStorage.setItem('jwt', String(response.access_token));
-                setCurrentUser(response.current_user);
-                resetForm();
+                sessionManager.getSession().then(response => {
+                    setCurrentUser(response.current_user)
+                    setDisplayOptions(new Map(Object.entries(response.display_options)))
+                });
+
                 navigate(AppRoutes.IndexPage);
             } else {
                 setLoginError(response.error);
             }
         });
-    }
-
-    const resetForm = () => {
-        setUsername(null);
-        setPassword(null);
     }
 
     useEffect(() => {

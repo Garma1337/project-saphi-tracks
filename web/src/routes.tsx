@@ -1,7 +1,6 @@
 enum AppRoutes {
     IndexPage = '/',
     LoginPage = '/login',
-    RegisterPage = '/register',
     CustomTrackListPage = '/customTrack/list',
     CustomTrackDetailPage = '/customTrack/show',
     CustomTrackCreatePage = '/customTrack/new',
@@ -9,6 +8,7 @@ enum AppRoutes {
     ToolsPage = '/tools',
     UserListPage = '/user/list',
     UserDetailPage = '/user/show',
+    AdminPage = '/admin',
 }
 
 export default AppRoutes;

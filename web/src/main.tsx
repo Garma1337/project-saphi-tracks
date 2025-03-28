@@ -4,8 +4,9 @@ import App from './App.tsx'
 import './App.css'
 import {HashRouter} from 'react-router-dom'
 import {createTheme, CssBaseline, ThemeProvider} from '@mui/material'
+import getCurrentTheme from "./utils/getCurrentTheme.ts";
 
-const theme = localStorage.getItem('theme') == 'dark' ? 'dark' : 'light';
+const theme = getCurrentTheme()
 
 const darkTheme = createTheme({
     palette: {

@@ -1,11 +1,11 @@
 import {
-    CreateCustomTrackResponse,
+    CreateCustomTrackResponse, DownloadResourceResponse,
     LoginResponse,
     PaginatedQueryResponse,
     SessionResponse,
     VerifyCustomTrackResponse,
     VerifyResourceResponse
-} from "./api/response.ts";
+} from "./../api/response.ts";
 
 export default interface ApiClientInterface {
     createCustomTrack: (
@@ -18,6 +18,9 @@ export default interface ApiClientInterface {
         vrmFile: File,
         vrmFileVersion: string,
     ) => Promise<CreateCustomTrackResponse>
+    downloadResource: (
+        id: number
+    ) => Promise<DownloadResourceResponse>
     findCustomTracks: (
         id: number | null,
         authorId: number | null,
