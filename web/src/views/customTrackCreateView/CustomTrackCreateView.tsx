@@ -60,7 +60,7 @@ const CustomTrackCreateView = () => {
     }
 
     useEffect(() => {
-        if (!displayOptions.get('show_custom_track_create_button')) {
+        if (!displayOptions.get('show_create_custom_track_button')) {
             navigate(AppRoutes.IndexPage);
         }
     }, [currentUser, navigate]);

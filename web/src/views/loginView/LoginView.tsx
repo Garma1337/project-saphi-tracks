@@ -9,10 +9,7 @@ const LoginView = () => {
     const sessionManager = ServiceManager.createSessionManager();
 
     const navigate = useNavigate();
-
     const currentUser = useStore(state => state.currentUser);
-    const setCurrentUser = useStore(state => state.setCurrentUser);
-    const setDisplayOptions = useStore(state => state.setDisplayOptions);
 
     const [loginError, setLoginError] = useState<string | null>(null);
     const [username, setUsername] = useState<string | null>(null);
@@ -23,12 +20,7 @@ const LoginView = () => {
 
         sessionManager.login(username, password).then((response) => {
             if (response.success) {
-                sessionManager.getSession().then(response => {
-                    setCurrentUser(response.current_user)
-                    setDisplayOptions(new Map(Object.entries(response.display_options)))
-                });
-
-                navigate(AppRoutes.IndexPage);
+                window.location.reload();
             } else {
                 setLoginError(response.error);
             }

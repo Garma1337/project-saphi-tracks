@@ -1,4 +1,4 @@
-import {Box, Card, CardContent, CardMedia, Link, Typography} from "@mui/material";
+import {Box, Card, CardContent, CardMedia, Chip, Link, Typography} from "@mui/material";
 import AppRoutes from "../routes.tsx";
 import formatDate from "../utils/formatDate.ts";
 import {useNavigate} from "react-router-dom";
@@ -32,6 +32,12 @@ const CustomTrackListGrid = (props: CustomTrackListGridProps) => {
                                 <Link onClick={() => navigate(AppRoutes.CustomTrackDetailPage + "?id=" + customTrack.id)}>
                                     {customTrack.name}
                                 </Link>
+                                <Chip
+                                    size={'small'}
+                                    label={customTrack.verified ? 'Verified' : 'Unverified'}
+                                    color={customTrack.verified ? 'success' : 'error'}
+                                    sx={{ml: 1}}
+                                />
                             </h2>
                             <Typography>
                                 Author: <Link

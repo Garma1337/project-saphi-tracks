@@ -33,9 +33,7 @@ const Layout = () => {
 
     const navigate = useNavigate();
     const currentUser = useStore(state => state.currentUser);
-    const setCurrentUser = useStore(state => state.setCurrentUser);
     const displayOptions = useStore(state => state.displayOptions);
-    const setDisplayOptions = useStore(state => state.setDisplayOptions);
     const [accountAnchorEL, setAccountAnchorEL] = React.useState<null | HTMLElement>(null);
     const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -51,12 +49,9 @@ const Layout = () => {
     };
 
     const logoutPlayer = () => {
-        sessionManager.logout().then(response => {
-            setCurrentUser(response.current_user)
-            setDisplayOptions(new Map(Object.entries(response.display_options)))
+        sessionManager.logout().then(() => {
+            window.location.reload();
         });
-
-        navigate(AppRoutes.IndexPage);
     }
 
     const handleDrawerToggle = () => {

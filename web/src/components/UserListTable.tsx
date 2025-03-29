@@ -1,5 +1,6 @@
 import {
     Button,
+    Chip,
     Paper,
     Table,
     TableBody,
@@ -47,6 +48,12 @@ const UserListTable = (props: UserListTableProps) => {
                                 <Typography
                                     onClick={() => navigate(`${AppRoutes.UserDetailPage}?id=${row.id}`)}>
                                     <Link to="#">{row.username}</Link>
+                                    <Chip
+                                        size={'small'}
+                                        label={row.verified ? 'Verified' : 'Unverified'}
+                                        color={row.verified ? 'success' : 'error'}
+                                        sx={{ml: 1}}
+                                    />
                                 </Typography>
                             </TableCell>
                             <TableCell align="center">{formatDate(row.created)}</TableCell>

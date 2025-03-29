@@ -19,6 +19,7 @@ import AdminView from "./views/adminView/AdminView.tsx";
 
 function App() {
     const apiClient: ApiClient = ServiceManager.createApiClient();
+    const sessionManager = ServiceManager.createSessionManager();
 
     const setCurrentUser = useStore(state => state.setCurrentUser);
     const setDisplayOptions = useStore(state => state.setDisplayOptions);
@@ -26,7 +27,7 @@ function App() {
     const setTags = useStore(state => state.setTags);
 
     useEffect(() => {
-        apiClient.getSession().then(response => {
+        sessionManager.getSession().then((response) => {
             setCurrentUser(response.current_user)
             setDisplayOptions(new Map(Object.entries(response.display_options)))
         });
