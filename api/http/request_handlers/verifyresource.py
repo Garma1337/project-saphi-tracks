@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from api.auth.permission.permissionresolver import PermissionResolver
+from api.auth.sessionmanager import SessionManager
 from api.http.request_handlers.requesthandler import RequestHandler
 from api.http.response import ErrorJsonResponse, SuccessJsonResponse, JsonResponse
 from api.resource.resourcemanager import ResourceManager, ResourceNotFoundError, ResourceAlreadyVerifiedError
@@ -8,7 +9,8 @@ from api.resource.resourcemanager import ResourceManager, ResourceNotFoundError,
 
 class VerifyResource(RequestHandler):
 
-    def __init__(self, resource_manager: ResourceManager, permission_resolver: PermissionResolver):
+    def __init__(self, session_manager: SessionManager, resource_manager: ResourceManager, permission_resolver: PermissionResolver):
+        self.session_manager = session_manager
         self.resource_manager = resource_manager
         self.permission_resolver = permission_resolver
 
@@ -16,7 +18,7 @@ class VerifyResource(RequestHandler):
         if not 'id' in request.json:
             return ErrorJsonResponse('You need to provide a resource id')
 
-        current_user = self.get_current_user()
+        current_user = self.session_manager.find_user_by_jwt_identity(self.get_current_identity())
 
         if not self.permission_resolver.can_verify_resource(current_user):
             return ErrorJsonResponse('You are not allowed to verify resources', 401)

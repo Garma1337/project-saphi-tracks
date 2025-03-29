@@ -40,12 +40,12 @@ class LoginUserTest(TestCase):
         self.local_user_adapter._create_access_token = Mock(return_value='123456')
 
         self.authenticator = Authenticator(self.local_user_adapter)
-        self.login_user = LoginUser(self.authenticator)
+        self.login_user = LoginUser(self.authenticator, self.entity_manager)
 
         self.entity_manager.get_repository = lambda model: self.user_repository
 
     def test_can_login_user(self):
-        self.login_user.get_current_user = Mock(return_value=None)
+        self.login_user.get_current_identity = Mock(return_value=None)
 
         response = self.login_user.handle_request(Request.from_values(json={
             'username': 'Garma',
@@ -60,7 +60,10 @@ class LoginUserTest(TestCase):
         self.assertEqual(status_code, 200)
 
     def test_can_not_login_user_if_already_logged_in(self):
-        self.login_user.get_current_user = Mock(return_value={'name': 'Garma'})
+        garma = User()
+        garma.username = 'Garma'
+
+        self.login_user.get_current_identity = Mock(return_value=garma.to_dictionary())
 
         response = self.login_user.handle_request(Request.from_values(json={
             'username': 'Garma',
@@ -75,7 +78,7 @@ class LoginUserTest(TestCase):
         self.assertEqual(status_code, 401)
 
     def test_can_not_login_user_if_no_username(self):
-        self.login_user.get_current_user = Mock(return_value=None)
+        self.login_user.get_current_identity = Mock(return_value=None)
 
         response = self.login_user.handle_request(Request.from_values(json={
             'password': 'Password123!'
@@ -89,7 +92,7 @@ class LoginUserTest(TestCase):
         self.assertEqual(status_code, 400)
 
     def test_can_not_login_user_if_no_password(self):
-        self.login_user.get_current_user = Mock(return_value=None)
+        self.login_user.get_current_identity = Mock(return_value=None)
 
         response = self.login_user.handle_request(Request.from_values(json={
             'username': 'Garma'
@@ -103,7 +106,7 @@ class LoginUserTest(TestCase):
         self.assertEqual(status_code, 400)
 
     def test_can_not_login_user_if_authentication_fails(self):
-        self.login_user.get_current_user = Mock(return_value=None)
+        self.login_user.get_current_identity = Mock(return_value=None)
 
         response = self.login_user.handle_request(Request.from_values(json={
             'username': 'Garma',

@@ -10,6 +10,7 @@ from api.auth.passwordmanager import PasswordManager
 from api.auth.user_adapter.localuseradapter import LocalUserAdapter
 from api.auth.user_adapter.useradapter import RegistrationError, AuthenticationError
 from api.database.entitymanager import EntityManager
+from api.database.model.permission import Permission
 from api.database.model.user import User
 from api.tests.mockmodelrepository import MockModelRepository
 from api.tests.mockpasswordencoderstrategy import MockPasswordEncoderStrategy
@@ -33,12 +34,19 @@ class LocalUserAdapterTest(TestCase):
             verified=True
         )
 
+        self.permission_repository = MockModelRepository(Permission)
+
+        repositories = {
+            Permission: self.permission_repository,
+            User: self.user_repository
+        }
+
         self.local_user_adapter = LocalUserAdapter(
             self.entity_manager,
             self.password_manager
         )
 
-        self.local_user_adapter.entity_manager.get_repository = lambda model: self.user_repository
+        self.local_user_adapter.entity_manager.get_repository = lambda model: repositories[model]
 
     def test_can_authenticate_user(self):
         self.assertTrue(self.local_user_adapter.authenticate_user('Garma', 'Password123!'))

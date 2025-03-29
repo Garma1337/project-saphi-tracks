@@ -1,11 +1,13 @@
 # coding: utf-8
 
 from unittest import TestCase
+from unittest.mock import Mock
 
 from flask import Request
 from flask_sqlalchemy import SQLAlchemy
 
 from api.auth.permission.logicalpermissionresolver import LogicalPermissionResolver
+from api.auth.sessionmanager import SessionManager
 from api.database.entitymanager import EntityManager
 from api.database.model.customtrack import CustomTrack
 from api.database.model.permission import Permission
@@ -29,14 +31,21 @@ class UpdateCustomTrackTest(TestCase):
         self.entity_manager = EntityManager(SQLAlchemy(), MockModelRepository)
         self.entity_manager.get_repository = lambda model: self.custom_track_repository
 
-        self.permission_resolver = LogicalPermissionResolver()
-
-        self.garma = User()
+        self.user_repository = MockModelRepository(User)
+        self.garma = self.user_repository.create(
+            id=1,
+            username='Garma',
+        )
         self.garma.permission = Permission()
         self.garma.permission.can_edit_custom_tracks = True
 
-        self.update_custom_track = UpdateCustomTrack(self.entity_manager, self.permission_resolver)
-        self.update_custom_track.get_current_user = lambda: self.garma
+        self.session_manager = SessionManager(EntityManager(SQLAlchemy(), MockModelRepository))
+        self.session_manager.entity_manager.get_repository = lambda model: self.user_repository
+
+        self.permission_resolver = LogicalPermissionResolver()
+
+        self.update_custom_track = UpdateCustomTrack(self.entity_manager, self.session_manager, self.permission_resolver)
+        self.update_custom_track.get_current_identity = Mock(return_value=self.garma.to_dictionary())
 
     def test_can_update_custom_track(self):
         response = self.update_custom_track.handle_request(Request.from_values(json={'id': self.custom_track.id, 'highlighted': True}))

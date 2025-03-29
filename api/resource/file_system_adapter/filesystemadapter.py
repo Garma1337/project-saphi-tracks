@@ -1,6 +1,9 @@
 # coding: utf-8
 
 from abc import abstractmethod
+from pathlib import Path
+
+from werkzeug.datastructures import FileStorage
 
 
 class FileNotReadableError(Exception):
@@ -26,7 +29,7 @@ class FileSystemAdapter(object):
         pass
 
     @abstractmethod
-    def get_full_path(self, file_path: str) -> str:
+    def get_full_path(self, file_path: str) -> Path:
         pass
 
     @abstractmethod
@@ -42,9 +45,21 @@ class FileSystemAdapter(object):
         pass
 
     @abstractmethod
-    def delete_file(self, file_path: str):
+    def move_uploaded_file(self, file: FileStorage, destination_directory: str, destination_file_name: str) -> None:
         pass
 
     @abstractmethod
-    def delete_directory_tree(self, directory_path: str):
+    def delete_file(self, file_path: str) -> None:
+        pass
+
+    @abstractmethod
+    def delete_directory_tree(self, directory_path: str) -> None:
+        pass
+
+    @abstractmethod
+    def generate_checksum(self, file_path: str) -> str:
+        pass
+
+    @abstractmethod
+    def offer_file_download(self, directory: str, file_path: str) -> None:
         pass

@@ -1,0 +1,33 @@
+# coding: utf-8
+
+from unittest import TestCase
+
+from flask_sqlalchemy import SQLAlchemy
+
+from api.auth.sessionmanager import SessionManager
+from api.database.entitymanager import EntityManager
+from api.database.model.user import User
+from api.tests.mockmodelrepository import MockModelRepository
+
+
+class SessionManagerTest(TestCase):
+
+    def setUp(self):
+        self.entity_manager = EntityManager(SQLAlchemy(), MockModelRepository)
+        self.session_manager = SessionManager(self.entity_manager)
+
+        self.user_repository = MockModelRepository(User)
+        self.garma = self.user_repository.create(
+            id=1,
+            username='Garma',
+        )
+
+        self.entity_manager.get_repository = lambda model: self.user_repository
+
+    def test_can_find_user_by_current_identity(self):
+        current_user = self.session_manager.find_user_by_jwt_identity({'id': 1, 'username': 'Garma'})
+        self.assertEqual(current_user, self.garma)
+
+    def test_can_not_find_user_if_identity_is_none(self):
+        current_user = self.session_manager.find_user_by_jwt_identity(None)
+        self.assertIsNone(current_user)

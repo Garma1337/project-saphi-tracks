@@ -7,9 +7,11 @@ from flask import Request
 from flask_sqlalchemy import SQLAlchemy
 
 from api.auth.permission.logicalpermissionresolver import LogicalPermissionResolver
+from api.auth.sessionmanager import SessionManager
 from api.database.entitymanager import EntityManager
 from api.database.model.resource import Resource
 from api.http.request_handlers.downloadresource import DownloadResource
+from api.lib.semvervalidator import SemVerValidator
 from api.resource.file_encoder_strategy.sha256fileencoderstrategy import Sha256FileEncoderStrategy
 from api.resource.resourcemanager import ResourceManager
 from api.tests.mockfilesystemadapter import MockFileSystemAdapter
@@ -20,21 +22,25 @@ class DownloadResourceTest(TestCase):
 
     def setUp(self):
         self.entity_manager = EntityManager(SQLAlchemy(), MockModelRepository)
+        self.session_manager = SessionManager(self.entity_manager)
         self.resource_repository = MockModelRepository(Resource)
 
         self.file_system_adapter = MockFileSystemAdapter()
         self.file_encoder_strategy = Sha256FileEncoderStrategy()
+        self.semver_validator = SemVerValidator()
 
         self.resource_manager = ResourceManager(
             self.entity_manager,
             self.file_system_adapter,
-            self.file_encoder_strategy
+            self.file_encoder_strategy,
+            self.semver_validator
         )
+
         self.resource_manager._offer_resource_download = Mock(return_value = None)
 
         self.permission_resolver = LogicalPermissionResolver()
-        self.download_resource = DownloadResource(self.entity_manager, self.resource_manager, self.permission_resolver)
-        self.download_resource.get_current_user = Mock(return_value=None)
+        self.download_resource = DownloadResource(self.entity_manager, self.session_manager, self.resource_manager, self.permission_resolver)
+        self.download_resource.get_current_identity = Mock(return_value=None)
 
         self.entity_manager.get_repository = lambda model: self.resource_repository
 

@@ -5,6 +5,7 @@ from datetime import datetime
 from api.auth.passwordmanager import PasswordManager
 from api.auth.user_adapter.useradapter import AuthenticationError, UserAdapter, RegistrationError
 from api.database.entitymanager import EntityManager
+from api.database.model.permission import Permission
 from api.database.model.user import User
 from api.event.event import Event
 from api.event.eventmanager import EventManager
@@ -63,6 +64,16 @@ class SaphiUserAdapter(UserAdapter):
             salt=salt,
             created=datetime.now(),
             verified=True
+        )
+
+        permission_repository = self.entity_manager.get_repository(Permission)
+        permission_repository.create(
+            user_id=user.id,
+            can_edit_custom_tracks=False,
+            can_delete_custom_tracks=False,
+            can_edit_resources=False,
+            can_delete_resources=False,
+            can_edit_users=False
         )
 
         return user

@@ -16,10 +16,10 @@ class LoginUser(RequestHandler):
         self.entity_manager = entity_manager
 
     def handle_request(self, request: Request) -> JsonResponse:
-        current_user = self.get_current_user()
+        current_user = self.get_current_identity()
 
         if current_user:
-            return ErrorJsonResponse(f'You are already logged in as {current_user['name']}.', 401)
+            return ErrorJsonResponse(f'You are already logged in as {current_user['username']}.', 401)
 
         username = request.json.get('username')
         password = request.json.get('password')
@@ -37,6 +37,7 @@ class LoginUser(RequestHandler):
         users = user_repository.find_by(username=username)
 
         access_token = self.authenticator.login_user(username, password)
+
         return JsonResponse({'success': True, 'access_token': access_token, 'current_user': users[0].to_dictionary()})
 
     def require_authentication(self) -> bool:

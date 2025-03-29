@@ -3,7 +3,7 @@
 from typing import List
 
 from marshmallow import Schema, fields
-from sqlalchemy import Column, ForeignKey, String, DateTime, Boolean
+from sqlalchemy import Column, ForeignKey, String, DateTime, Boolean, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from api.database.associations import custom_tracks_tags
@@ -31,7 +31,7 @@ class CustomTrack(Model):
     id: Mapped[int] = mapped_column(primary_key=True, nullable=False, autoincrement=True)
     author_id: Mapped[int] = Column(ForeignKey('users.id'))
     name: Mapped[str] = Column(String(100), nullable=False)
-    description: Mapped[str] = Column(String(100), nullable=False)
+    description: Mapped[str] = Column(Text(), nullable=False)
     created: Mapped[str] = Column(DateTime(), nullable=False)
     highlighted: Mapped[bool] = Column(Boolean(), nullable=False)
     verified: Mapped[bool] = Column(Boolean(), nullable=False)

@@ -7,6 +7,7 @@ from api.auth.authenticator import Authenticator
 from api.auth.password_encoder_strategy.bcryptpasswordencoderstrategy import BcryptPasswordEncoderStrategy
 from api.auth.passwordmanager import PasswordManager
 from api.auth.permission.logicalpermissionresolver import LogicalPermissionResolver
+from api.auth.sessionmanager import SessionManager
 from api.auth.user_adapter.localuseradapter import LocalUserAdapter
 from api.auth.user_adapter.saphiuseradapter import SaphiUserAdapter
 from api.database.databasemanager import DatabaseManager
@@ -36,9 +37,11 @@ from api.http.routerfactory import RouterFactory
 from api.lib.container import Container
 from api.lib.customtrackmanager import CustomTrackManager
 from api.lib.saphiclient import SaphiClient
+from api.lib.semvervalidator import SemVerValidator
 from api.resource.file_encoder_strategy.sha256fileencoderstrategy import Sha256FileEncoderStrategy
 from api.resource.file_system_adapter.localfilesystemadapter import LocalFileSystemAdapter
 from api.resource.resourcemanager import ResourceManager
+from api.ui.displayoptionsgenerator import DisplayOptionsGenerator
 
 container = Container()
 current_directory = os.path.abspath(os.path.dirname(__file__))
@@ -52,6 +55,7 @@ def init_app(app):
         container.get('auth.password_manager'),
         container.get('saphi_client')
     ))
+    container.register('auth.session_manager', lambda: SessionManager(container.get('db.entity_manager')))
 
     container.register('auth.permission.permission_resolver', lambda: LogicalPermissionResolver())
     container.register('auth.password_encoder_strategy.bcrypt', lambda: BcryptPasswordEncoderStrategy())
@@ -79,33 +83,43 @@ def init_app(app):
     container.register('http.dispatcher', lambda: Dispatcher(container.get('http.router')))
 
     # HTTP Request Handlers
-    container.register('http.request_handler.create_custom_track', lambda: CreateCustomTrack())
+    container.register('http.request_handler.create_custom_track', lambda: CreateCustomTrack(
+        container.get('auth.session_manager'),
+        container.get('custom_track_manager')
+    ))
     container.register('http.request_handler.download_resource', lambda: DownloadResource(
         container.get('db.entity_manager'),
+        container.get('auth.session_manager'),
         container.get('resource.resource_manager'),
         container.get('auth.permission.permission_resolver')
     ))
     container.register('http.request_handler.find_custom_tracks', lambda: FindCustomTracks(
         container.get('db.entity_manager'),
+        container.get('auth.session_manager'),
         container.get('auth.permission.permission_resolver')
     ))
     container.register('http.request_handler.generate_dtos', lambda: GenerateDTOs(
         container.get('db.dto_generator.dto_generator_service'),
         container.get('db.dto_generator.html_code_formatter')
     ))
-    container.register('http.request_handler.get_session', lambda: GetSession())
+    container.register('http.request_handler.get_session', lambda: GetSession(
+        container.get('auth.session_manager'),
+        container.get('ui.display_options_generator')
+    ))
     container.register('http.request_handler.find_permissions', lambda: FindPermissions(
         container.get('db.entity_manager'),
         container.get('auth.permission.permission_resolver')
     ))
     container.register('http.request_handler.find_resources', lambda: FindResources(
         container.get('db.entity_manager'),
+        container.get('auth.session_manager'),
         container.get('auth.permission.permission_resolver')
     ))
     container.register('http.request_handler.find_settings', lambda: FindSettings(container.get('db.entity_manager')))
     container.register('http.request_handler.find_tags', lambda: FindTags(container.get('db.entity_manager')))
     container.register('http.request_handler.find_users', lambda: FindUsers(
         container.get('db.entity_manager'),
+        container.get('auth.session_manager'),
         container.get('auth.permission.permission_resolver')
     ))
     container.register('http.request_handler.login_user', lambda: LoginUser(
@@ -114,20 +128,27 @@ def init_app(app):
     ))
     container.register('http.request_handler.update_custom_track', lambda: UpdateCustomTrack(
         container.get('db.entity_manager'),
+        container.get('auth.session_manager'),
         container.get('auth.permission.permission_resolver')
     ))
     container.register('http.request_handler.verify_custom_track', lambda: VerifyCustomTrack(
+        container.get('auth.session_manager'),
         container.get('custom_track_manager'),
         container.get('auth.permission.permission_resolver')
     ))
     container.register('http.request_handler.verify_resource', lambda: VerifyResource(
+        container.get('auth.session_manager'),
         container.get('resource.resource_manager'),
         container.get('auth.permission.permission_resolver')
     ))
 
     # libraries
-    container.register('custom_track_manager', lambda: CustomTrackManager(container.get('db.entity_manager'), container.get('resource.resource_manager')))
+    container.register('custom_track_manager', lambda: CustomTrackManager(
+        container.get('db.entity_manager'),
+        container.get('resource.resource_manager')
+    ))
     container.register('saphi_client', lambda: SaphiClient(app.config['SAPHI_API_URL'], app.config['SAPHI_API_TOKEN']))
+    container.register('semver_validator', lambda: SemVerValidator())
 
     # Resources
     container.register('resource.file_encoder_strategy.sha256', lambda: Sha256FileEncoderStrategy())
@@ -135,8 +156,12 @@ def init_app(app):
     container.register('resource.resource_manager', lambda: ResourceManager(
         container.get('db.entity_manager'),
         container.get('resource.file_system_adapter.local'),
-        container.get('resource.file_encoder_strategy.sha256')
+        container.get('resource.file_encoder_strategy.sha256'),
+        container.get('semver_validator'),
     ))
+
+    # UI
+    container.register('ui.display_options_generator', lambda: DisplayOptionsGenerator(container.get('auth.permission.permission_resolver')))
 
     # Container itself
     container.register('container', lambda: container)

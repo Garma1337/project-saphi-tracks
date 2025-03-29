@@ -1,13 +1,16 @@
 # coding: utf-8
 
 import uuid
+from copy import copy
 from datetime import datetime
 from unittest import TestCase
+from unittest.mock import Mock
 
 from flask import Request
 from flask_sqlalchemy import SQLAlchemy
 
 from api.auth.permission.logicalpermissionresolver import LogicalPermissionResolver
+from api.auth.sessionmanager import SessionManager
 from api.database.entitymanager import EntityManager
 from api.database.model.customtrack import CustomTrack
 from api.database.model.permission import Permission
@@ -20,6 +23,10 @@ from api.tests.mockmodelrepository import MockModelRepository
 class FindCustomTracksTest(TestCase):
 
     def setUp(self):
+        self.entity_manager = EntityManager(SQLAlchemy(), MockModelRepository)
+        self.session_manager = SessionManager(copy(self.entity_manager))
+        self.permission_resolver = LogicalPermissionResolver()
+
         self.user_repository = MockModelRepository(User)
         self.resource_repository = MockModelRepository(Resource)
         self.custom_track_repository = MockModelRepository(CustomTrack)
@@ -48,15 +55,14 @@ class FindCustomTracksTest(TestCase):
         ]
 
         self.request_handler = FindCustomTracks(
-            EntityManager(
-                SQLAlchemy(),
-                MockModelRepository
-            ),
-            LogicalPermissionResolver()
+            copy(self.entity_manager),
+            self.session_manager,
+            self.permission_resolver
         )
 
-        self.request_handler.get_current_user = lambda: self.garma
+        self.request_handler.get_current_identity = Mock(return_value=self.garma.to_dictionary())
         self.request_handler.entity_manager.get_repository = lambda model: self.custom_track_repository
+        self.session_manager.entity_manager.get_repository = lambda model: self.user_repository
 
     def test_can_find_custom_tracks(self):
         response = self.request_handler.handle_request(Request.from_values())

@@ -8,19 +8,21 @@ from api.database.model.customtrack import CustomTrack
 from api.http.request_handlers.requesthandler import RequestHandler
 from api.http.requesthelper import RequestHelper
 from api.http.response import JsonResponse, ErrorJsonResponse, SuccessJsonResponse
+from api.auth.sessionmanager import SessionManager
 
 
 class UpdateCustomTrack(RequestHandler):
 
-    def __init__(self, entity_manager: EntityManager, permission_resolver: PermissionResolver):
+    def __init__(self, entity_manager: EntityManager, session_manager: SessionManager, permission_resolver: PermissionResolver):
         self.entity_manager = entity_manager
+        self.session_manager = session_manager
         self.permission_resolver = permission_resolver
 
     def handle_request(self, request: Request) -> JsonResponse:
         if not 'id' in request.json:
             return ErrorJsonResponse('You need to provide a custom track id')
 
-        current_user = self.get_current_user()
+        current_user = self.session_manager.find_user_by_jwt_identity(self.get_current_identity())
 
         # if a user can verify custom tracks, he can also edit them
         if not self.permission_resolver.can_verify_custom_track(current_user):

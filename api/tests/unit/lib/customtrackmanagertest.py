@@ -8,6 +8,7 @@ from api.database.entitymanager import EntityManager
 from api.database.model.customtrack import CustomTrack
 from api.database.model.resource import Resource
 from api.lib.customtrackmanager import CustomTrackManager, CustomTrackNotFoundError, CustomTrackAlreadyVerifiedError
+from api.lib.semvervalidator import SemVerValidator
 from api.resource.file_encoder_strategy.sha256fileencoderstrategy import Sha256FileEncoderStrategy
 from api.resource.resourcemanager import ResourceManager
 from api.tests.mockfilesystemadapter import MockFileSystemAdapter
@@ -22,11 +23,13 @@ class CustomTrackManagerTest(TestCase):
 
         self.file_system_adapter = MockFileSystemAdapter()
         self.file_encoder_strategy = Sha256FileEncoderStrategy()
+        self.semver_validator = SemVerValidator()
 
         self.resource_manager = ResourceManager(
             EntityManager(SQLAlchemy(), MockModelRepository),
             self.file_system_adapter,
-            self.file_encoder_strategy
+            self.file_encoder_strategy,
+            self.semver_validator
         )
 
         self.custom_track_manager = CustomTrackManager(

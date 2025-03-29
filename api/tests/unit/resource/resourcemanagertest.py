@@ -4,9 +4,12 @@ from unittest import TestCase
 from unittest.mock import Mock
 
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.datastructures import FileStorage
 
 from api.database.entitymanager import EntityManager
-from api.database.model.resource import Resource
+from api.database.model.resource import Resource, ResourceType
+from api.database.model.user import User
+from api.lib.semvervalidator import SemVerValidator
 from api.resource.file_encoder_strategy.sha256fileencoderstrategy import Sha256FileEncoderStrategy
 from api.resource.resourcemanager import ResourceManager, ResourceNotFoundError, ResourceAlreadyVerifiedError
 from api.tests.mockfilesystemadapter import MockFileSystemAdapter
@@ -22,18 +25,31 @@ class ResourceManagerTest(TestCase):
         )
 
         self.resource_repository = MockModelRepository(Resource)
+        self.user_repository = MockModelRepository(User)
+        self.garma = self.user_repository.create(
+            id=1,
+            username='Garma',
+        )
 
         self.file_system_adapter = MockFileSystemAdapter()
         self.file_encoder_strategy = Sha256FileEncoderStrategy()
+        self.semver_validator = SemVerValidator()
 
         self.resource_manager = ResourceManager(
             self.entity_manager,
             self.file_system_adapter,
-            self.file_encoder_strategy
+            self.file_encoder_strategy,
+            self.semver_validator
         )
+
         self.resource_manager._offer_resource_download = Mock(return_value = None)
 
-        self.entity_manager.get_repository = lambda model: self.resource_repository
+        repositories = {
+            Resource: self.resource_repository,
+            User: self.user_repository
+        }
+
+        self.entity_manager.get_repository = lambda model: repositories[model]
 
     def test_can_get_expected_file_extensions(self):
         self.assertEqual(['jpg', 'png'], self.resource_manager.get_expected_file_extensions('preview'))

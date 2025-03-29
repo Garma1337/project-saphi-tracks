@@ -3,6 +3,7 @@
 from flask import Request
 
 from api.auth.permission.permissionresolver import PermissionResolver
+from api.auth.sessionmanager import SessionManager
 from api.database.entitymanager import EntityManager
 from api.database.model.resource import Resource
 from api.http.request_handlers.requesthandler import RequestHandler
@@ -13,8 +14,9 @@ from api.lib.pagination import Pagination
 
 class FindResources(RequestHandler):
 
-    def __init__(self, entity_manager: EntityManager, permission_resolver: PermissionResolver):
+    def __init__(self, entity_manager: EntityManager, session_manager: SessionManager, permission_resolver: PermissionResolver):
         self.entity_manager = entity_manager
+        self.session_manager = session_manager
         self.permission_resolver = permission_resolver
 
     def handle_request(self, request: Request) -> JsonResponse:
@@ -22,7 +24,8 @@ class FindResources(RequestHandler):
 
         verified = RequestHelper.try_parse_boolean_value(request.args, 'verified')
 
-        if not self.permission_resolver.can_see_unverified_resources(self.get_current_user()):
+        current_user = self.session_manager.find_user_by_jwt_identity(self.get_current_identity())
+        if not self.permission_resolver.can_see_unverified_resources(current_user):
             verified = True
 
         filter_args = {
