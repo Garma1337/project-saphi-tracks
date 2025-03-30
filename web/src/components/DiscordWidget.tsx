@@ -30,10 +30,10 @@ const DiscordWidget = () => {
     return (
         <>
             {error && (
-                <Alert severity="error">Failed to load discord guild widget: {error}</Alert>
+                <Alert severity="error" variant="filled">Failed to load discord guild widget: {error}</Alert>
             )}
             {!discordGuildWidget && !error && (
-                <Alert severity="info">Loading discord guild widget ...</Alert>
+                <Alert severity="info" variant="filled">Loading discord guild widget ...</Alert>
             )}
             {!error && discordGuildWidget && (
                 <Stack spacing={2}>
