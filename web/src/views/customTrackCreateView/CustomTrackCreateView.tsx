@@ -70,18 +70,18 @@ const CustomTrackCreateView = () => {
             <Typography variant={"h4"}>Create Custom Track</Typography>
 
             {success && (
-                <Alert severity="success">
+                <Alert severity="success" variant="filled">
                     Your custom track was created successfully! It will be available to the public after being verified by moderators.
                 </Alert>
             )}
 
             {error && (
-                <Alert severity="error">
+                <Alert severity="error" variant="filled">
                     Failed to create custom track: {error}
                 </Alert>
             )}
 
-            <Alert severity="info">
+            <Alert severity="info" variant="filled">
                 The maximum allowed file size is 5MB.
                 Preview images should be 340x250 pixels.
             </Alert>

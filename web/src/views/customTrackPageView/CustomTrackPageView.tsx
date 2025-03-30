@@ -101,12 +101,12 @@ const CustomTrackPageView = () => {
 
                     {!customTrack.verified && (
                         <>
-                            {verifyError && <Alert severity="error">{verifyError}</Alert>}
-                            <Alert severity="warning">This track has not been verified yet, so it can only be seen by moderators.</Alert>
+                            {verifyError && <Alert severity="error" variant="filled">{verifyError}</Alert>}
+                            <Alert severity="warning" variant="filled">This track has not been verified yet, so it can only be seen by moderators.</Alert>
                         </>
                     )}
 
-                    {verifySuccess && <Alert severity="success">The track has been verified successfully!</Alert>}
+                    {verifySuccess && <Alert severity="success" variant="filled">The track has been verified successfully!</Alert>}
 
                     <Accordion>
                         <AccordionSummary
@@ -165,7 +165,7 @@ const CustomTrackPageView = () => {
                     )}
                 </>
             )}
-            {!customTrack && <Alert severity="warning">No custom track found.</Alert>}
+            {!customTrack && <Alert severity="warning" variant="filled">No custom track found.</Alert>}
         </Stack>
     );
 }

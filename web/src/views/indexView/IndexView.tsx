@@ -1,7 +1,7 @@
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 import ApiClient from "../../lib/services/apiClient.ts";
 import ServiceManager from "../../lib/serviceManager.ts";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import {CustomTrack} from "../../lib/api/dtos.ts";
 import CustomTrackListGrid from "../../components/CustomTrackListGrid.tsx";
 import Typography from "@mui/material/Typography/Typography";
@@ -32,7 +32,7 @@ const IndexView = () => {
                         Welcome!
                     </Typography>
 
-                    <Typography variant="body1">
+                    <Typography variant="body1" component="span">
                         On this website you can browse and share custom tracks for CTR. Please keep in mind that
                         registration is only possible on <Link
                         to="https://records.project-saphi.com">records.project-saphi.com</Link>.

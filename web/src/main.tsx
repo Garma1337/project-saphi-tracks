@@ -3,21 +3,24 @@ import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './App.css'
 import {HashRouter} from 'react-router-dom'
-import {createTheme, CssBaseline, ThemeProvider} from '@mui/material'
+import {CssBaseline, ThemeProvider} from '@mui/material'
 import getCurrentTheme from "./utils/getCurrentTheme.ts";
+import darkTheme from "./theme/dark.ts";
+import lightTheme from "./theme/light.ts";
 
-const theme = getCurrentTheme()
+let theme;
+const mode = getCurrentTheme();
 
-const darkTheme = createTheme({
-    palette: {
-        mode: theme,
-    },
-});
+if (mode === 'dark') {
+    theme = darkTheme;
+} else {
+    theme = lightTheme;
+}
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
         <HashRouter>
-            <ThemeProvider theme={darkTheme}>
+            <ThemeProvider theme={theme}>
                 <CssBaseline/>
                 <App/>
             </ThemeProvider>

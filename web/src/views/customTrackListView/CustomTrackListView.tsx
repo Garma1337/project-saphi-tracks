@@ -67,7 +67,7 @@ const CustomTrackListView = () => {
                 <Button
                     onClick={() => resetForm()}
                     variant="contained"
-                    color="warning"
+                    color="secondary"
                     size="large"
                     sx={{padding: 1.75}}
                 >
@@ -109,7 +109,7 @@ const CustomTrackListView = () => {
                     />
                 </>
             )}
-            {customTracks.length === 0 && <Alert severity={"warning"}>No custom tracks match the search.</Alert>}
+            {customTracks.length === 0 && <Alert severity="warning" variant="filled">No custom tracks match the search.</Alert>}
         </Stack>
     );
 }

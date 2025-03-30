@@ -93,7 +93,7 @@ const Layout = () => {
 
     return (
         <Box sx={{flexGrow: 1}}>
-            <AppBar position="static" color="primary">
+            <AppBar position="static" color="primary" enableColorOnDark>
                 <Container>
                     <Toolbar>
                         <IconButton

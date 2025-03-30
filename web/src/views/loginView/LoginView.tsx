@@ -37,12 +37,12 @@ const LoginView = () => {
         <Stack spacing={2}>
             <Typography variant="h4">Login</Typography>
 
-            <Alert severity="warning">
+            <Alert severity="warning" variant="filled">
                 Registration is only possible on records.project-saphi.com. Please create an account there, before
                 attempting to log in here.
             </Alert>
 
-            {loginError && <Alert severity="error">Failed to login: {loginError}</Alert>}
+            {loginError && <Alert severity="error" variant="filled">Failed to login: {loginError}</Alert>}
 
             <Stack component="form" spacing={2} width={"30ch"}>
                 <TextField

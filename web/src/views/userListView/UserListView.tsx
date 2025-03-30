@@ -58,7 +58,7 @@ const UserListView = () => {
                 <Button
                     onClick={() => resetForm()}
                     variant="contained"
-                    color="warning"
+                    color="secondary"
                     size="large"
                     sx={{padding: 1.75}}
                 >
@@ -89,7 +89,7 @@ const UserListView = () => {
                     />
                 </>
             )}
-            {users.length === 0 && <Alert severity={"warning"}>No users match the search.</Alert>}
+            {users.length === 0 && <Alert severity="warning" variant="filled">No users match the search.</Alert>}
         </Stack>
     );
 }

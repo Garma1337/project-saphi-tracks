@@ -59,13 +59,13 @@ const UserPageView = () => {
                     {userCustomTracks.length > 0 && (
                         <Stack spacing={2}>
                             <Typography variant="h4">Custom Tracks</Typography>
-                            <Alert severity={"info"}>This listing shows a random selection of 6 custom tracks created by {user.username}.</Alert>
+                            <Alert severity="info" variant="filled">This listing shows a random selection of 6 custom tracks created by {user.username}.</Alert>
                             <CustomTrackListGrid customTracks={userCustomTracks}/>
                         </Stack>
                     )}
                 </>
             )}
-            {!user && <Alert severity="warning">No player found.</Alert>}
+            {!user && <Alert severity="warning" variant="filled">No player found.</Alert>}
         </>
     );
 }

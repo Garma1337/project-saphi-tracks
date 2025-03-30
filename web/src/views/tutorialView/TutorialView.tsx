@@ -6,7 +6,7 @@ const TutorialView = () => {
             <Typography variant="h4">Tutorial</Typography>
 
             <Box my={2}>
-                <Alert severity="warning">
+                <Alert severity="warning" variant="filled">
                     This section is under construction ...
                 </Alert>
             </Box>

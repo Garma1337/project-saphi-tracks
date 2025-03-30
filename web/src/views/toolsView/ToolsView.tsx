@@ -6,7 +6,7 @@ const ToolsView = () => {
             <Typography variant="h4">Tools</Typography>
 
             <Box my={2}>
-                <Alert severity="info">
+                <Alert severity="info" variant="filled">
                     In this section you can find tools which you need to create, modify or play CTR with custom tracks. Depending on what you are planning to do,
                     you will not need all of them. If you are not sure what you need, you can ask for help in our <Link href={"https://discord.gg/6mxqGJmkKJ"}>Discord server</Link>.
                 </Alert>
