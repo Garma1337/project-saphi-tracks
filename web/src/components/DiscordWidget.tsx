@@ -1,0 +1,75 @@
+import ApiClient from "../lib/services/apiClient.ts";
+import ServiceManager from "../lib/serviceManager.ts";
+import {useEffect, useState } from "react";
+import {DiscordGuildWidget} from "../lib/api/dtos.ts";
+import Stack from "@mui/material/Stack/Stack";
+import Alert from "@mui/material/Alert/Alert";
+import Typography from "@mui/material/Typography/Typography";
+import CardMedia from "@mui/material/CardMedia/CardMedia";
+import Grid from "@mui/material/Grid/Grid";
+import Button from "@mui/material/Button/Button";
+import Link from "@mui/material/Link";
+import Box from "@mui/material/Box/Box";
+
+const DiscordWidget = () => {
+    const apiClient: ApiClient = ServiceManager.createApiClient();
+
+    const [discordGuildWidget, setDiscordGuildWidget] = useState<DiscordGuildWidget | null>(null);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        apiClient.getDiscordStatus().then((status) => {
+            if (status.success) {
+                setDiscordGuildWidget(status.widget);
+            } else {
+                setError(status.error);
+            }
+        });
+    }, []);
+
+    return (
+        <>
+            {error && (
+                <Alert severity="error">Failed to load discord guild widget: {error}</Alert>
+            )}
+            {!discordGuildWidget && !error && (
+                <Alert severity="info">Loading discord guild widget ...</Alert>
+            )}
+            {!error && discordGuildWidget && (
+                <Stack spacing={2}>
+                    <Box>
+                        <Typography variant={"h5"}>Discord - {discordGuildWidget.name}</Typography>
+                        <Typography variant={"body1"}>{discordGuildWidget.member_count} members online</Typography>
+                    </Box>
+
+                    <Grid container>
+                        {discordGuildWidget.members.map((member) => (
+                            <Grid container spacing={1} sx={{ mb: 0.5 }} key={member.id}>
+                                <Grid item>
+                                    <CardMedia
+                                        component="img"
+                                        image={member.avatar}
+                                        alt={member.username}
+                                        sx={{width: 25, height: 25}}
+                                        style={{borderRadius: '50%'}}
+                                    />
+                                </Grid>
+                                <Grid item>
+                                    <Typography variant="body1">{member.username}</Typography>
+                                </Grid>
+                            </Grid>
+                        ))}
+                    </Grid>
+
+                    <Link href={discordGuildWidget.invite_link}>
+                        <Button variant={"contained"}>
+                            Join the discord
+                        </Button>
+                    </Link>
+                </Stack>
+            )}
+        </>
+    )
+}
+
+export default DiscordWidget;

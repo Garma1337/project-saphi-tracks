@@ -1,4 +1,4 @@
-import {CustomTrack, Resource, User} from "./dtos.ts";
+import {CustomTrack, DiscordGuildWidget, Resource, User} from "./dtos.ts";
 
 export type Pagination = {
     current_page: number;
@@ -16,6 +16,12 @@ export type CreateCustomTrackResponse = {
     success: boolean;
     error: string | null;
     custom_track: CustomTrack | null;
+}
+
+export type DiscordStatusResponse = {
+    success: boolean;
+    error: string | null;
+    widget: DiscordGuildWidget | null;
 }
 
 export type DownloadResourceResponse = {

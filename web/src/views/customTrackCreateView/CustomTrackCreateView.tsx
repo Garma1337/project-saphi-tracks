@@ -1,5 +1,5 @@
 import {Alert, Button, Stack, TextField, Typography} from "@mui/material";
-import {useState, useEffect} from "react";
+import {useState, useEffect, ChangeEvent} from "react";
 import ServiceManager from "../../lib/serviceManager.ts";
 import ApiClient from "../../lib/services/apiClient.ts";
 import useStore from "../../store.ts";
@@ -77,13 +77,13 @@ const CustomTrackCreateView = () => {
 
             {error && (
                 <Alert severity="error">
-                    Your custom track could not be created: {error}
+                    Failed to create custom track: {error}
                 </Alert>
             )}
 
             <Alert severity="info">
                 The maximum allowed file size is 5MB.
-                Preview images must be 250x250 pixels.
+                Preview images should be 340x250 pixels.
             </Alert>
 
             <Stack component={"form"} spacing={2} width={"60ch"}>
@@ -116,14 +116,14 @@ const CustomTrackCreateView = () => {
                     type="file"
                     variant="outlined"
                     name="previewImage"
-                    onChange={(e) => setPreviewImage(e.target.files[0])}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => setPreviewImage(e.target.files?.[0] || null)}
                 />
                 <Stack spacing={2} direction={"row"}>
                     <TextField
                         type="file"
                         variant="outlined"
                         name="levFile"
-                        onChange={(e) => setLevFile(e.target.files[0])}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => setLevFile(e.target.files?.[0] || null)}
                     />
                     <TextField
                         label=".lev File Version"
@@ -137,7 +137,7 @@ const CustomTrackCreateView = () => {
                         type="file"
                         variant="outlined"
                         name="vrmFile"
-                        onChange={(e) => setVrmFile(e.target.files[0])}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => setVrmFile(e.currentTarget.files?.[0] || null)}
                     />
                     <TextField
                         label=".vrm File Version"

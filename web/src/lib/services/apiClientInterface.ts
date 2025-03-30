@@ -1,11 +1,12 @@
 import {
-    CreateCustomTrackResponse, DownloadResourceResponse,
+    CreateCustomTrackResponse, DiscordStatusResponse, DownloadResourceResponse,
     LoginResponse,
     PaginatedQueryResponse,
     SessionResponse,
     VerifyCustomTrackResponse,
     VerifyResourceResponse
 } from "./../api/response.ts";
+import {Resource} from "../api/dtos.ts";
 
 export default interface ApiClientInterface {
     createCustomTrack: (
@@ -61,15 +62,17 @@ export default interface ApiClientInterface {
         page: number | null,
         perPage: number | null,
     ) => Promise<PaginatedQueryResponse>
-    getSession: () => Promise<SessionResponse>,
+    getDiscordStatus: () => Promise<DiscordStatusResponse>
+    getSession: () => Promise<SessionResponse>
     login: (
         username: string,
         password: string
-    ) => Promise<LoginResponse>,
+    ) => Promise<LoginResponse>
+    proxyResource: (resource: Resource | null) => string
     verifyCustomTrack: (
         id: number
-    ) => Promise<VerifyCustomTrackResponse>,
+    ) => Promise<VerifyCustomTrackResponse>
     verifyResource: (
         id: number
-    ) => Promise<VerifyResourceResponse>,
+    ) => Promise<VerifyResourceResponse>
 }

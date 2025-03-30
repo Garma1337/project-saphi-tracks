@@ -41,13 +41,13 @@ const CustomTrackPageView = () => {
                     <Typography variant="h4">{customTrack.name}</Typography>
 
                     {!customTrack.verified && (
-                        <Alert severity="warning">This track has not been verified yet.</Alert>
+                        <Alert severity="warning">This track has not been verified yet, so it can only be seen by moderators.</Alert>
                     )}
 
                     <YouTubeVideo src={customTrack.video}/>
 
                     <Typography>
-                        Here is what {customTrack.author.username} has to say about the track:
+                        {customTrack.author.username} says:
                     </Typography>
                     <Blockquote text={customTrack.description}/>
 

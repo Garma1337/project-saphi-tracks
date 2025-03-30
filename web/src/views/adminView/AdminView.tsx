@@ -80,7 +80,7 @@ const AdminView = () => {
             <TabContent value={tabIndex} index={0}>
                 <Stack spacing={2}>
                     {unverifiedCustomTracks.length === 0 && (
-                        <Alert severity="info">There are currently no unverified custom tracks.</Alert>
+                        <Alert severity="success">There are currently no unverified custom tracks.</Alert>
                     )}
 
                     {unverifiedCustomTracks.length > 0 && (
@@ -109,7 +109,7 @@ const AdminView = () => {
             <TabContent value={tabIndex} index={1}>
                 <Stack spacing={2}>
                     {unverifiedUsers.length === 0 && (
-                        <Alert severity="info">There are currently no unverified users.</Alert>
+                        <Alert severity="success">There are currently no unverified users.</Alert>
                     )}
 
                     {unverifiedUsers.length > 0 && (

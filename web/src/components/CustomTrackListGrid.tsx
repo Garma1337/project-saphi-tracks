@@ -2,14 +2,21 @@ import {Box, Card, CardContent, CardMedia, Chip, Link, Typography} from "@mui/ma
 import AppRoutes from "../routes.tsx";
 import formatDate from "../utils/formatDate.ts";
 import {useNavigate} from "react-router-dom";
-import {CustomTrack} from "../lib/api/dtos.ts";
+import {CustomTrack, Resource} from "../lib/api/dtos.ts";
+import ApiClient from "../lib/services/apiClient.ts";
+import ServiceManager from "../lib/serviceManager.ts";
 
 interface CustomTrackListGridProps {
     customTracks: CustomTrack[]
 }
 
 const CustomTrackListGrid = (props: CustomTrackListGridProps) => {
+    const apiClient: ApiClient = ServiceManager.createApiClient();
     const navigate = useNavigate();
+
+    const getPreviewImage = (customTrack: CustomTrack): Resource | null => {
+        return customTrack.resources.find(resource => resource.resource_type === 'preview') || null;
+    }
 
     return (
         <Box sx={{
@@ -24,7 +31,7 @@ const CustomTrackListGrid = (props: CustomTrackListGridProps) => {
                         <CardMedia
                             component="img"
                             height="250"
-                            image={"https://ctrcustomtracks.com/wp-content/uploads/2025/01/NeonParadise-300x222.png"}
+                            image={apiClient.proxyResource(getPreviewImage(customTrack))}
                             alt={customTrack.name}
                         />
                         <Box>

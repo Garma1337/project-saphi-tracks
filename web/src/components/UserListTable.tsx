@@ -60,7 +60,7 @@ const UserListTable = (props: UserListTableProps) => {
                             <TableCell align="center">{row.custom_tracks.length}</TableCell>
                             <TableCell align="center">
                                 <Link to={`${AppRoutes.UserDetailPage}?id=${row.id}`}>
-                                    <Button variant="outlined" color="primary">
+                                    <Button variant="contained" color="primary">
                                         <ZoomInIcon sx={{marginRight: 1}}/>
                                         Profile
                                     </Button>

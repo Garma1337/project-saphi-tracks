@@ -1,13 +1,16 @@
 import axios, {AxiosInstance} from "axios";
 import ApiClientInterface from "./apiClientInterface.ts";
 import {
-    CreateCustomTrackResponse, DownloadResourceResponse,
+    CreateCustomTrackResponse,
+    DiscordStatusResponse,
+    DownloadResourceResponse,
     LoginResponse,
     PaginatedQueryResponse,
     SessionResponse,
     VerifyCustomTrackResponse,
     VerifyResourceResponse
 } from "./../api/response.ts";
+import {Resource} from "../api/dtos.ts";
 
 export default class ApiClient implements ApiClientInterface {
     private client: AxiosInstance;
@@ -172,6 +175,11 @@ export default class ApiClient implements ApiClientInterface {
         return response.data as PaginatedQueryResponse;
     }
 
+    public async getDiscordStatus(): Promise<DiscordStatusResponse> {
+        const response = await this.client.get(`/discordstatus`);
+        return response.data as DiscordStatusResponse;
+    }
+
     public async getSession(): Promise<SessionResponse> {
         const response = await this.client.get(`/session`);
         return response.data as SessionResponse;
@@ -180,6 +188,18 @@ export default class ApiClient implements ApiClientInterface {
     public async login(username: string, password: string): Promise<LoginResponse> {
         const response = await this.client.post(`/login`, { username, password });
         return response.data as LoginResponse;
+    }
+
+    public proxyResource(resource: Resource | null): string {
+        if (!resource) {
+            return '';
+        }
+
+        if (!this.client.defaults.baseURL) {
+            return '';
+        }
+
+        return `${this.client.defaults.baseURL.replace('/api/v1', '')}/rproxy/${resource.file_name}`;
     }
 
     public async verifyCustomTrack(id: number): Promise<VerifyCustomTrackResponse> {

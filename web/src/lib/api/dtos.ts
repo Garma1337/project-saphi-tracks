@@ -3,13 +3,28 @@ export type CustomTrack = {
     author_id: number;
     name: string;
     description: string;
-    created: Date;
+    created: string;
     highlighted: boolean;
     verified: boolean;
     video: string;
     author: User;
     resources: Resource[];
     tags: Tag[];
+}
+
+export type DiscordGuildWidgetMember = {
+    id: string;
+    username: string;
+    status: string;
+    avatar: string;
+}
+
+export type DiscordGuildWidget = {
+    id: string;
+    name: string;
+    invite_link: string;
+    member_count: number;
+    members: DiscordGuildWidgetMember[];
 }
 
 export type Permission = {
@@ -32,7 +47,7 @@ export type Resource = {
     resource_type: string;
     checksum: string;
     version: string;
-    created: Date;
+    created: string;
     verified: boolean;
     author: User;
     custom_track: CustomTrack;
@@ -54,7 +69,7 @@ export type Tag  ={
 export type User = {
     id: number;
     username: string;
-    created: Date;
+    created: string;
     verified: boolean;
     custom_tracks: CustomTrack[];
     permission: Permission;
