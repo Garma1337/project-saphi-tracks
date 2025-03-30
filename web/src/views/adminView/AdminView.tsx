@@ -7,7 +7,7 @@ import Tabs from "@mui/material/Tabs/Tabs";
 import Tab from "@mui/material/Tab/Tab";
 import TabContent from "../../components/TabContent.tsx";
 import CustomTrackListGrid from "../../components/CustomTrackListGrid.tsx";
-import {Alert, Box, Pagination as MuiPagination, Stack} from "@mui/material";
+import {Alert, Box, Pagination as MuiPagination, Stack, Typography} from "@mui/material";
 import UserListTable from "../../components/UserListTable.tsx";
 import useStore from "../../store.ts";
 import { useNavigate } from "react-router-dom";
@@ -70,72 +70,79 @@ const AdminView = () => {
     }, [displayOptions, navigate]);
 
     return (
-        <Box sx={{width: '100%'}}>
-            <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
-                <Tabs value={tabIndex} onChange={handleChange} aria-label="basic tabs example">
-                    <Tab label="Unverified Tracks" {...createTabProperties(0)} />
-                    <Tab label="Unverified Users" {...createTabProperties(1)} />
-                </Tabs>
+        <Stack spacing={2}>
+            <Typography variant="h4">Administration</Typography>
+
+            <Box sx={{width: '100%'}}>
+                <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
+                    <Tabs value={tabIndex} onChange={handleChange} aria-label="basic tabs example">
+                        <Tab label="Unverified Tracks" {...createTabProperties(0)} />
+                        <Tab label="Unverified Users" {...createTabProperties(1)} />
+                    </Tabs>
+                </Box>
+
+                <TabContent value={tabIndex} index={0}>
+                    <Stack spacing={2}>
+                        {unverifiedCustomTracks.length === 0 && (
+                            <Alert severity="success" variant="filled">There are currently no unverified custom tracks.</Alert>
+                        )}
+
+                        {unverifiedCustomTracks.length > 0 && (
+                            <>
+                                <MuiPagination
+                                    count={customTrackPagination?.total_page_count}
+                                    shape={"rounded"}
+                                    color={"primary"}
+                                    size={"large"}
+                                    page={customTrackPage}
+                                    onChange={handleCustomTrackPageChange}
+                                />
+                                <CustomTrackListGrid customTracks={unverifiedCustomTracks}/>
+                                <MuiPagination
+                                    count={customTrackPagination?.total_page_count}
+                                    shape={"rounded"}
+                                    color={"primary"}
+                                    size={"large"}
+                                    page={customTrackPage}
+                                    onChange={handleCustomTrackPageChange}
+                                />
+                            </>
+                        )}
+                    </Stack>
+                </TabContent>
+
+                <TabContent value={tabIndex} index={1}>
+                    <Stack spacing={2}>
+                        {unverifiedUsers.length === 0 && (
+                            <Alert severity="success" variant="filled">There are currently no unverified users.</Alert>
+                        )}
+
+                        {unverifiedUsers.length > 0 && (
+                            <>
+                                <MuiPagination
+                                    count={userPagination?.total_page_count}
+                                    shape={"rounded"}
+                                    color={"primary"}
+                                    size={"large"}
+                                    page={userPage}
+                                    onChange={handleUserPageChange}
+                                />
+                                <UserListTable users={unverifiedUsers}/>
+                                <MuiPagination
+                                    count={userPagination?.total_page_count}
+                                    shape={"rounded"}
+                                    color={"primary"}
+                                    size={"large"}
+                                    page={userPage}
+                                    onChange={handleUserPageChange}
+                                />
+                            </>
+                        )}
+                    </Stack>
+                </TabContent>
+
             </Box>
-            <TabContent value={tabIndex} index={0}>
-                <Stack spacing={2}>
-                    {unverifiedCustomTracks.length === 0 && (
-                        <Alert severity="success" variant="filled">There are currently no unverified custom tracks.</Alert>
-                    )}
-
-                    {unverifiedCustomTracks.length > 0 && (
-                        <>
-                            <MuiPagination
-                                count={customTrackPagination?.total_page_count}
-                                shape={"rounded"}
-                                color={"primary"}
-                                size={"large"}
-                                page={customTrackPage}
-                                onChange={handleCustomTrackPageChange}
-                            />
-                            <CustomTrackListGrid customTracks={unverifiedCustomTracks}/>
-                            <MuiPagination
-                                count={customTrackPagination?.total_page_count}
-                                shape={"rounded"}
-                                color={"primary"}
-                                size={"large"}
-                                page={customTrackPage}
-                                onChange={handleCustomTrackPageChange}
-                            />
-                        </>
-                    )}
-                </Stack>
-            </TabContent>
-            <TabContent value={tabIndex} index={1}>
-                <Stack spacing={2}>
-                    {unverifiedUsers.length === 0 && (
-                        <Alert severity="success" variant="filled">There are currently no unverified users.</Alert>
-                    )}
-
-                    {unverifiedUsers.length > 0 && (
-                        <>
-                            <MuiPagination
-                                count={userPagination?.total_page_count}
-                                shape={"rounded"}
-                                color={"primary"}
-                                size={"large"}
-                                page={userPage}
-                                onChange={handleUserPageChange}
-                            />
-                            <UserListTable users={unverifiedUsers}/>
-                            <MuiPagination
-                                count={userPagination?.total_page_count}
-                                shape={"rounded"}
-                                color={"primary"}
-                                size={"large"}
-                                page={userPage}
-                                onChange={handleUserPageChange}
-                            />
-                        </>
-                    )}
-                </Stack>
-            </TabContent>
-        </Box>
+        </Stack>
     );
 }
 
