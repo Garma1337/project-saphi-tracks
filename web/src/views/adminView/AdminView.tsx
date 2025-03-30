@@ -31,7 +31,7 @@ const AdminView = () => {
     const [tabIndex, setTabIndex] = useState(0);
 
     useEffect(() => {
-        apiClient.findCustomTracks(null, null, null, false, null, customTrackPage, null).then((query) => {
+        apiClient.findCustomTracks(null, null, null, null, false, customTrackPage, null).then((query) => {
             setUnverifiedCustomTracks(query.items || []);
             setCustomTrackPagination(query.pagination);
         });

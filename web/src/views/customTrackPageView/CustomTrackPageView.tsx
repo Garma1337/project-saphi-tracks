@@ -13,13 +13,26 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import YouTubeVideo from "../../components/YouTubeVideo.tsx";
 import DownloadResourceLink from "../../components/ResourceDownloadButton.tsx";
 import Blockquote from "../../components/BlockQuote.tsx";
+import Button from "@mui/material/Button/Button";
+import Grid from "@mui/material/Grid/Grid";
+import Dialog from "@mui/material/Dialog/Dialog";
+import DialogTitle from "@mui/material/DialogTitle/DialogTitle";
+import DialogContent from "@mui/material/DialogContent/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText/DialogContentText";
+import DialogActions from "@mui/material/DialogActions/DialogActions";
+import randomSlice from "../../utils/randomSlice.ts";
+import CustomTrackListGrid from "../../components/CustomTrackListGrid.tsx";
 
 const CustomTrackPageView = () => {
     const apiClient: ApiClient = ServiceManager.createApiClient();
 
     const [searchParams] = useSearchParams();
     const [customTrack, setCustomTrack] = useState<CustomTrack | null>(null);
+    const [userCustomTracks, setUserCustomTracks] = useState<CustomTrack[]>([]);
     const [resources, setResources] = useState<Resource[]>([]);
+    const [verifyModalOpen, setVerifyModalOpen] = useState(false);
+    const [verifySuccess, setVerifySuccess] = useState<boolean | null>(null);
+    const [verifyError, setVerifyError] = useState<string | null>(null);
 
     useEffect(() => {
         const id = Number(searchParams.get('id'));
@@ -34,22 +47,66 @@ const CustomTrackPageView = () => {
         }
     }, [customTrack, setResources]);
 
+    useEffect(() => {
+        if (customTrack) {
+            apiClient.findCustomTracks(null, customTrack.author.id, null, null, null, 1, 50).then((query) => {
+                const randomTracks: CustomTrack[] = randomSlice(query.items, 6);
+                setUserCustomTracks(randomTracks)
+            });
+        }
+    }, [customTrack, setUserCustomTracks]);
+
+    const verifyCustomTrack = async (customTrack: CustomTrack) => {
+        setVerifyError(null);
+
+        const response = await apiClient.verifyCustomTrack(customTrack.id);
+        if (response.success) {
+            setCustomTrack({...customTrack, verified: true});
+            setVerifySuccess(true);
+        } else {
+            setVerifyError(response.error);
+        }
+
+        closeModal();
+    }
+
+    const openModal = () => {
+        setVerifyModalOpen(true);
+    }
+
+    const closeModal = () => {
+        setVerifyModalOpen(false);
+    }
+
     return (
         <Stack spacing={2}>
             {customTrack && (
                 <>
-                    <Typography variant="h4">{customTrack.name}</Typography>
+                    <Grid container>
+                        <Grid item xs={10}>
+                            <Typography variant="h4">{customTrack.name}</Typography>
+                        </Grid>
+                        <Grid item xs={2}>
+                            {!customTrack.verified && (
+                                <Button
+                                    variant="contained"
+                                    color="success"
+                                    onClick={openModal}
+                                >
+                                    Verify this track
+                                </Button>
+                            )}
+                        </Grid>
+                    </Grid>
 
                     {!customTrack.verified && (
-                        <Alert severity="warning">This track has not been verified yet, so it can only be seen by moderators.</Alert>
+                        <>
+                            {verifyError && <Alert severity="error">{verifyError}</Alert>}
+                            <Alert severity="warning">This track has not been verified yet, so it can only be seen by moderators.</Alert>
+                        </>
                     )}
 
-                    <YouTubeVideo src={customTrack.video}/>
-
-                    <Typography>
-                        {customTrack.author.username} says:
-                    </Typography>
-                    <Blockquote text={customTrack.description}/>
+                    {verifySuccess && <Alert severity="success">The track has been verified successfully!</Alert>}
 
                     <Accordion>
                         <AccordionSummary
@@ -69,6 +126,43 @@ const CustomTrackPageView = () => {
                             </ul>
                         </AccordionDetails>
                     </Accordion>
+
+                    <YouTubeVideo src={customTrack.video}/>
+
+                    <Typography>
+                        {customTrack.author.username} says:
+                    </Typography>
+                    <Blockquote text={customTrack.description}/>
+
+                    <Dialog
+                        open={verifyModalOpen}
+                        onClose={openModal}
+                        aria-labelledby="alert-dialog-title"
+                        aria-describedby="alert-dialog-description"
+                    >
+                        <DialogTitle id="alert-dialog-title">
+                            Verify custom track "{customTrack.name}"?
+                        </DialogTitle>
+                        <DialogContent>
+                            <DialogContentText id="alert-dialog-description">
+                                This action cannot be undone. The track will be visible to all users
+                                and can be downloaded ingame.
+                            </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={closeModal} variant={"outlined"}>Back</Button>
+                            <Button onClick={() => verifyCustomTrack(customTrack)} variant={"contained"} color={"success"} autoFocus>
+                                Verify
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+
+                    {userCustomTracks.length > 0 && (
+                        <>
+                            <Typography variant="h4">Custom tracks made by {customTrack.author.username} ...</Typography>
+                            <CustomTrackListGrid customTracks={userCustomTracks}/>
+                        </>
+                    )}
                 </>
             )}
             {!customTrack && <Alert severity="warning">No custom track found.</Alert>}

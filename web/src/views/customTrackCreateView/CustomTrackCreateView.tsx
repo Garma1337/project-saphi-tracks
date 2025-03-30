@@ -113,6 +113,7 @@ const CustomTrackCreateView = () => {
                     onChange={(e) => setVideo(e.target.value)}
                 />
                 <TextField
+                    required
                     type="file"
                     variant="outlined"
                     name="previewImage"
@@ -120,12 +121,14 @@ const CustomTrackCreateView = () => {
                 />
                 <Stack spacing={2} direction={"row"}>
                     <TextField
+                        required
                         type="file"
                         variant="outlined"
                         name="levFile"
                         onChange={(e: ChangeEvent<HTMLInputElement>) => setLevFile(e.target.files?.[0] || null)}
                     />
                     <TextField
+                        required
                         label=".lev File Version"
                         variant="outlined"
                         name="levFileVersion"
@@ -134,12 +137,14 @@ const CustomTrackCreateView = () => {
                 </Stack>
                 <Stack spacing={2} direction={"row"}>
                     <TextField
+                        required
                         type="file"
                         variant="outlined"
                         name="vrmFile"
                         onChange={(e: ChangeEvent<HTMLInputElement>) => setVrmFile(e.currentTarget.files?.[0] || null)}
                     />
                     <TextField
+                        required
                         label=".vrm File Version"
                         variant="outlined"
                         name="vrmFileVersion"
