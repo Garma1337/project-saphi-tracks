@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import os.path
 import time
 from datetime import datetime
 from pathlib import Path
@@ -78,7 +79,7 @@ class ResourceManager(object):
             raise ResourceCreationError(f'No user with id {author_id} exists')
 
         if not self.semver_validator.check_is_valid_semver(file_version):
-            raise ResourceCreationError(f'Invalid file version format: {file_version}')
+            raise ResourceCreationError(f'"{file_version}" is not a valid semantic version')
 
         if uploaded_file.content_length > self.max_file_size:
             raise ResourceCreationError(f'File size exceeds the maximum limit of {self.max_file_size} bytes')
@@ -131,6 +132,10 @@ class ResourceManager(object):
 
         resource_repository.update(id=resource_id, verified=1)
         return resource_repository.find_one(resource_id)
+
+    def get_local_path(self, file_name: str) -> str:
+        encoder_target = self.file_encoder_strategy.encode_file_name(file_name)
+        return os.path.join(encoder_target.get_directory_path(), encoder_target.get_file_name())
 
     def generate_file_name_for_resource_type(self, resource_type: str) -> str:
         file_name_mapping = {

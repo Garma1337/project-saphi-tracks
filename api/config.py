@@ -4,6 +4,7 @@ import os
 from datetime import timedelta
 
 MAX_CONTENT_LENGTH = 10 * 1024 * 1024 # 10MB
+DISCORD_GUILD_ID = os.getenv('DISCORD_GUILD_ID')
 
 DATABASE_DRIVER = os.getenv('DATABASE_DRIVER')
 DATABASE_HOST = os.getenv('DATABASE_HOST')

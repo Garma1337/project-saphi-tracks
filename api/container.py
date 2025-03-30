@@ -15,6 +15,8 @@ from api.database.dto_generator.dtogeneratorservicefactory import DTOGeneratorSe
 from api.database.dto_generator.htmlcodeformatter import HtmlCodeFormatter
 from api.database.entitymanager import EntityManager
 from api.database.repository.modelrepository import ModelRepository
+from api.discord.discord import Discord
+from api.discord.discordclient import DiscordClient
 from api.event.eventmanagerfactory import EventManagerFactory
 from api.event.subscribers.saphiloginsuccessfuleventsubscriber import SaphiLoginSuccessfulEventSubscriber
 from api.faker.fakerservice import FakerService
@@ -28,6 +30,7 @@ from api.http.request_handlers.findsettings import FindSettings
 from api.http.request_handlers.findtags import FindTags
 from api.http.request_handlers.findusers import FindUsers
 from api.http.request_handlers.generatedtos import GenerateDTOs
+from api.http.request_handlers.getdiscordstatus import GetDiscordStatus
 from api.http.request_handlers.getsession import GetSession
 from api.http.request_handlers.loginuser import LoginUser
 from api.http.request_handlers.updatecustomtrack import UpdateCustomTrack
@@ -68,6 +71,10 @@ def init_app(app):
     container.register('db.dto_generator.dto_generator_service', lambda: DTOGeneratorServiceFactory.factory())
     container.register('db.dto_generator.html_code_formatter', lambda: HtmlCodeFormatter())
 
+    # Discord
+    container.register('discord.discord', lambda: Discord(container.get('discord.discord_client')))
+    container.register('discord.discord_client', lambda: DiscordClient())
+
     # Event System
     container.register('event.subscriber.saphi_login_successful', lambda: SaphiLoginSuccessfulEventSubscriber(
         container.get('db.entity_manager'),
@@ -101,6 +108,10 @@ def init_app(app):
     container.register('http.request_handler.generate_dtos', lambda: GenerateDTOs(
         container.get('db.dto_generator.dto_generator_service'),
         container.get('db.dto_generator.html_code_formatter')
+    ))
+    container.register('http.request_handler.get_discord_status', lambda: GetDiscordStatus(
+        container.get('discord.discord'),
+        app.config['DISCORD_GUILD_ID']
     ))
     container.register('http.request_handler.get_session', lambda: GetSession(
         container.get('auth.session_manager'),
