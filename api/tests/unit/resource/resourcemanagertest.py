@@ -20,17 +20,22 @@ from api.tests.mockmodelrepository import MockModelRepository
 class ResourceManagerTest(TestCase):
 
     def setUp(self):
+        self.db = SQLAlchemy()
+
         self.entity_manager = EntityManager(
             SQLAlchemy(),
             MockModelRepository
         )
 
-        self.resource_repository = MockModelRepository(Resource)
-        self.user_repository = MockModelRepository(User)
+        self.resource_repository = MockModelRepository(self.db, Resource)
+        self.user_repository = MockModelRepository(self.db, User)
         self.garma = self.user_repository.create(
             id=1,
             username='Garma',
         )
+
+        self.entity_manager.cache_repository_instance(Resource, self.resource_repository)
+        self.entity_manager.cache_repository_instance(User, self.user_repository)
 
         self.file_system_adapter = MockFileSystemAdapter()
         self.file_encoder_strategy = Sha256FileEncoderStrategy()
@@ -44,13 +49,6 @@ class ResourceManagerTest(TestCase):
         )
 
         self.resource_manager._get_current_ts = Mock(return_value=123456789)
-
-        repositories = {
-            Resource: self.resource_repository,
-            User: self.user_repository
-        }
-
-        self.entity_manager.get_repository = lambda model: repositories[model]
 
     def test_can_get_expected_file_extensions(self):
         self.assertEqual(['jpg', 'png'], self.resource_manager.get_expected_file_extensions('preview'))

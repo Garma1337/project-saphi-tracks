@@ -19,9 +19,13 @@ from api.tests.mockpasswordencoderstrategy import MockPasswordEncoderStrategy
 class SaphiLoginSuccessfulEventSubscriberTest(TestCase):
 
     def setUp(self):
+        self.db = SQLAlchemy()
+        self.entity_manager = EntityManager(self.db, MockModelRepository)
+
         self.event_manager = EventManager()
-        self.entity_manager = EntityManager(SQLAlchemy(), MockModelRepository)
-        self.user_repository = MockModelRepository(User)
+        self.user_repository = MockModelRepository(self.db, User)
+
+        self.entity_manager.cache_repository_instance(User, self.user_repository)
         self.password_manager = PasswordManager(MockPasswordEncoderStrategy())
 
         self.saphi_login_successful_event_subscriber = SaphiLoginSuccessfulEventSubscriber(
@@ -37,8 +41,6 @@ class SaphiLoginSuccessfulEventSubscriberTest(TestCase):
             self.password_manager,
             self.saphi_client
         )
-
-        self.entity_manager.get_repository = lambda model: self.user_repository
 
     def test_can_create_new_user(self):
         result = self.saphi_login_successful_event_subscriber.run_on_event(Event('saphi_login_successful', {

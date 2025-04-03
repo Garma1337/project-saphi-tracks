@@ -21,9 +21,13 @@ from api.tests.mockmodelrepository import MockModelRepository
 class DownloadResourceTest(TestCase):
 
     def setUp(self):
-        self.entity_manager = EntityManager(SQLAlchemy(), MockModelRepository)
+        self.db = SQLAlchemy()
+        self.entity_manager = EntityManager(self.db, MockModelRepository)
+
         self.session_manager = SessionManager(self.entity_manager)
-        self.resource_repository = MockModelRepository(Resource)
+        self.resource_repository = MockModelRepository(self.db, Resource)
+
+        self.entity_manager.cache_repository_instance(Resource, self.resource_repository)
 
         self.file_system_adapter = MockFileSystemAdapter()
         self.file_encoder_strategy = Sha256FileEncoderStrategy()
@@ -41,8 +45,6 @@ class DownloadResourceTest(TestCase):
         self.permission_resolver = LogicalPermissionResolver()
         self.download_resource = DownloadResource(self.entity_manager, self.session_manager, self.resource_manager, self.permission_resolver)
         self.download_resource.get_current_identity = Mock(return_value=None)
-
-        self.entity_manager.get_repository = lambda model: self.resource_repository
 
     def test_can_download_resource(self):
         self.resource_repository.create(

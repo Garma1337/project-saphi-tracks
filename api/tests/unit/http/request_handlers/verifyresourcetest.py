@@ -23,17 +23,19 @@ from api.tests.mockmodelrepository import MockModelRepository
 class VerifyResourceTest(TestCase):
 
     def setUp(self):
-        self.entity_manager = EntityManager(SQLAlchemy(), MockModelRepository)
+        self.db = SQLAlchemy()
+        self.entity_manager = EntityManager(self.db, MockModelRepository)
+
         self.session_manager = SessionManager(self.entity_manager)
 
-        self.resource_repository = MockModelRepository(Resource)
+        self.resource_repository = MockModelRepository(self.db, Resource)
         self.resource = self.resource_repository.create(
             author_id=1,
             custom_track_id=1,
             verified=False
         )
 
-        self.user_repository = MockModelRepository(User)
+        self.user_repository = MockModelRepository(self.db, User)
         self.garma = self.user_repository.create(
             id=1,
             username='Garma',
@@ -41,12 +43,8 @@ class VerifyResourceTest(TestCase):
         self.garma.permission = Permission()
         self.garma.permission.can_edit_resources = True
 
-        repositories = {
-            Resource: self.resource_repository,
-            User: self.user_repository
-        }
-
-        self.entity_manager.get_repository = lambda model: repositories[model]
+        self.entity_manager.cache_repository_instance(Resource, self.resource_repository)
+        self.entity_manager.cache_repository_instance(User, self.user_repository)
 
         self.file_system_adapter = MockFileSystemAdapter()
         self.file_encoder_strategy = Sha256FileEncoderStrategy()

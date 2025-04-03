@@ -81,9 +81,13 @@ class ModelRepository(ABC):
         self.db.session.execute(statement)
         self.db.session.commit()
 
+    def delete_one(self, id: int) -> None:
+        if not id:
+            raise ValueError('An id is required to delete an entity')
+
+        self.db.session.query(self.model_class).filter(getattr(self.model_class, 'id') == id).delete()
+        self.db.session.commit()
+
     def delete_all(self) -> None:
         self.db.session.query(self.model_class).delete()
         self.db.session.commit()
-
-    def set_model_class(self, model: type) -> None:
-        self.model_class = model

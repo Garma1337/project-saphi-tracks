@@ -1,7 +1,6 @@
 # coding: utf-8
 
 import uuid
-from copy import copy
 from datetime import datetime
 from unittest import TestCase
 from unittest.mock import Mock
@@ -23,13 +22,15 @@ from api.tests.mockmodelrepository import MockModelRepository
 class FindCustomTracksTest(TestCase):
 
     def setUp(self):
-        self.entity_manager = EntityManager(SQLAlchemy(), MockModelRepository)
-        self.session_manager = SessionManager(copy(self.entity_manager))
+        self.db = SQLAlchemy()
+        self.entity_manager = EntityManager(self.db, MockModelRepository)
+
+        self.session_manager = SessionManager(self.entity_manager)
         self.permission_resolver = LogicalPermissionResolver()
 
-        self.user_repository = MockModelRepository(User)
-        self.resource_repository = MockModelRepository(Resource)
-        self.custom_track_repository = MockModelRepository(CustomTrack)
+        self.user_repository = MockModelRepository(self.db, User)
+        self.resource_repository = MockModelRepository(self.db, Resource)
+        self.custom_track_repository = MockModelRepository(self.db, CustomTrack)
 
         self.garma = self.user_repository.create(
             email=f'{str(uuid.uuid4())}@domain.com',
@@ -54,15 +55,17 @@ class FindCustomTracksTest(TestCase):
             ) for i in range(1, 6)
         ]
 
+        self.entity_manager.cache_repository_instance(CustomTrack, self.custom_track_repository)
+        self.entity_manager.cache_repository_instance(Resource, self.resource_repository)
+        self.entity_manager.cache_repository_instance(User, self.user_repository)
+
         self.request_handler = FindCustomTracks(
-            copy(self.entity_manager),
+            self.entity_manager,
             self.session_manager,
             self.permission_resolver
         )
 
         self.request_handler.get_current_identity = Mock(return_value=self.garma.to_dictionary())
-        self.request_handler.entity_manager.get_repository = lambda model: self.custom_track_repository
-        self.session_manager.entity_manager.get_repository = lambda model: self.user_repository
 
     def test_can_find_custom_tracks(self):
         response = self.request_handler.handle_request(Request.from_values())

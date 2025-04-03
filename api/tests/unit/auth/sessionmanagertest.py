@@ -13,16 +13,18 @@ from api.tests.mockmodelrepository import MockModelRepository
 class SessionManagerTest(TestCase):
 
     def setUp(self):
-        self.entity_manager = EntityManager(SQLAlchemy(), MockModelRepository)
-        self.session_manager = SessionManager(self.entity_manager)
+        self.db = SQLAlchemy()
+        self.entity_manager = EntityManager(self.db, MockModelRepository)
 
-        self.user_repository = MockModelRepository(User)
+        self.user_repository = MockModelRepository(self.db, User)
         self.garma = self.user_repository.create(
             id=1,
             username='Garma',
         )
 
-        self.entity_manager.get_repository = lambda model: self.user_repository
+        self.entity_manager.cache_repository_instance(User, self.user_repository)
+
+        self.session_manager = SessionManager(self.entity_manager)
 
     def test_can_find_user_by_current_identity(self):
         current_user = self.session_manager.find_user_by_jwt_identity({'id': 1, 'username': 'Garma'})

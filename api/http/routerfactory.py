@@ -31,4 +31,7 @@ class RouterFactory(object):
         # PATCH Endpoints
         router.add_route('customtracks', 'PATCH', container.get('http.request_handler.update_custom_track'))
 
+        # DELETE Endpoints
+        router.add_route('customtracks', 'DELETE', container.get('http.request_handler.delete_custom_track'))
+
         return router

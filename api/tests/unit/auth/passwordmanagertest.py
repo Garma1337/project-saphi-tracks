@@ -33,8 +33,8 @@ class PasswordManagerTest(TestCase):
     def test_can_validate_secure_password(self):
         self.assertTrue(self.password_manager.is_secure_password('Password123!'))
 
-    def test_can_not_validate_insecure_password(self):
-        self.assertFalse(self.password_manager.is_secure_password('password'))
+    def test_can_not_validate_insecure_password_with_too_few_letters(self):
+        self.assertFalse(self.password_manager.is_secure_password('passwor'))
 
     def test_can_not_validate_insecure_password_with_no_digits(self):
         self.assertFalse(self.password_manager.is_secure_password('Password'))

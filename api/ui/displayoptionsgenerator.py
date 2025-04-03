@@ -16,7 +16,9 @@ class DisplayOptionsGenerator(object):
             'show_create_custom_track_button': user is not None,
             'show_admin_button': self.permission_resolver.can_verify_custom_track(user),
             'show_login_button': user is None,
-            'show_logout_button': user is not None
+            'show_logout_button': user is not None,
+            'show_verify_custom_track_button': self.permission_resolver.can_verify_custom_track(user),
+            'show_delete_custom_track_button': self.permission_resolver.can_verify_custom_track(user),
         }
 
         return display_options

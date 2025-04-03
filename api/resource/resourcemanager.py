@@ -133,6 +133,16 @@ class ResourceManager(object):
         resource_repository.update(id=resource_id, verified=1)
         return resource_repository.find_one(resource_id)
 
+    def delete_resource(self, resource_id: int) -> None:
+        resource_repository = self.entity_manager.get_repository(Resource)
+        resource = resource_repository.find_one(resource_id)
+
+        if not resource:
+            raise ResourceNotFoundError(f'No resource with id {resource_id} exists')
+
+        self.file_system_adapter.delete_file(self.get_local_path(resource.file_name))
+        resource_repository.delete_one(resource_id)
+
     def get_local_path(self, file_name: str) -> str:
         encoder_target = self.file_encoder_strategy.encode_file_name(file_name)
         return os.path.join(encoder_target.get_directory_path(), encoder_target.get_file_name())

@@ -155,6 +155,23 @@ class ModelRepositoryTest(IntegrationTest):
             with self.assertRaises(ValueError):
                 self.model_repository.update(id=crash.id, test='test')
 
+    def test_can_delete_model(self):
+        with self.app.test_request_context():
+            crash = self.model_repository.create(name='Crash', description='Bandicoot', value=9000)
+
+            count = self.model_repository.count()
+            self.assertEqual(count, 1)
+
+            self.model_repository.delete_one(crash.id)
+
+            model = self.model_repository.find_one(crash.id)
+            self.assertIsNone(model)
+
+    def test_can_not_delete_model_when_id_is_missing(self):
+        with self.app.test_request_context():
+            with self.assertRaises(ValueError):
+                self.model_repository.delete_one(None)
+
     def test_can_delete_all_models(self):
         with self.app.test_request_context():
             crash = self.model_repository.create(name='Crash', description='Bandicoot', value=9000)

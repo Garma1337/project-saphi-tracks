@@ -18,20 +18,22 @@ from api.ui.displayoptionsgenerator import DisplayOptionsGenerator
 class GetSessionTest(TestCase):
 
     def setUp(self):
-        self.entity_manager = EntityManager(SQLAlchemy(), MockModelRepository)
+        self.db = SQLAlchemy()
+        self.entity_manager = EntityManager(self.db, MockModelRepository)
         self.session_manager = SessionManager(self.entity_manager)
 
         self.permission_resolver = LogicalPermissionResolver()
         self.display_options_generator = DisplayOptionsGenerator(self.permission_resolver)
 
-        self.user_repository = MockModelRepository(User)
+        self.user_repository = MockModelRepository(self.db, User)
         self.garma = self.user_repository.create(
             id=1,
             username='Garma',
         )
 
+        self.entity_manager.cache_repository_instance(User, self.user_repository)
+
         self.get_session = GetSession(self.session_manager, self.display_options_generator)
-        self.entity_manager.get_repository = lambda model: self.user_repository
 
     def test_can_get_session_if_logged_in(self):
         self.permission_resolver.can_verify_custom_track = Mock(return_value=False)

@@ -22,6 +22,7 @@ from api.event.subscribers.saphiloginsuccessfuleventsubscriber import SaphiLogin
 from api.faker.fakerservice import FakerService
 from api.http.dispatcher import Dispatcher
 from api.http.request_handlers.createcustomtrack import CreateCustomTrack
+from api.http.request_handlers.deletecustomtrack import DeleteCustomTrack
 from api.http.request_handlers.downloadresource import DownloadResource
 from api.http.request_handlers.findcustomtracks import FindCustomTracks
 from api.http.request_handlers.findpermissions import FindPermissions
@@ -93,6 +94,11 @@ def init_app(app):
     container.register('http.request_handler.create_custom_track', lambda: CreateCustomTrack(
         container.get('auth.session_manager'),
         container.get('custom_track_manager')
+    ))
+    container.register('http.request_handler.delete_custom_track', lambda: DeleteCustomTrack(
+        container.get('auth.session_manager'),
+        container.get('custom_track_manager'),
+        container.get('auth.permission.permission_resolver')
     ))
     container.register('http.request_handler.download_resource', lambda: DownloadResource(
         container.get('db.entity_manager'),

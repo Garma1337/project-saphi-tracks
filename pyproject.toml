@@ -14,3 +14,15 @@ dependencies = [
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.coverage.run]
+omit = [
+    "migrations/*",
+    "*/__init__.py",
+    "api/config.dev.py",
+    "api/faker/*",
+    "api/tests/fixtures.py",
+    "api/tests/mockfilesystemadapter.py",
+    "api/tests/mockmodelrepository.py",
+    "api/tests/mockpasswordencoderstrategy.py",
+]

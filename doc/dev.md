@@ -14,7 +14,6 @@ at implementing it yourself.
 Here is an overview of contents in this document:
 
 * [Development Environment Setup](#development-environment-setup)
-* [Folder Structure](#folder-structure)
 * [Faking Data](#faking-data)
 * [Test Coverage](#test-coverage)
 * [Model DTOs](#model-dtos)
@@ -42,8 +41,6 @@ Running the REST API backend is then as simple as:
 ```bash
 $ flask --app api run
 ```
-
-## Folder Structure
 
 ## Faking Data
 
@@ -80,6 +77,15 @@ just be sensible about it and make sure your feature at least works.
 
 Alternatively, you can also write integration tests. But I might still reject your PR if you wrote an integration test
 for something that should and can be unit tested.
+
+The project comes with the `coverage` package, which is used to measure the test coverage of the project. You can check
+your test coverage with:
+
+```bash
+$ python -m coverage run -m unittest discover -v --pattern "*test.py" 
+```
+
+The current test coverage is around 95%.
 
 ## Model DTOs
 

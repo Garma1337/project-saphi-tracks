@@ -14,19 +14,16 @@ from api.tests.mockmodelrepository import MockModelRepository
 class FindTagsTest(TestCase):
 
     def setUp(self):
-        self.find_tags = FindTags(
-            EntityManager(
-                SQLAlchemy(),
-                MockModelRepository
-            )
-        )
+        self.db = SQLAlchemy()
+        self.entity_manager = EntityManager(self.db, MockModelRepository)
 
-        self.tag_repository = MockModelRepository(Tag)
-
+        self.tag_repository = MockModelRepository(self.db, Tag)
         self.remake = self.tag_repository.create(name='Remake')
         self.difficult = self.tag_repository.create(name='Difficult')
 
-        self.find_tags.entity_manager.get_repository = lambda model: self.tag_repository
+        self.entity_manager.cache_repository_instance(Tag, self.tag_repository)
+
+        self.find_tags = FindTags(self.entity_manager)
 
     def test_can_find_tags(self):
         response = self.find_tags.handle_request(Request.from_values())

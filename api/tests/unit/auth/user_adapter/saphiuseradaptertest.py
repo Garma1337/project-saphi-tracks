@@ -26,13 +26,11 @@ class SaphiUserAdapterTest(TestCase):
         self.entity_manager = EntityManager(self.db, MockModelRepository)
         self.password_manager = PasswordManager(MockPasswordEncoderStrategy())
 
-        self.user_repository = MockModelRepository(User)
-        self.permission_repository = MockModelRepository(Permission)
+        self.user_repository = MockModelRepository(self.db, User)
+        self.permission_repository = MockModelRepository(self.db, Permission)
 
-        repositories = {
-            Permission: self.permission_repository,
-            User: self.user_repository
-        }
+        self.entity_manager.cache_repository_instance(Permission, self.permission_repository)
+        self.entity_manager.cache_repository_instance(User, self.user_repository)
 
         self.event_manager = EventManager()
         self.event_manager.register_event_subscriber(SaphiLoginSuccessfulEventSubscriber(self.entity_manager, self.password_manager))
@@ -45,8 +43,6 @@ class SaphiUserAdapterTest(TestCase):
             self.password_manager,
             self.saphi_client
         )
-
-        self.entity_manager.get_repository = lambda model: repositories[model]
 
     def test_can_authenticate_user(self):
         self.saphi_client.validate_user_credentials = Mock(return_value={'success': True})

@@ -24,7 +24,7 @@ class LocalUserAdapterTest(TestCase):
         self.entity_manager = EntityManager(self.db, MockModelRepository)
         self.password_manager = PasswordManager(MockPasswordEncoderStrategy())
 
-        self.user_repository = MockModelRepository(User)
+        self.user_repository = MockModelRepository(self.db, User)
         self.garma = self.user_repository.create(
             username='Garma',
             email='email@domain.com',
@@ -34,19 +34,15 @@ class LocalUserAdapterTest(TestCase):
             verified=True
         )
 
-        self.permission_repository = MockModelRepository(Permission)
+        self.permission_repository = MockModelRepository(self.db, Permission)
 
-        repositories = {
-            Permission: self.permission_repository,
-            User: self.user_repository
-        }
+        self.entity_manager.cache_repository_instance(Permission, self.permission_repository)
+        self.entity_manager.cache_repository_instance(User, self.user_repository)
 
         self.local_user_adapter = LocalUserAdapter(
             self.entity_manager,
             self.password_manager
         )
-
-        self.local_user_adapter.entity_manager.get_repository = lambda model: repositories[model]
 
     def test_can_authenticate_user(self):
         self.assertTrue(self.local_user_adapter.authenticate_user('Garma', 'Password123!'))

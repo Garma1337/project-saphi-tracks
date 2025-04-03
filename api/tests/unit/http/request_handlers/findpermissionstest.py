@@ -15,7 +15,10 @@ from api.tests.mockmodelrepository import MockModelRepository
 class FindPermissionsTest(TestCase):
 
     def setUp(self):
-        self.permission_repository = MockModelRepository(Permission)
+        self.db = SQLAlchemy()
+        self.entity_manager = EntityManager(self.db, MockModelRepository)
+
+        self.permission_repository = MockModelRepository(self.db, Permission)
 
         for i in range(1, 3):
             self.permission_repository.create(
@@ -28,15 +31,10 @@ class FindPermissionsTest(TestCase):
                 can_edit_users=i % 2,
             )
 
-        self.find_permissions = FindPermissions(
-            EntityManager(
-                SQLAlchemy(),
-                MockModelRepository
-            ),
-            LogicalPermissionResolver()
-        )
+        self.entity_manager.cache_repository_instance(Permission, self.permission_repository)
+        self.permission_resolver = LogicalPermissionResolver()
 
-        self.find_permissions.entity_manager.get_repository = lambda model: self.permission_repository
+        self.find_permissions = FindPermissions(self.entity_manager, self.permission_resolver)
 
     def test_can_find_permissions(self):
         response = self.find_permissions.handle_request(Request.from_values())

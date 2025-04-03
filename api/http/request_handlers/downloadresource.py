@@ -7,6 +7,7 @@ from api.auth.sessionmanager import SessionManager
 from api.database.entitymanager import EntityManager
 from api.database.model.resource import Resource
 from api.http.request_handlers.requesthandler import RequestHandler
+from api.http.requesthelper import RequestHelper
 from api.http.response import JsonResponse, ErrorJsonResponse, EmptyResponse
 from api.resource.resourcemanager import ResourceManager
 
@@ -23,13 +24,13 @@ class DownloadResource(RequestHandler):
         if not 'id' in request.args:
             return ErrorJsonResponse('You need to provide a resource id')
 
-        resource_id = int(request.args.get('id'))
+        resource_id = RequestHelper.try_parse_integer_value(request.args, 'id')
         resource_repository = self.entity_manager.get_repository(Resource)
 
         resource = resource_repository.find_one(resource_id)
 
         if not resource:
-            return ErrorJsonResponse('No resource with id {} exists', 404)
+            return ErrorJsonResponse(f'No resource with id {resource_id} exists', 404)
 
         current_user = self.session_manager.find_user_by_jwt_identity(self.get_current_identity())
         if not self.permission_resolver.can_see_resource(current_user, resource):

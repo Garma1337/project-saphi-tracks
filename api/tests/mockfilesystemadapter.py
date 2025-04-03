@@ -53,9 +53,15 @@ class MockFileSystemAdapter(FileSystemAdapter):
         return 'checksum'
 
     def delete_file(self, file_path: str):
+        if file_path not in self.files:
+            return
+
         del self.files[file_path]
 
     def delete_directory_tree(self, directory_path: str):
+        if directory_path not in self.files:
+            return
+
         del self.files[directory_path]
 
     def offer_file_download(self, directory: str, file_path: str) -> None:

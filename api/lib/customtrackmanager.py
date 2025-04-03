@@ -93,3 +93,15 @@ class CustomTrackManager(object):
         resource_repository.update(id=vrm_resource.id, custom_track_id=custom_track.id)
 
         return custom_track
+
+    def delete_custom_track(self, custom_track_id: int) -> None:
+        custom_track_repository = self.entity_manager.get_repository(CustomTrack)
+        custom_track = custom_track_repository.find_one(custom_track_id)
+
+        if not custom_track:
+            raise CustomTrackNotFoundError(f'No custom track with id {custom_track_id} exists')
+
+        for resource in custom_track.resources:
+            self.resource_manager.delete_resource(resource.id)
+
+        custom_track_repository.delete_one(custom_track_id)

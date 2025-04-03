@@ -5,7 +5,9 @@ from api.database.repository.modelrepository import ModelRepository
 
 class MockModelRepository(ModelRepository):
 
-    def __init__(self, model_class):
+    def __init__(self, db, model_class):
+        super().__init__(db, model_class)
+
         self.models = []
         self.id = 1
         self.model_class = model_class
@@ -59,3 +61,15 @@ class MockModelRepository(ModelRepository):
                 setattr(model, attribute, kwargs[attribute])
 
         return model
+
+    def delete_one(self, id: int) -> None:
+        model = self.find_one(id)
+
+        if model is None:
+            raise ValueError(f'Model with id {id} not found')
+
+        self.models.remove(model)
+
+    def delete_all(self) -> None:
+        self.models = []
+        self.id = 1

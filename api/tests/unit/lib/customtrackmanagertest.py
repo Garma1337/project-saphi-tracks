@@ -18,27 +18,30 @@ from api.tests.mockmodelrepository import MockModelRepository
 class CustomTrackManagerTest(TestCase):
 
     def setUp(self):
-        self.custom_track_repository = MockModelRepository(CustomTrack)
-        self.resource_repository = MockModelRepository(Resource)
+        self.db = SQLAlchemy()
+        self.entity_manager = EntityManager(self.db, MockModelRepository)
+
+        self.custom_track_repository = MockModelRepository(self.db, CustomTrack)
+        self.resource_repository = MockModelRepository(self.db, Resource)
+
+        self.entity_manager.cache_repository_instance(CustomTrack, self.custom_track_repository)
+        self.entity_manager.cache_repository_instance(Resource, self.resource_repository)
 
         self.file_system_adapter = MockFileSystemAdapter()
         self.file_encoder_strategy = Sha256FileEncoderStrategy()
         self.semver_validator = SemVerValidator()
 
         self.resource_manager = ResourceManager(
-            EntityManager(SQLAlchemy(), MockModelRepository),
+            self.entity_manager,
             self.file_system_adapter,
             self.file_encoder_strategy,
             self.semver_validator
         )
 
         self.custom_track_manager = CustomTrackManager(
-            EntityManager(SQLAlchemy(), MockModelRepository),
+            self.entity_manager,
             self.resource_manager
         )
-
-        self.resource_manager.entity_manager.get_repository = lambda model: self.resource_repository
-        self.custom_track_manager.entity_manager.get_repository = lambda model: self.custom_track_repository
 
     def test_can_verify_custom_track(self):
         custom_track = self.custom_track_repository.create(
@@ -71,3 +74,27 @@ class CustomTrackManagerTest(TestCase):
 
         with self.assertRaises(CustomTrackAlreadyVerifiedError):
             self.custom_track_manager.verify_custom_track(custom_track.id)
+
+    def test_can_delete_custom_track(self):
+        custom_track = self.custom_track_repository.create(
+            author_id=1,
+            verified=False
+        )
+
+        resource = self.resource_repository.create(
+            author_id=1,
+            file_name='preview.png',
+            custom_track_id=custom_track.id,
+            verified=False
+        )
+
+        custom_track.resources = [resource]
+
+        self.custom_track_manager.delete_custom_track(custom_track.id)
+
+        self.assertIsNone(self.custom_track_repository.find_one(custom_track.id))
+        self.assertIsNone(self.resource_repository.find_one(resource.id))
+
+    def test_can_not_delete_custom_track_when_not_found(self):
+        with self.assertRaises(CustomTrackNotFoundError):
+            self.custom_track_manager.delete_custom_track(1)

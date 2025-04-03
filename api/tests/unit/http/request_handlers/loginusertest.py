@@ -20,12 +20,10 @@ from api.tests.mockpasswordencoderstrategy import MockPasswordEncoderStrategy
 class LoginUserTest(TestCase):
 
     def setUp(self):
-        self.entity_manager = EntityManager(
-            SQLAlchemy(),
-            MockModelRepository
-        )
+        self.db = SQLAlchemy()
+        self.entity_manager = EntityManager(self.db, MockModelRepository)
 
-        self.user_repository = MockModelRepository(User)
+        self.user_repository = MockModelRepository(self.db, User)
         self.garma = self.user_repository.create(
             username='Garma',
             email='email@domain.com',
@@ -34,6 +32,8 @@ class LoginUserTest(TestCase):
             verified=True
         )
 
+        self.entity_manager.cache_repository_instance(User, self.user_repository)
+
         self.password_manager = PasswordManager(MockPasswordEncoderStrategy())
 
         self.local_user_adapter = LocalUserAdapter(self.entity_manager, self.password_manager)
@@ -41,8 +41,6 @@ class LoginUserTest(TestCase):
 
         self.authenticator = Authenticator(self.local_user_adapter)
         self.login_user = LoginUser(self.authenticator, self.entity_manager)
-
-        self.entity_manager.get_repository = lambda model: self.user_repository
 
     def test_can_login_user(self):
         self.login_user.get_current_identity = Mock(return_value=None)
