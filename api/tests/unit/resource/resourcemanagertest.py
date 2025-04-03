@@ -9,12 +9,12 @@ from werkzeug.datastructures import FileStorage
 from api.database.entitymanager import EntityManager
 from api.database.model.resource import Resource, ResourceType
 from api.database.model.user import User
-from api.lib.semvervalidator import SemVerValidator
 from api.resource.file_encoder_strategy.sha256fileencoderstrategy import Sha256FileEncoderStrategy
 from api.resource.resourcemanager import ResourceManager, ResourceNotFoundError, ResourceAlreadyVerifiedError, \
     ResourceCreationError
 from api.tests.mockfilesystemadapter import MockFileSystemAdapter
 from api.tests.mockmodelrepository import MockModelRepository
+from api.util.semvervalidator import SemVerValidator
 
 
 class ResourceManagerTest(TestCase):

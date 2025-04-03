@@ -9,7 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 
 from api import create_test_app, db
-from api.lib.filesystemhelper import FileSystemHelper
+from api.util.filesystemhelper import FileSystemHelper
 
 
 class IntegrationTest(TestCase):

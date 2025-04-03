@@ -9,7 +9,7 @@ from api.database.model.permission import Permission
 from api.database.model.user import User
 from api.event.event import Event
 from api.event.eventmanager import EventManager
-from api.lib.saphiclient import SaphiClient
+from api.services.saphiclient import SaphiClient
 
 
 class SaphiUserAdapter(UserAdapter):

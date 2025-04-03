@@ -5,7 +5,7 @@ from flask import Request
 from api.auth.sessionmanager import SessionManager
 from api.http.request_handlers.requesthandler import RequestHandler
 from api.http.response import JsonResponse, SuccessJsonResponse, ErrorJsonResponse
-from api.lib.customtrackmanager import CustomTrackManager
+from api.services.customtrackmanager import CustomTrackManager
 from api.resource.resourcemanager import ResourceCreationError
 
 

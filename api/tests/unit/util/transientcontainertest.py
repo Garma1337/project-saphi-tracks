@@ -3,7 +3,7 @@
 import pickle
 from unittest import TestCase
 
-from api.lib.container import Container, ContainerError
+from api.di.transientcontainer import TransientContainer, ContainerError
 
 
 class TestService(object):
@@ -12,10 +12,10 @@ class TestService(object):
         pass
 
 
-class ContainerTest(TestCase):
+class TransientContainerTest(TestCase):
 
     def setUp(self):
-        self.container = Container()
+        self.container = TransientContainer()
 
     def test_can_register_service(self):
         self.container.register('test', lambda: TestService())

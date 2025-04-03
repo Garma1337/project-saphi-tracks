@@ -15,6 +15,7 @@ from api.database.dto_generator.dtogeneratorservicefactory import DTOGeneratorSe
 from api.database.dto_generator.htmlcodeformatter import HtmlCodeFormatter
 from api.database.entitymanager import EntityManager
 from api.database.repository.modelrepository import ModelRepository
+from api.di.transientcontainer import TransientContainer
 from api.discord.discord import Discord
 from api.discord.discordclient import DiscordClient
 from api.event.eventmanagerfactory import EventManagerFactory
@@ -38,16 +39,15 @@ from api.http.request_handlers.updatecustomtrack import UpdateCustomTrack
 from api.http.request_handlers.verifycustomtrack import VerifyCustomTrack
 from api.http.request_handlers.verifyresource import VerifyResource
 from api.http.routerfactory import RouterFactory
-from api.lib.container import Container
-from api.lib.customtrackmanager import CustomTrackManager
-from api.lib.saphiclient import SaphiClient
-from api.lib.semvervalidator import SemVerValidator
 from api.resource.file_encoder_strategy.sha256fileencoderstrategy import Sha256FileEncoderStrategy
 from api.resource.file_system_adapter.localfilesystemadapter import LocalFileSystemAdapter
 from api.resource.resourcemanager import ResourceManager
+from api.services.customtrackmanager import CustomTrackManager
+from api.services.saphiclient import SaphiClient
 from api.ui.displayoptionsgenerator import DisplayOptionsGenerator
+from api.util.semvervalidator import SemVerValidator
 
-container = Container()
+container = TransientContainer()
 current_directory = os.path.abspath(os.path.dirname(__file__))
 
 def init_app(app):

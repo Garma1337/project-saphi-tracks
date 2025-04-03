@@ -2,7 +2,7 @@
 
 from unittest import TestCase
 
-from api.lib.semvervalidator import SemVerValidator
+from api.util.semvervalidator import SemVerValidator
 
 
 class SemverValidatorTest(TestCase):

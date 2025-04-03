@@ -7,7 +7,7 @@ from unittest.mock import Mock
 import requests
 from requests import RequestException, Response
 
-from api.lib.saphiclient import SaphiClient
+from api.services.saphiclient import SaphiClient
 
 
 class SaphiClientTest(TestCase):

@@ -13,11 +13,11 @@ from api.database.model.permission import Permission
 from api.database.model.resource import Resource
 from api.database.model.user import User
 from api.http.request_handlers.verifyresource import VerifyResource
-from api.lib.semvervalidator import SemVerValidator
 from api.resource.file_encoder_strategy.sha256fileencoderstrategy import Sha256FileEncoderStrategy
 from api.resource.resourcemanager import ResourceManager
 from api.tests.mockfilesystemadapter import MockFileSystemAdapter
 from api.tests.mockmodelrepository import MockModelRepository
+from api.util.semvervalidator import SemVerValidator
 
 
 class VerifyResourceTest(TestCase):

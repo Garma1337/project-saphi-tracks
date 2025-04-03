@@ -11,11 +11,11 @@ from api.auth.sessionmanager import SessionManager
 from api.database.entitymanager import EntityManager
 from api.database.model.resource import Resource
 from api.http.request_handlers.downloadresource import DownloadResource
-from api.lib.semvervalidator import SemVerValidator
 from api.resource.file_encoder_strategy.sha256fileencoderstrategy import Sha256FileEncoderStrategy
 from api.resource.resourcemanager import ResourceManager
 from api.tests.mockfilesystemadapter import MockFileSystemAdapter
 from api.tests.mockmodelrepository import MockModelRepository
+from api.util.semvervalidator import SemVerValidator
 
 
 class DownloadResourceTest(TestCase):

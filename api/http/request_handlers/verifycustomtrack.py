@@ -6,7 +6,7 @@ from api.auth.permission.permissionresolver import PermissionResolver
 from api.auth.sessionmanager import SessionManager
 from api.http.request_handlers.requesthandler import RequestHandler
 from api.http.response import JsonResponse, ErrorJsonResponse, SuccessJsonResponse
-from api.lib.customtrackmanager import CustomTrackManager, CustomTrackNotFoundError, CustomTrackAlreadyVerifiedError
+from api.services.customtrackmanager import CustomTrackManager, CustomTrackNotFoundError, CustomTrackAlreadyVerifiedError
 
 
 class VerifyCustomTrack(RequestHandler):

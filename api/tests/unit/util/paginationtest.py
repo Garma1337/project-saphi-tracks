@@ -2,7 +2,7 @@
 
 from unittest import TestCase
 
-from api.lib.pagination import Pagination
+from api.util.pagination import Pagination
 
 
 class PaginationTest(TestCase):

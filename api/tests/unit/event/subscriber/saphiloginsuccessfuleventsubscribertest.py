@@ -11,7 +11,7 @@ from api.database.model.user import User
 from api.event.event import Event
 from api.event.eventmanager import EventManager
 from api.event.subscribers.saphiloginsuccessfuleventsubscriber import SaphiLoginSuccessfulEventSubscriber
-from api.lib.saphiclient import SaphiClient
+from api.services.saphiclient import SaphiClient
 from api.tests.mockmodelrepository import MockModelRepository
 from api.tests.mockpasswordencoderstrategy import MockPasswordEncoderStrategy
 

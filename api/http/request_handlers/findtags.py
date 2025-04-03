@@ -7,7 +7,7 @@ from api.database.model.tag import Tag
 from api.http.request_handlers.requesthandler import RequestHandler
 from api.http.requesthelper import RequestHelper
 from api.http.response import JsonResponse
-from api.lib.pagination import Pagination
+from api.util.pagination import Pagination
 
 
 class FindTags(RequestHandler):

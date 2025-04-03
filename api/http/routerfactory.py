@@ -1,13 +1,13 @@
 # coding: utf-8
 
+from api.di.transientcontainer import TransientContainer
 from api.http.router import Router
-from api.lib.container import Container
 
 
 class RouterFactory(object):
 
     @staticmethod
-    def factory(container: Container) -> Router:
+    def factory(container: TransientContainer) -> Router:
         router = Router()
 
         # GET Endpoints

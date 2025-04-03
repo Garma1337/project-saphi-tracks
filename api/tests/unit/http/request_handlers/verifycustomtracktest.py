@@ -14,12 +14,12 @@ from api.database.model.permission import Permission
 from api.database.model.resource import Resource
 from api.database.model.user import User
 from api.http.request_handlers.verifycustomtrack import VerifyCustomTrack
-from api.lib.customtrackmanager import CustomTrackManager
-from api.lib.semvervalidator import SemVerValidator
 from api.resource.file_encoder_strategy.sha256fileencoderstrategy import Sha256FileEncoderStrategy
 from api.resource.resourcemanager import ResourceManager
+from api.services.customtrackmanager import CustomTrackManager
 from api.tests.mockfilesystemadapter import MockFileSystemAdapter
 from api.tests.mockmodelrepository import MockModelRepository
+from api.util.semvervalidator import SemVerValidator
 
 
 class VerifyCustomTrackTest(TestCase):

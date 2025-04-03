@@ -4,7 +4,7 @@ class ContainerError(Exception):
     pass
 
 
-class Container(object):
+class TransientContainer(object):
 
     def __init__(self):
         self.services = {}

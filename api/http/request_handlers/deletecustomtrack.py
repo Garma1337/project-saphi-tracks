@@ -7,7 +7,7 @@ from api.auth.sessionmanager import SessionManager
 from api.http.request_handlers.requesthandler import RequestHandler
 from api.http.requesthelper import RequestHelper
 from api.http.response import ErrorJsonResponse, SuccessJsonResponse, JsonResponse
-from api.lib.customtrackmanager import CustomTrackNotFoundError, CustomTrackManager
+from api.services.customtrackmanager import CustomTrackNotFoundError, CustomTrackManager
 
 
 class DeleteCustomTrack(RequestHandler):

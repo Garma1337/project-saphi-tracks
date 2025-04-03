@@ -7,12 +7,13 @@ from flask_sqlalchemy import SQLAlchemy
 from api.database.entitymanager import EntityManager
 from api.database.model.customtrack import CustomTrack
 from api.database.model.resource import Resource
-from api.lib.customtrackmanager import CustomTrackManager, CustomTrackNotFoundError, CustomTrackAlreadyVerifiedError
-from api.lib.semvervalidator import SemVerValidator
 from api.resource.file_encoder_strategy.sha256fileencoderstrategy import Sha256FileEncoderStrategy
 from api.resource.resourcemanager import ResourceManager
+from api.services.customtrackmanager import CustomTrackManager, CustomTrackNotFoundError, \
+    CustomTrackAlreadyVerifiedError
 from api.tests.mockfilesystemadapter import MockFileSystemAdapter
 from api.tests.mockmodelrepository import MockModelRepository
+from api.util.semvervalidator import SemVerValidator
 
 
 class CustomTrackManagerTest(TestCase):

@@ -11,9 +11,9 @@ from werkzeug.datastructures import FileStorage
 from api.database.entitymanager import EntityManager
 from api.database.model.resource import ResourceType, Resource
 from api.database.model.user import User
-from api.lib.semvervalidator import SemVerValidator
 from api.resource.file_encoder_strategy.fileencoderstrategy import FileEncoderStrategy
 from api.resource.file_system_adapter.filesystemadapter import FileSystemAdapter
+from api.util.semvervalidator import SemVerValidator
 
 
 class ResourceCreationError(Exception):
