@@ -10,16 +10,16 @@ const darkTheme = createTheme({
       main: '#f55e3b',
     },
     warning: {
-      main: '#ffe584',
+      main: '#ffe566',
     },
     info: {
-      main: '#aed8ff',
+      main: '#94c0ff',
     },
     error: {
-      main: '#ffa99a',
+      main: '#da4a4a',
     },
     success: {
-      main: '#8ce492',
+      main: '#92ed94',
     },
   },
 })

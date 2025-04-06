@@ -17,15 +17,16 @@ import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import {User} from "../lib/api/dtos.ts";
 
 interface UserListTableProps {
-    users: User[]
+    users: User[];
+    borderLess?: boolean;
 }
 
 const UserListTable = (props: UserListTableProps) => {
     const navigate = useNavigate();
 
     return (
-        <TableContainer component={Paper}>
-            <Table sx={{minWidth: 650}} aria-label="PBs">
+        <TableContainer component={props.borderLess ? 'div' : Paper}>
+            <Table sx={{minWidth: 650}} aria-label="User List">
                 <TableHead>
                     <TableRow>
                         <TableCell>#</TableCell>

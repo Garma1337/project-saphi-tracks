@@ -1,10 +1,11 @@
-import {Box, Card, CardContent, CardMedia, Chip, Link, Typography} from "@mui/material";
+import {Box, Button, Card, CardContent, CardMedia, Chip, Link, Stack, Typography} from "@mui/material";
 import AppRoutes from "../routes.tsx";
 import formatDate from "../utils/formatDate.ts";
 import {useNavigate} from "react-router-dom";
 import {CustomTrack, Resource} from "../lib/api/dtos.ts";
 import ApiClient from "../lib/services/apiClient.ts";
 import ServiceManager from "../lib/serviceManager.ts";
+import DownloadIcon from '@mui/icons-material/Download';
 
 interface CustomTrackListGridProps {
     customTracks: CustomTrack[]
@@ -28,32 +29,38 @@ const CustomTrackListGrid = (props: CustomTrackListGridProps) => {
             {props.customTracks.map(customTrack => (
                 <Card>
                     <CardContent>
-                        <CardMedia
-                            component="img"
-                            height="250"
-                            image={apiClient.proxyResource(getPreviewImage(customTrack))}
-                            alt={customTrack.name}
-                        />
-                        <Box>
-                            <h2>
-                                <Link onClick={() => navigate(AppRoutes.CustomTrackDetailPage + "?id=" + customTrack.id)}>
+                        <Stack spacing={2}>
+                            <CardMedia
+                                component="img"
+                                height="250"
+                                image={apiClient.proxyResource(getPreviewImage(customTrack))}
+                                alt={customTrack.name}
+                            />
+                            <Box>
+                                <Typography variant="h5">
                                     {customTrack.name}
-                                </Link>
-                                <Chip
-                                    size={'small'}
-                                    label={customTrack.verified ? 'Verified' : 'Unverified'}
-                                    color={customTrack.verified ? 'success' : 'error'}
-                                    sx={{ml: 1}}
-                                />
-                            </h2>
-                            <Typography>
-                                Author: <Link
-                                onClick={() => navigate(AppRoutes.UserDetailPage + "?id=" + customTrack.author_id)}>{customTrack.author.username}</Link>
-                            </Typography>
-                            <Typography>
-                                Created: {formatDate(customTrack.created.toLocaleString())}
-                            </Typography>
-                        </Box>
+                                    <Chip
+                                        size={'small'}
+                                        label={customTrack.verified ? 'Verified' : 'Unverified'}
+                                        color={customTrack.verified ? 'success' : 'error'}
+                                        sx={{ml: 1}}
+                                    />
+                                </Typography>
+                            </Box>
+                            <Box>
+                                <Typography>
+                                    Author: <Link
+                                    onClick={() => navigate(AppRoutes.UserDetailPage + "?id=" + customTrack.author_id)}>{customTrack.author.username}</Link>
+                                </Typography>
+                                <Typography>
+                                    Created: {formatDate(customTrack.created.toLocaleString())}
+                                </Typography>
+                            </Box>
+                            <Button variant="contained" onClick={() => navigate(AppRoutes.CustomTrackDetailPage + "?id=" + customTrack.id)}>
+                                <DownloadIcon sx={{mr: 1}}/>
+                                Download
+                            </Button>
+                        </Stack>
                     </CardContent>
                 </Card>
             ))}

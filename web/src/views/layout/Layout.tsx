@@ -51,6 +51,7 @@ const Layout = () => {
     const logoutPlayer = () => {
         sessionManager.logout().then(() => {
             window.location.reload();
+            navigate(AppRoutes.IndexPage);
         });
     }
 

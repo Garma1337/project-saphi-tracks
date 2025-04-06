@@ -18,6 +18,12 @@ export type CreateCustomTrackResponse = {
     custom_track: CustomTrack | null;
 }
 
+export type DeleteCustomTrackResponse = {
+    success: boolean;
+    error: string | null;
+    message: string | null;
+}
+
 export type DiscordStatusResponse = {
     success: boolean;
     error: string | null;

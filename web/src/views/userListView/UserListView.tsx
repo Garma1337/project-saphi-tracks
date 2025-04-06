@@ -77,7 +77,7 @@ const UserListView = () => {
                         onChange={handlePageChange}
                         sx={{marginBottom: 2}}
                     />
-                    <UserListTable users={users}/>
+                    <UserListTable users={users} borderLess={true} />
                     <MuiPagination
                         count={pagination?.total_page_count}
                         shape={"rounded"}

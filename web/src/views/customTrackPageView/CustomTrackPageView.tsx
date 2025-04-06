@@ -4,35 +4,45 @@ import ApiClient from "../../lib/services/apiClient.ts";
 import ServiceManager from "../../lib/serviceManager.ts";
 import {useEffect, useState} from "react";
 import {CustomTrack, Resource} from "../../lib/api/dtos.ts";
-import {useSearchParams} from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import Alert from "@mui/material/Alert/Alert";
 import Accordion from "@mui/material/Accordion/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary/AccordionSummary";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import YouTubeVideo from "../../components/YouTubeVideo.tsx";
-import DownloadResourceLink from "../../components/ResourceDownloadButton.tsx";
 import Blockquote from "../../components/BlockQuote.tsx";
 import Button from "@mui/material/Button/Button";
 import Grid from "@mui/material/Grid/Grid";
-import Dialog from "@mui/material/Dialog/Dialog";
-import DialogTitle from "@mui/material/DialogTitle/DialogTitle";
-import DialogContent from "@mui/material/DialogContent/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText/DialogContentText";
-import DialogActions from "@mui/material/DialogActions/DialogActions";
 import randomSlice from "../../utils/randomSlice.ts";
 import CustomTrackListGrid from "../../components/CustomTrackListGrid.tsx";
+import SimpleDialog from "../../components/SimpleDialog.tsx";
+import AppRoutes from "../../routes.tsx";
+import Menu from "@mui/material/Menu/Menu";
+import MenuItem from "@mui/material/MenuItem/MenuItem";
+import useStore from "../../store.ts";
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
+import DeleteIcon from '@mui/icons-material/Delete';
+import CheckIcon from '@mui/icons-material/Check';
+import ResourceListTable from "../../components/ResourceListTable.tsx";
 
 const CustomTrackPageView = () => {
     const apiClient: ApiClient = ServiceManager.createApiClient();
+    const navigate = useNavigate();
+    const displayOptions = useStore(state => state.displayOptions);
 
     const [searchParams] = useSearchParams();
     const [customTrack, setCustomTrack] = useState<CustomTrack | null>(null);
     const [userCustomTracks, setUserCustomTracks] = useState<CustomTrack[]>([]);
     const [resources, setResources] = useState<Resource[]>([]);
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [verifyModalOpen, setVerifyModalOpen] = useState(false);
     const [verifySuccess, setVerifySuccess] = useState<boolean | null>(null);
     const [verifyError, setVerifyError] = useState<string | null>(null);
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [deleteError, setDeleteError] = useState<string | null>(null);
+
+    const menuOpen = Boolean(anchorEl);
 
     useEffect(() => {
         const id = Number(searchParams.get('id'));
@@ -67,15 +77,38 @@ const CustomTrackPageView = () => {
             setVerifyError(response.error);
         }
 
-        closeModal();
-    }
-
-    const openModal = () => {
-        setVerifyModalOpen(true);
-    }
-
-    const closeModal = () => {
         setVerifyModalOpen(false);
+    }
+
+    const deleteCustomTrack = async (customTrack: CustomTrack) => {
+        setDeleteError(null);
+
+        const response = await apiClient.deleteCustomTrack(customTrack.id);
+        if (response.success) {
+            navigate(AppRoutes.IndexPage);
+        } else {
+            setDeleteError(response.error);
+        }
+
+        setDeleteModalOpen(false);
+    }
+
+    const openVerifyModal = () => {
+        setVerifyModalOpen(true);
+        handleMenuClose();
+    }
+
+    const openDeleteModal = () => {
+        setDeleteModalOpen(true);
+        handleMenuClose();
+    }
+
+    const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+    }
+
+    const handleMenuClose = () => {
+        setAnchorEl(null);
     }
 
     return (
@@ -83,21 +116,51 @@ const CustomTrackPageView = () => {
             {customTrack && (
                 <>
                     <Grid container>
-                        <Grid item xs={10}>
-                            <Typography variant="h4">{customTrack.name}</Typography>
-                        </Grid>
-                        <Grid item xs={2}>
-                            {!customTrack.verified && (
+                        <Typography variant="h4">{customTrack.name}</Typography>
+
+                        {displayOptions?.get('show_admin_button') && (
+                            <>
                                 <Button
+                                    id="basic-button"
                                     variant="contained"
-                                    color="success"
-                                    onClick={openModal}
+                                    color="primary"
+                                    aria-controls={menuOpen ? 'basic-menu' : undefined}
+                                    aria-haspopup="true"
+                                    aria-expanded={menuOpen ? 'true' : undefined}
+                                    onClick={handleMenuClick}
+                                    sx={{marginLeft: 'auto'}}
                                 >
-                                    Verify this track
+                                    <FormatListBulletedIcon sx={{ mr: 1 }} />
+                                    Moderator Actions
                                 </Button>
-                            )}
-                        </Grid>
+                                <Menu
+                                    id="basic-menu"
+                                    anchorEl={anchorEl}
+                                    open={menuOpen}
+                                    onClose={handleMenuClose}
+                                    MenuListProps={{
+                                        'aria-labelledby': 'basic-button',
+                                    }}
+                                >
+                                    {!customTrack.verified && displayOptions?.get('show_verify_custom_track_button') && (
+                                        <MenuItem onClick={() => openVerifyModal()}>
+                                            <CheckIcon sx={{ mr: 1 }} />
+                                            Verify Custom Track
+                                        </MenuItem>
+                                    )}
+
+                                    {displayOptions?.get('show_delete_custom_track_button') && (
+                                        <MenuItem onClick={() => openDeleteModal()}>
+                                            <DeleteIcon sx={{ mr: 1 }} />
+                                            Delete Custom Track
+                                        </MenuItem>
+                                    )}
+                                </Menu>
+                            </>
+                        )}
                     </Grid>
+
+                    {deleteError && <Alert severity="error" variant="filled">{deleteError}</Alert>}
 
                     {!customTrack.verified && (
                         <>
@@ -117,13 +180,7 @@ const CustomTrackPageView = () => {
                             <Typography component="span">Downloads</Typography>
                         </AccordionSummary>
                         <AccordionDetails>
-                            <ul>
-                                {resources.map((resource) => (
-                                    <li>
-                                        <DownloadResourceLink resourceId={resource.id} label={resource.file_name} /> (v{resource.version})
-                                    </li>
-                                ))}
-                            </ul>
+                            <ResourceListTable resources={resources} borderLess={true} />
                         </AccordionDetails>
                     </Accordion>
 
@@ -134,32 +191,39 @@ const CustomTrackPageView = () => {
                     </Typography>
                     <Blockquote text={customTrack.description}/>
 
-                    <Dialog
+                    <SimpleDialog
                         open={verifyModalOpen}
-                        onClose={openModal}
-                        aria-labelledby="alert-dialog-title"
-                        aria-describedby="alert-dialog-description"
-                    >
-                        <DialogTitle id="alert-dialog-title">
-                            Verify custom track "{customTrack.name}"?
-                        </DialogTitle>
-                        <DialogContent>
-                            <DialogContentText id="alert-dialog-description">
-                                This action cannot be undone. The track will be visible to all users
-                                and can be downloaded ingame.
-                            </DialogContentText>
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={closeModal} variant={"outlined"}>Back</Button>
-                            <Button onClick={() => verifyCustomTrack(customTrack)} variant={"contained"} color={"success"} autoFocus>
-                                Verify
-                            </Button>
-                        </DialogActions>
-                    </Dialog>
+                        onClose={() => setVerifyModalOpen(false)}
+                        title={`Verify custom track "${customTrack.name}"?`}
+                        description={"This action cannot be undone. The track will be visible to all users and can be downloaded ingame."}
+                        actions={
+                            <>
+                                <Button onClick={() => setVerifyModalOpen(false)} variant="outlined" color="inherit">Back</Button>
+                                <Button onClick={() => verifyCustomTrack(customTrack)} variant="contained" color="success" autoFocus>
+                                    Verify
+                                </Button>
+                            </>
+                        }
+                    />
+
+                    <SimpleDialog
+                        open={deleteModalOpen}
+                        onClose={() => setDeleteModalOpen(false)}
+                        title={`Delete custom track "${customTrack.name}"?`}
+                        description={"This action cannot be undone. The track, including all resources, will be removed immediately."}
+                        actions={
+                            <>
+                                <Button onClick={() => setDeleteModalOpen(false)} variant="outlined" color="inherit">Back</Button>
+                                <Button onClick={() => deleteCustomTrack(customTrack)} variant="contained" color="error" autoFocus>
+                                    Delete
+                                </Button>
+                            </>
+                        }
+                    />
 
                     {userCustomTracks.length > 0 && (
                         <>
-                            <Typography variant="h4">Custom tracks made by {customTrack.author.username} ...</Typography>
+                            <Typography variant="h4">Other Custom Tracks by {customTrack.author.username}</Typography>
                             <CustomTrackListGrid customTracks={userCustomTracks}/>
                         </>
                     )}

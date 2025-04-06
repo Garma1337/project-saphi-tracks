@@ -1,5 +1,5 @@
 import {
-    CreateCustomTrackResponse, DiscordStatusResponse, DownloadResourceResponse,
+    CreateCustomTrackResponse, DeleteCustomTrackResponse, DiscordStatusResponse, DownloadResourceResponse,
     LoginResponse,
     PaginatedQueryResponse,
     SessionResponse,
@@ -19,6 +19,9 @@ export default interface ApiClientInterface {
         vrmFile: File,
         vrmFileVersion: string,
     ) => Promise<CreateCustomTrackResponse>
+    deleteCustomTrack: (
+        id: number
+    ) => Promise<DeleteCustomTrackResponse>
     downloadResource: (
         id: number
     ) => Promise<DownloadResourceResponse>

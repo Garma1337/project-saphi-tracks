@@ -1,7 +1,7 @@
 import axios, {AxiosInstance} from "axios";
 import ApiClientInterface from "./apiClientInterface.ts";
 import {
-    CreateCustomTrackResponse,
+    CreateCustomTrackResponse, DeleteCustomTrackResponse,
     DiscordStatusResponse,
     DownloadResourceResponse,
     LoginResponse,
@@ -55,6 +55,11 @@ export default class ApiClient implements ApiClientInterface {
         });
 
         return response.data as CreateCustomTrackResponse;
+    }
+
+    public async deleteCustomTrack(id: number): Promise<DeleteCustomTrackResponse> {
+        const response = await this.client.delete(`/customtracks`, { data: { id } });
+        return response.data as DeleteCustomTrackResponse;
     }
 
     public async downloadResource(id: number): Promise<DownloadResourceResponse> {

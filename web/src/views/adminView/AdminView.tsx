@@ -10,7 +10,7 @@ import CustomTrackListGrid from "../../components/CustomTrackListGrid.tsx";
 import {Alert, Box, Pagination as MuiPagination, Stack, Typography} from "@mui/material";
 import UserListTable from "../../components/UserListTable.tsx";
 import useStore from "../../store.ts";
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import AppRoutes from "../../routes.tsx";
 
 const AdminView = () => {
@@ -76,8 +76,8 @@ const AdminView = () => {
             <Box sx={{width: '100%'}}>
                 <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
                     <Tabs value={tabIndex} onChange={handleChange} aria-label="basic tabs example">
-                        <Tab label="Unverified Tracks" {...createTabProperties(0)} />
-                        <Tab label="Unverified Users" {...createTabProperties(1)} />
+                        <Tab label={`Unverified Custom Tracks (${unverifiedCustomTracks.length})`} {...createTabProperties(0)} />
+                        <Tab label={`Unverified Users (${unverifiedUsers.length})`} {...createTabProperties(1)} />
                     </Tabs>
                 </Box>
 
@@ -97,7 +97,7 @@ const AdminView = () => {
                                     page={customTrackPage}
                                     onChange={handleCustomTrackPageChange}
                                 />
-                                <CustomTrackListGrid customTracks={unverifiedCustomTracks}/>
+                                <CustomTrackListGrid customTracks={unverifiedCustomTracks} />
                                 <MuiPagination
                                     count={customTrackPagination?.total_page_count}
                                     shape={"rounded"}
@@ -127,7 +127,7 @@ const AdminView = () => {
                                     page={userPage}
                                     onChange={handleUserPageChange}
                                 />
-                                <UserListTable users={unverifiedUsers}/>
+                                <UserListTable users={unverifiedUsers} borderLess={true} />
                                 <MuiPagination
                                     count={userPagination?.total_page_count}
                                     shape={"rounded"}

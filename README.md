@@ -8,4 +8,4 @@ in action.
 
 ## Technical Documentation
 
-Look no [further](doc/index.md).
+I have documented various things [here](doc/index.md).
