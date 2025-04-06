@@ -13,7 +13,6 @@ class RouterFactory(object):
         # GET Endpoints
         router.add_route('customtracks', 'GET', container.get('http.request_handler.find_custom_tracks'))
         router.add_route('discordstatus', 'GET', container.get('http.request_handler.get_discord_status'))
-        router.add_route('download', 'GET', container.get('http.request_handler.download_resource'))
         router.add_route('dtos', 'GET', container.get('http.request_handler.generate_dtos'))
         router.add_route('permissions', 'GET', container.get('http.request_handler.find_permissions'))
         router.add_route('resources', 'GET', container.get('http.request_handler.find_resources'))
