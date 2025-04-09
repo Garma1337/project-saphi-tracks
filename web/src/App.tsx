@@ -16,6 +16,7 @@ import LoginView from "./views/loginView/LoginView.tsx";
 import ServiceManager from "./lib/serviceManager.ts";
 import CustomTrackPageView from "./views/customTrackPageView/CustomTrackPageView.tsx";
 import AdminView from "./views/adminView/AdminView.tsx";
+import useAppViewModel from "./viewModels/useAppViewModel.ts";
 
 function App() {
     const apiClient: ApiClient = ServiceManager.createApiClient();
@@ -26,20 +27,14 @@ function App() {
     const setSettings = useStore(state => state.setSettings);
     const setTags = useStore(state => state.setTags);
 
-    useEffect(() => {
-        sessionManager.getSession().then((response) => {
-            setCurrentUser(response.current_user)
-            setDisplayOptions(new Map(Object.entries(response.display_options)))
-        });
-    }, [setCurrentUser, setDisplayOptions]);
+    const { settings, tags, displayOptions, currentUser } = useAppViewModel(apiClient, sessionManager);
 
     useEffect(() => {
-        apiClient.findSettings(null, null, null, null, null).then(query => setSettings(query.items));
-    }, [setSettings]);
-
-    useEffect(() => {
-        apiClient.findTags(null, null, null, null).then(query => setTags(query.items));
-    }, [setTags]);
+        setSettings(settings);
+        setTags(tags);
+        setDisplayOptions(displayOptions);
+        setCurrentUser(currentUser);
+    }, [settings, tags, displayOptions, currentUser, setSettings, setTags, setDisplayOptions, setCurrentUser]);
 
     return (
         <Routes>

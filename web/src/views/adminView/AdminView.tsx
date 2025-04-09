@@ -1,8 +1,6 @@
 import {useEffect, useState} from "react";
 import ApiClient from "../../lib/services/apiClient.ts";
 import ServiceManager from "../../lib/serviceManager.ts";
-import {CustomTrack, User} from "../../lib/api/dtos.ts";
-import {Pagination} from "../../lib/api/response.ts";
 import Tabs from "@mui/material/Tabs/Tabs";
 import Tab from "@mui/material/Tab/Tab";
 import TabContent from "../../components/TabContent.tsx";
@@ -12,6 +10,7 @@ import UserListTable from "../../components/UserListTable.tsx";
 import useStore from "../../store.ts";
 import {useNavigate} from "react-router-dom";
 import AppRoutes from "../../routes.tsx";
+import useAdminViewModel from "../../viewModels/useAdminViewModel.ts";
 
 const AdminView = () => {
     const apiClient: ApiClient = ServiceManager.createApiClient();
@@ -19,32 +18,17 @@ const AdminView = () => {
     const navigate = useNavigate();
     const displayOptions = useStore(state => state.displayOptions);
 
-    const [unverifiedCustomTracks, setUnverifiedCustomTracks] = useState<CustomTrack[]>([]);
-    const [unverifiedUsers, setUnverifiedUsers] = useState<User[]>([]);
-
-    const [customTrackPagination, setCustomTrackPagination] = useState<Pagination | null>(null);
     const [customTrackPage, setCustomTrackPage] = useState<number>(1);
-
-    const [userPagination, setUserPagination] = useState<Pagination | null>(null);
     const [userPage, setUserPage] = useState<number>(1);
-
     const [tabIndex, setTabIndex] = useState(0);
 
-    useEffect(() => {
-        apiClient.findCustomTracks(null, null, null, null, false, customTrackPage, null).then((query) => {
-            setUnverifiedCustomTracks(query.items || []);
-            setCustomTrackPagination(query.pagination);
-        });
-    }, [setUnverifiedCustomTracks, setCustomTrackPagination, customTrackPage]);
+    const { unverifiedCustomTracks, unverifiedUsers, customTrackPagination, userPagination } = useAdminViewModel(
+        apiClient,
+        customTrackPage,
+        userPage
+    )
 
-    useEffect(() => {
-        apiClient.findUsers(null, null, false, userPage, null).then((query) => {
-            setUnverifiedUsers(query.items || []);
-            setUserPagination(query.pagination);
-        });
-    }, [setUnverifiedUsers, setUserPagination, userPage]);
-
-    const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
+    const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
         setTabIndex(newValue);
     };
 
@@ -75,7 +59,7 @@ const AdminView = () => {
 
             <Box sx={{width: '100%'}}>
                 <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
-                    <Tabs value={tabIndex} onChange={handleChange} aria-label="basic tabs example">
+                    <Tabs value={tabIndex} onChange={handleTabChange} aria-label="basic tabs example">
                         <Tab label={`Unverified Custom Tracks (${unverifiedCustomTracks.length})`} {...createTabProperties(0)} />
                         <Tab label={`Unverified Users (${unverifiedUsers.length})`} {...createTabProperties(1)} />
                     </Tabs>

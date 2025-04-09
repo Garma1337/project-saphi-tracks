@@ -4,6 +4,7 @@ import ServiceManager from "../../lib/serviceManager.ts";
 import {useNavigate} from "react-router-dom";
 import AppRoutes from "../../routes.tsx";
 import useStore from "../../store.ts";
+import useLoginViewModel from "../../viewModels/useLoginViewModel.ts";
 
 const LoginView = () => {
     const sessionManager = ServiceManager.createSessionManager();
@@ -11,21 +12,10 @@ const LoginView = () => {
     const navigate = useNavigate();
     const currentUser = useStore(state => state.currentUser);
 
-    const [loginError, setLoginError] = useState<string | null>(null);
     const [username, setUsername] = useState<string | null>(null);
     const [password, setPassword] = useState<string | null>(null);
 
-    const loginPlayer = (username: string, password: string) => {
-        setLoginError(null);
-
-        sessionManager.login(username, password).then((response) => {
-            if (response.success) {
-                window.location.reload();
-            } else {
-                setLoginError(response.error);
-            }
-        });
-    }
+    const { loginError, loginPlayer } = useLoginViewModel(sessionManager);
 
     useEffect(() => {
         if (currentUser) {

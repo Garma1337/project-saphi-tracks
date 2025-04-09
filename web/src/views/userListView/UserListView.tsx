@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {
     Alert,
     Box,
@@ -12,31 +12,27 @@ import {
 } from "@mui/material";
 import ApiClient from "../../lib/services/apiClient.ts";
 import RestoreIcon from "@mui/icons-material/Restore";
-import {Pagination} from "../../lib/api/response.ts";
 import ServiceManager from "../../lib/serviceManager.ts";
 import UserListTable from "../../components/UserListTable.tsx";
+import useUserListViewModel from '../../viewModels/useUserListViewModel.ts';
 
 const UserListView = () => {
     const apiClient: ApiClient = ServiceManager.createApiClient();
 
-    const [pagination, setPagination] = useState<Pagination | null>(null);
     const [page, setPage] = useState<number>(1);
-    const [users, setUsers] = useState<any[]>([]);
-
     const [name, setName] = useState<string | null>(null);
 
-    useEffect(() => {
-        apiClient.findUsers(null, name, null, page, null).then((query) => {
-            setPagination(query.pagination);
-            setUsers(query.items || []);
-        });
-    }, [name, page, setPagination, setUsers]);
+    const { users, pagination } = useUserListViewModel(
+        apiClient,
+        page,
+        name,
+    )
 
     const handlePageChange = (_event: React.ChangeEvent<unknown>, value: number) => {
         setPage(value);
     }
 
-    const resetForm = () => {
+    const resetSearchForm = () => {
         setName(null);
     }
 
@@ -56,7 +52,7 @@ const UserListView = () => {
                 </FormControl>
 
                 <Button
-                    onClick={() => resetForm()}
+                    onClick={() => resetSearchForm()}
                     variant="contained"
                     color="secondary"
                     size="large"

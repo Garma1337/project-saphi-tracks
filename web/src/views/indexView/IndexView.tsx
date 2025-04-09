@@ -1,28 +1,17 @@
 import {Link} from "react-router-dom";
 import ApiClient from "../../lib/services/apiClient.ts";
 import ServiceManager from "../../lib/serviceManager.ts";
-import {useEffect, useState} from "react";
-import {CustomTrack} from "../../lib/api/dtos.ts";
 import CustomTrackListGrid from "../../components/CustomTrackListGrid.tsx";
 import Typography from "@mui/material/Typography/Typography";
 import Stack from "@mui/material/Stack/Stack";
-import randomSlice from "../../utils/randomSlice.ts";
 import Grid from "@mui/material/Grid/Grid";
-import DiscordWidget from "../../components/DiscordWidget.tsx";
+import DiscordGuildWidgetBox from "../../components/DiscordGuildWidgetBox.tsx";
+import useIndexViewModel from "../../viewModels/useIndexViewModel.ts";
 
 const IndexView = () => {
     const apiClient: ApiClient = ServiceManager.createApiClient();
 
-    const [highlightedTracks, setHighlightedTracks] = useState<CustomTrack[]>([]);
-
-    useEffect(() => {
-        apiClient.findCustomTracks(null, null, null, true, null, 1, 10).then((query) => {
-            const items = query.items || [];
-            const randomTracks: CustomTrack[] = randomSlice(items, 3);
-
-            setHighlightedTracks(randomTracks);
-        });
-    }, [setHighlightedTracks]);
+    const { discordGuildWidget, discordGuildWidgetLoadingError, highlightedTracks } = useIndexViewModel(apiClient);
 
     return (
         <Grid container spacing={2}>
@@ -73,7 +62,10 @@ const IndexView = () => {
             </Grid>
 
             <Grid item xs={12} md={3}>
-                <DiscordWidget />
+                <DiscordGuildWidgetBox
+                    discordGuildWidget={discordGuildWidget}
+                    discordGuildWidgetLoadingError={discordGuildWidgetLoadingError}
+                />
             </Grid>
         </Grid>
     );

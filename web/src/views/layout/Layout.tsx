@@ -27,9 +27,11 @@ import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ServiceManager from "../../lib/serviceManager.ts";
 import toggleTheme from "../../utils/toggleTheme.ts";
+import useLayoutViewModel from "../../viewModels/useLayoutViewModel.ts";
 
 const Layout = () => {
     const sessionManager = ServiceManager.createSessionManager();
+    const { logoutPlayer } = useLayoutViewModel(sessionManager);
 
     const navigate = useNavigate();
     const currentUser = useStore(state => state.currentUser);
@@ -47,13 +49,6 @@ const Layout = () => {
     const handleAccountMenuClose = () => {
         setAccountAnchorEL(null);
     };
-
-    const logoutPlayer = () => {
-        sessionManager.logout().then(() => {
-            window.location.reload();
-            navigate(AppRoutes.IndexPage);
-        });
-    }
 
     const handleDrawerToggle = () => {
         setDrawerOpen(!drawerOpen);

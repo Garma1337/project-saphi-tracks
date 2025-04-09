@@ -1,6 +1,5 @@
 import * as React from 'react';
-import {useEffect, useState} from 'react';
-import {CustomTrack} from "../../lib/api/dtos.ts";
+import {useState} from 'react';
 import ApiClient from "../../lib/services/apiClient.ts";
 import {
     Alert,
@@ -16,10 +15,10 @@ import {useNavigate} from "react-router-dom";
 import AppRoutes from "../../routes.tsx";
 import RestoreIcon from '@mui/icons-material/Restore';
 import AddIcon from '@mui/icons-material/Add';
-import {Pagination} from "../../lib/api/response.ts";
 import CustomTrackListGrid from "../../components/CustomTrackListGrid.tsx";
 import ServiceManager from "../../lib/serviceManager.ts";
 import useStore from "../../store.ts";
+import useCustomTrackListViewModel from '../../viewModels/useCustomTrackListViewModel.ts';
 
 const CustomTrackListView = () => {
     const apiClient: ApiClient = ServiceManager.createApiClient();
@@ -27,24 +26,20 @@ const CustomTrackListView = () => {
     const navigate = useNavigate();
     const displayOptions = useStore(state => state.displayOptions);
 
-    const [customTracks, setCustomTracks] = useState<CustomTrack[]>([]);
-    const [pagination, setPagination] = useState<Pagination | null>(null);
     const [page, setPage] = useState<number>(1);
-
     const [name, setName] = useState<string | null>(null);
 
-    useEffect(() => {
-        apiClient.findCustomTracks(null, null, name, null, null, page, 20).then((query) => {
-            setPagination(query.pagination);
-            setCustomTracks(query.items || []);
-        });
-    }, [name, page, setPagination, setCustomTracks]);
+    const { customTracks, pagination } = useCustomTrackListViewModel(
+        apiClient,
+        page,
+        name,
+    )
 
     const handlePageChange = (_event: React.ChangeEvent<unknown>, value: number) => {
         setPage(value);
     }
 
-    const resetForm = () => {
+    const resetSearchForm = () => {
         setPage(1);
         setName(null);
     }
@@ -65,7 +60,7 @@ const CustomTrackListView = () => {
                 </FormControl>
 
                 <Button
-                    onClick={() => resetForm()}
+                    onClick={() => resetSearchForm()}
                     variant="contained"
                     color="secondary"
                     size="large"
