@@ -204,7 +204,7 @@ export default class ApiClient implements ApiClientInterface {
             return '';
         }
 
-        return `${this.client.defaults.baseURL.replace('/api/v1', '')}/rproxy/${resource.file_name}`;
+        return `${this.client.defaults.baseURL.replace('/api/v1', '')}/resource/${resource.file_name}`;
     }
 
     public async verifyCustomTrack(id: number): Promise<VerifyCustomTrackResponse> {
