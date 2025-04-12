@@ -19,7 +19,7 @@ class LoginUser(RequestHandler):
         current_user = self.get_current_identity()
 
         if current_user:
-            return ErrorJsonResponse(f'You are already logged in as {current_user['username']}.', 401)
+            return ErrorJsonResponse(f'You are already logged in as {current_user["username"]}.', 401)
 
         username = request.json.get('username')
         password = request.json.get('password')
