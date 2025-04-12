@@ -1,0 +1,53 @@
+services:
+
+  api:
+    build:
+      context: .
+      dockerfile: api.Dockerfile
+    restart: always
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    environment:
+      FLASK_APP: api
+      FLASK_RUN_HOST: 0.0.0.0
+      FLASK_RUN_PORT: 5000
+    depends_on:
+      - db
+    volumes:
+      - /root/docker-data/api/resources:/app/resources
+
+  web:
+    build:
+      context: .
+      dockerfile: web.Dockerfile
+    restart: always
+    ports:
+      - "3000:80"
+    env_file:
+      - .env
+    depends_on:
+      - api
+
+  db:
+    image: postgres:16.3-bookworm
+    restart: always
+    shm_size: 128mb
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U $${{POSTGRES_USER}} -d $${{POSTGRES_DB}}'"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    volumes:
+      - /root/docker-data/db:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
