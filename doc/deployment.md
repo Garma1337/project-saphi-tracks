@@ -33,8 +33,8 @@ $ docker-compose up -f docker-compose.yml -p saphi-custom-tracks
 
 The compose file will create 3 containers:
 
-* The REST API container `saphi-custom-tracks-api`, running on port **5000**
-* The web application container `saphi-custom-tracks-web`, running on port **3000**
+* The REST API container `saphi-custom-tracks-api`, running on port **5090**
+* The web application container `saphi-custom-tracks-web`, running on port **3090**
 * The database container `db`, running on port **5432**
 * The adminer container `adminer`, running on port **8080**
 
