@@ -7,6 +7,7 @@ import {CssBaseline, ThemeProvider} from '@mui/material'
 import getCurrentTheme from "./utils/getCurrentTheme.ts";
 import darkTheme from "./theme/dark.ts";
 import lightTheme from "./theme/light.ts";
+import reportWebVitals from "./utils/reportWebVitals.ts";
 
 let theme;
 const mode = getCurrentTheme();
@@ -27,3 +28,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         </HashRouter>
     </React.StrictMode>
 )
+
+reportWebVitals();
